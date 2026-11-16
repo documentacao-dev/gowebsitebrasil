@@ -31,6 +31,27 @@ MARCADOR = re.compile(r'ia-translated')
 ASSET = re.compile(r'(?:href|src)="(/(?:css|js|images|fonts|favicon|static)[^"#?]*)')
 CSS_URL = re.compile(r'url\(\s*[\'"]?([^\'")]+)')
 HEADERS = {'Host': 'go.dev', 'X-Forwarded-Proto': 'https'}
+SITE = 'https://go.documentacao.dev'
+# Analytics do go.dev oficial (Google Tag Manager): não pode ir para o fork,
+# senão os visitantes daqui viram dados na conta do Google.
+GTM = [
+    re.compile(r'<link rel="preconnect" href="https://www\.googletagmanager\.com">\s*'),
+    re.compile(r'<script[^>]*>\(function\(w,d,s,l,i\).*?</script>\s*', re.S),
+    re.compile(r'<noscript><iframe src="https://www\.googletagmanager\.com/.*?</noscript>\s*', re.S),
+    re.compile(r'<meta class="js-gtmID"[^>]*>\s*'),  # o JS do pkgsite lê o ID daqui
+    re.compile(r'<script>\s*// this will throw if the querySelector.*?</script>\s*', re.S),
+    re.compile(r'<noscript>\s*<iframe src="https://www\.googletagmanager\.com/.*?</noscript>\s*', re.S),
+    re.compile(r'<section class="Cookie-notice js-cookieNotice">.*?</section>\s*', re.S),
+]
+
+
+def limpar(html):
+    for rx in GTM:
+        html = rx.sub('', html)
+    # A página canônica é a traduzida, não a do go.dev em inglês.
+    html = re.sub(r'(<link rel="canonical" href=")https://go\.dev', r'\1' + SITE, html)
+    html = re.sub(r'(<meta name="og:url" content=")https://go\.dev', r'\1' + SITE, html)
+    return html
 FORA = ('tour/',)  # app Angular próprio, não dá para espelhar como página
 
 
@@ -74,7 +95,7 @@ def main():
         except Exception as e:  # página que o servidor não serve nesse caminho
             falhas.append(f'{url}: {e}')
             continue
-        html = html.replace('<html lang="en">', '<html lang="pt-BR">')
+        html = limpar(html.replace('<html lang="en">', '<html lang="pt-BR">'))
         (out / saida).parent.mkdir(parents=True, exist_ok=True)
         (out / saida).write_text(html)
         pendentes |= set(ASSET.findall(html))
