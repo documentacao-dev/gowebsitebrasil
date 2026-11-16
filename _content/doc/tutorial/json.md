@@ -1,29 +1,30 @@
 <!--{
-  "Title": "Tutorial: Working with JSON",
+  "ia-translated": true,
+  "Title": "Tutorial: Trabalhando com JSON",
   "Breadcrumb": true
 }-->
 
-JSON (JavaScript Object Notation) is a simple data interchange format.
-Syntactically it resembles the objects and lists of JavaScript.
-It is commonly used for communication with networked API services,
-but it is used in many other places, too.
-Its home page, [json.org](http://json.org),
-provides a wonderfully clear and concise definition of the standard.
+JSON (JavaScript Object Notation) é um formato simples de troca de dados.
+Sintaticamente, ele se parece com os objetos e listas do JavaScript.
+É muito usado para comunicação com serviços de API em rede,
+mas também aparece em muitos outros lugares.
+A página oficial, [json.org](http://json.org),
+traz uma definição excelente, clara e concisa do padrão.
 
-With the [encoding/json/v2 package](/pkg/encoding/json/v2) it's a snap to read
-and write JSON data from your Go programs.
-This package provides a cleaner API and better defaults than the older
-[encoding/json](/pkg/encoding/json) package.
+Com o [pacote encoding/json/v2](/pkg/encoding/json/v2), é muito simples ler
+e escrever dados JSON nos seus programas em Go.
+Esse pacote oferece uma API mais limpa e padrões melhores do que o pacote mais
+antigo [encoding/json](/pkg/encoding/json).
 
-## Encoding
+## Codificação
 
-To encode JSON data we use the [`Marshal`](/pkg/encoding/json/v2#Marshal) function.
+Para codificar dados JSON, usamos a função [`Marshal`](/pkg/encoding/json/v2#Marshal).
 
 ```
 func Marshal(in any, opts ...Options) (out []byte, err error)
 ```
 
-Given the Go data structure, `Message`,
+Dada a estrutura de dados do Go, `Message`,
 
 ```
 type Message struct {
@@ -33,67 +34,67 @@ type Message struct {
 }
 ```
 
-and an instance of `Message`
+e uma instância de `Message`
 
 ```
 m := Message{"Alice", "Hello", time.Date(2011, 1, 25, 0, 0, 0, 0, time.UTC)}
 ```
 
-we can marshal a JSON-encoded version of m using `json.Marshal`:
+podemos fazer o marshal de uma versão JSON de `m` usando `json.Marshal`:
 
 ```
 b, err := json.Marshal(m)
 ```
 
-If all is well, `err` will be `nil` and `b` will be a `[]byte` containing this JSON data:
+Se tudo correr bem, `err` será `nil` e `b` será um `[]byte` contendo estes dados JSON:
 
 ```
 b == []byte(`{"Name":"Alice","Body":"Hello","Time":"2011-01-25T00:00:00Z"}`)
 ```
 
-Only data structures that can be represented as valid JSON will be encoded:
+Só são codificadas estruturas de dados que podem ser representadas como JSON válido:
 
-  - Pointers will be encoded as the values they point to (or `null` if the pointer is `nil`).
+  - Ponteiros são codificados como os valores para os quais apontam (ou como `null` se o ponteiro for `nil`).
 
-  - JSON objects only support strings as keys.
-    Thus, to encode a Go map, it must have a key that encodes as a JSON string,
-    such as `map[string]T` (where `T` is any Go type supported by the json
-    package).
+  - Objetos JSON só aceitam strings como chaves.
+    Assim, para codificar um map do Go, ele precisa ter uma chave que seja codificada como string JSON,
+    como `map[string]T` (em que `T` é qualquer tipo do Go suportado pelo pacote
+    json).
 
-  - Channel, complex, and function types cannot be encoded.
+  - Tipos de canal, complexos e funções não podem ser codificados.
 
-  - Cyclic data structures are not supported.
+  - Estruturas de dados cíclicas não são suportadas.
 
-  - [`Marshal`](/pkg/encoding/json/v2#Marshal) documents the full set of encoding semantics.
+  - [`Marshal`](/pkg/encoding/json/v2#Marshal) documenta o conjunto completo da semântica de codificação.
 
-The json package only accesses the exported fields of struct types (those
-that begin with an uppercase letter).
-Therefore only the exported fields of a struct will be present in the JSON output.
+O pacote json só acessa os campos exportados de tipos struct (aqueles
+que começam com letra maiúscula).
+Por isso, apenas os campos exportados de uma struct aparecem na saída JSON.
 
-## Decoding
+## Decodificação
 
-To decode JSON data we use the [`Unmarshal`](/pkg/encoding/json/v2#Unmarshal) function.
+Para decodificar dados JSON, usamos a função [`Unmarshal`](/pkg/encoding/json/v2#Unmarshal).
 
 ```
 func Unmarshal(in []byte, out any, opts ...Options) (err error)
 ```
 
-We must first create a place where the decoded data will be stored
+Primeiro, precisamos criar um lugar onde os dados decodificados serão armazenados
 
 ```
 var m Message
 ```
 
-and call `json.Unmarshal`, passing it a `[]byte` of JSON data and a pointer to `m`
+e chamar `json.Unmarshal`, passando a ela um `[]byte` com os dados JSON e um ponteiro para `m`
 
 ```
 err := json.Unmarshal(b, &m)
 ```
 
-If `b` contains valid JSON that fits in `m`,
-after the call `err` will be `nil` and the data from `b` will have been
-stored in the struct `m`,
-as if by an assignment like:
+Se `b` contiver JSON válido que caiba em `m`,
+depois da chamada `err` será `nil` e os dados de `b` terão sido
+armazenados na struct `m`,
+como se fosse feita uma atribuição como:
 
 ```
 m = Message{
@@ -103,17 +104,17 @@ m = Message{
 }
 ```
 
-How does `Unmarshal` identify the fields in which to store the decoded data?
-For a given JSON key `"Foo"`,
-`Unmarshal` will look through the destination struct's fields to find (in
-order of preference):
+Como o `Unmarshal` identifica os campos onde deve guardar os dados decodificados?
+Para uma chave JSON `"Foo"`,
+o `Unmarshal` procura nos campos da struct de destino (em
+ordem de preferência):
 
-  - An exported field with a tag of `json:"Foo"` (see the [Go spec](/ref/spec#Struct_types)
-    for more on struct tags), or
+  - Um campo exportado com a tag `json:"Foo"` (veja a [especificação da linguagem Go](/ref/spec#Struct_types)
+    para mais sobre tags de struct), ou
 
-  - An exported field named `Foo`.
+  - Um campo exportado chamado `Foo`.
 
-What happens when the structure of the JSON data doesn't exactly match the Go type?
+E o que acontece quando a estrutura dos dados JSON não bate exatamente com o tipo do Go?
 
 ```
 b := []byte(`{"Name":"Bob","Food":"Pickle"}`)
@@ -121,35 +122,35 @@ var m Message
 err := json.Unmarshal(b, &m)
 ```
 
-`Unmarshal` will decode only the fields that it can find in the destination type.
-In this case, only the `Name` field of `m` will be populated,
-and the `Food` field will be ignored.
-This behavior is particularly useful when you wish to pick only a few specific
-fields out of a large JSON blob.
-It also means that any unexported fields in the destination struct will
-be unaffected by `Unmarshal`.
+O `Unmarshal` decodifica apenas os campos que consegue encontrar no tipo de destino.
+Nesse caso, só o campo `Name` de `m` será preenchido,
+e o campo `Food` será ignorado.
+Esse comportamento é especialmente útil quando você quer extrair apenas alguns
+campos específicos de um JSON grande.
+Isso também significa que quaisquer campos não exportados da struct de destino
+não são afetados pelo `Unmarshal`.
 
-But what if you don't know the structure of your JSON data beforehand?
+Mas e se você não souber a estrutura dos seus dados JSON de antemão?
 
-## Generic JSON with `any`
+## JSON genérico com `any`
 
-The `any` type describes any Go type.
-`any` is defined as `interface{}` (empty interface), which describes an interface with zero methods.
-Every Go type implements at least zero methods and therefore satisfies the empty interface.
+O tipo `any` descreve qualquer tipo do Go.
+`any` é definido como `interface{}` (interface vazia), que descreve uma interface sem métodos.
+Todo tipo do Go implementa pelo menos zero métodos e, portanto, satisfaz a interface vazia.
 
-`any` serves as a general container type:
+`any` funciona como um tipo contêiner genérico:
 
 	var a any
 	a = "a string"
 	a = 2011
 	a = 2.777
 
-A type assertion accesses the underlying concrete type:
+Uma asserção de tipo acessa o tipo concreto subjacente:
 
 	r := a.(float64)
 	fmt.Println("the circle's area", math.Pi*r*r)
 
-Or, if the underlying type is unknown, a type switch determines the type:
+Ou, se o tipo subjacente for desconhecido, um switch de tipo determina o tipo:
 
 	switch v := a.(type) {
 	case int:
@@ -163,36 +164,36 @@ Or, if the underlying type is unknown, a type switch determines the type:
 	    // a isn't one of the types above
 	}
 
-The json package uses `map[string]any` and
-`[]any` values to store arbitrary JSON objects and arrays;
-it will happily unmarshal any valid JSON blob into a plain
-`any` value.  The default concrete Go types are:
+O pacote json usa valores `map[string]any` e
+`[]any` para armazenar objetos e arrays JSON arbitrários;
+ele aceita de bom grado fazer o unmarshal de qualquer JSON válido
+em um valor `any` simples. Os tipos concretos padrão do Go são:
 
-  - `bool` for JSON booleans,
+  - `bool` para booleanos JSON,
 
-  - `float64` for JSON numbers,
+  - `float64` para números JSON,
 
-  - `string` for JSON strings, and
+  - `string` para strings JSON, e
 
-  - `nil` for JSON null.
+  - `nil` para null JSON.
 
-## Decoding arbitrary data
+## Decodificando dados arbitrários
 
-Consider this JSON data, stored in the variable `b`:
+Considere estes dados JSON, armazenados na variável `b`:
 
 ```
 b := []byte(`{"Name":"Wednesday","Age":6,"Parents":["Gomez","Morticia"]}`)
 ```
 
-Without knowing this data's structure, we can decode it into an `any` value with `Unmarshal`:
+Sem saber a estrutura desses dados, podemos decodificá-los em um valor `any` com `Unmarshal`:
 
 ```
 var f any
 err := json.Unmarshal(b, &f)
 ```
 
-At this point the Go value in `f` would be a map whose keys are strings
-and whose values are themselves stored as `any` values:
+Neste ponto, o valor do Go em `f` seria um map cujas chaves são strings
+e cujos valores são, por sua vez, armazenados como valores `any`:
 
 ```
 f = map[string]any{
@@ -205,14 +206,14 @@ f = map[string]any{
 }
 ```
 
-To access this data we can use a type assertion to access `f`'s underlying `map[string]any`:
+Para acessar esses dados, podemos usar uma asserção de tipo para obter o `map[string]any` subjacente de `f`:
 
 ```
 m := f.(map[string]any)
 ```
 
-We can then iterate through the map with a range statement and use a type
-switch to access its values as their concrete types:
+Depois, podemos percorrer o map com uma instrução range e usar um switch de tipo
+para acessar seus valores como os tipos concretos:
 
 ```
 for k, v := range m {
@@ -232,11 +233,11 @@ for k, v := range m {
 }
 ```
 
-In this way you can work with unknown JSON data while still enjoying the benefits of type safety.
+Dessa forma, você pode trabalhar com dados JSON desconhecidos e ainda aproveitar os benefícios da segurança de tipos.
 
-## Reference Types
+## Tipos de referência
 
-Let's define a Go type to contain the data from the previous example:
+Vamos definir um tipo do Go para conter os dados do exemplo anterior:
 
 ```
 type FamilyMember struct {
@@ -249,16 +250,16 @@ var m FamilyMember
 err := json.Unmarshal(b, &m)
 ```
 
-Unmarshaling that data into a `FamilyMember` value works as expected,
-but if we look closely we can see a remarkable thing has happened.
-With the var statement we allocated a `FamilyMember` struct,
-and then provided a pointer to that value to `Unmarshal`,
-but at that time the `Parents` field was a `nil` slice value.
-To populate the `Parents` field, `Unmarshal` allocated a new slice behind the scenes.
-This is typical of how `Unmarshal` works with the supported reference types
-(pointers, slices, and maps).
+Fazer o unmarshal desses dados em um valor `FamilyMember` funciona como esperado,
+mas, se olharmos com atenção, podemos notar algo notável que aconteceu.
+Com a instrução var, alocamos uma struct `FamilyMember` e
+passamos um ponteiro para esse valor ao `Unmarshal`,
+mas, naquele momento, o campo `Parents` era um valor de slice `nil`.
+Para preencher o campo `Parents`, o `Unmarshal` alocou uma nova slice por trás dos panos.
+Isso é típico da forma como o `Unmarshal` trabalha com os tipos de referência suportados
+(ponteiros, slices e maps).
 
-Consider unmarshaling into this data structure:
+Considere fazer o unmarshal nesta estrutura de dados:
 
 ```
 type Foo struct {
@@ -266,13 +267,13 @@ type Foo struct {
 }
 ```
 
-If there were a `Bar` field in the JSON object,
-`Unmarshal` would allocate a new `Bar` and populate it.
-If not, `Bar` would be left as a `nil` pointer.
+Se houvesse um campo `Bar` no objeto JSON,
+o `Unmarshal` alocaria um novo `Bar` e o preencheria.
+Se não houvesse, `Bar` ficaria como um ponteiro `nil`.
 
-From this a useful pattern arises: if you have an application that receives
-a few distinct message types,
-you might define "receiver" structure like
+Disso surge um padrão útil: se você tiver uma aplicação que recebe
+alguns tipos distintos de mensagem,
+você pode definir uma estrutura "receptora" como
 
 ```
 type IncomingMessage struct {
@@ -281,35 +282,35 @@ type IncomingMessage struct {
 }
 ```
 
-and the sending party can populate the `Cmd` field and/or the `Msg` field
-of the top-level JSON object,
-depending on the type of message they want to communicate.
-`Unmarshal`, when decoding the JSON into an `IncomingMessage` struct,
-will only allocate the data structures present in the JSON data.
-To know which messages to process, the programmer need simply test that
-either `Cmd` or `Msg` is not `nil`.
+e a parte que envia pode preencher o campo `Cmd` e/ou o campo `Msg`
+do objeto JSON de nível superior,
+dependendo do tipo de mensagem que quer comunicar.
+O `Unmarshal`, ao decodificar o JSON em uma struct `IncomingMessage`,
+só alocará as estruturas de dados presentes nos dados JSON.
+Para saber quais mensagens processar, o programador só precisa testar se
+`Cmd` ou `Msg` não é `nil`.
 
-## Streaming Marshal and Unmarshal
+## Marshal e Unmarshal em streaming
 
-The [`io.Reader`](/pkg/io#Reader) and [`io.Writer`](/pkg/io#Writer) interfaces are ubiquitous in Go, providing streaming access to resources such as HTTP connections, WebSockets, or files.
-The `MarshalWrite` and `UnmarshalRead` functions allow marshaling and unmarshaling directly to and from these streams without requiring an intermediate `[]byte` holding the entire message.
+As interfaces [`io.Reader`](/pkg/io#Reader) e [`io.Writer`](/pkg/io#Writer) são onipresentes em Go, oferecendo acesso em streaming a recursos como conexões HTTP, WebSockets ou arquivos.
+As funções `MarshalWrite` e `UnmarshalRead` permitem fazer marshal e unmarshal diretamente de e para esses streams, sem precisar de um `[]byte` intermediário que armazene a mensagem inteira.
 
 ```
 func MarshalWrite(out io.Writer, in any, opts ...Options) (err error)
 func UnmarshalRead(in io.Reader, out any, opts ...Options) (err error)
 ```
 
-For example, we can write marshal output directly to standard out:
+Por exemplo, podemos escrever a saída do marshal diretamente na saída padrão:
 
 ```
 err := json.MarshalWrite(os.Stdout, m)
 ```
 
-## Custom Marshal and Unmarshal
+## Marshal e Unmarshal personalizados
 
-Sometimes the default marshal behavior does not make sense for your type.
+Às vezes, o comportamento padrão de marshal não faz sentido para o seu tipo.
 
-For example, suppose we have a type describing a software version.
+Por exemplo, suponha que temos um tipo que descreve a versão de um software.
 
 ```
 type Version struct {
@@ -320,10 +321,10 @@ v := Version{1, 2, 3}
 b, err := json.Marshal(s)
 ```
 
-This marshals as `{"Major":1,"Minor":2,"Patch":3}`, as expected based on the struct definition, but a version string like "1.2.3" would likely be a better representation for JSON consumers.
+Isso faz o marshal como `{"Major":1,"Minor":2,"Patch":3}`, como esperado com base na definição da struct, mas uma string de versão como "1.2.3" provavelmente seria uma representação melhor para quem consome o JSON.
 
-By implementing the [`MarshalerTo`](/pkg/encoding/json/v2#MarshalerTo) interface, we can provide a custom JSON representation.
-[`UnmarshalerFrom`](/pkg/encoding/json/v2#UnmarshalerFrom) provides unmarshaling of the custom JSON representation.
+Implementando a interface [`MarshalerTo`](/pkg/encoding/json/v2#MarshalerTo), podemos fornecer uma representação JSON personalizada.
+[`UnmarshalerFrom`](/pkg/encoding/json/v2#UnmarshalerFrom) faz o unmarshal da representação JSON personalizada.
 
 ```
 type MarshalerTo interface {
@@ -335,7 +336,7 @@ type UnmarshalerFrom interface {
 }
 ```
 
-We can implement these method to convert to and from string representations.
+Podemos implementar esses métodos para converter de e para representações em string.
 
 ```
 func (v Version) MarshalJSONTo(enc *jsontext.Encoder) error {
@@ -343,7 +344,7 @@ func (v Version) MarshalJSONTo(enc *jsontext.Encoder) error {
 }
 ```
 
-With custom marshaling, the `Version{1, 2, 3}` value now marshals as `"1.2.3"`.
+Com o marshal personalizado, o valor `Version{1, 2, 3}` agora faz marshal como `"1.2.3"`.
 
 ```
 func (v *Version) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
@@ -362,9 +363,9 @@ func (v *Version) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 }
 ```
 
-With custom unmarshaling, `"1.2.3"` now unmarshals as `Version{1, 2, 3}`.
-This simple example requires the exact `"major.minor.patch"` version format, but a more complex `UnmarshalJSONFrom` could choose to add flexibility, such as making the minor and patch versions optional.
+Com o unmarshal personalizado, `"1.2.3"` agora faz unmarshal como `Version{1, 2, 3}`.
+Este exemplo simples exige exatamente o formato de versão `"major.minor.patch"`, mas um `UnmarshalJSONFrom` mais complexo poderia escolher adicionar flexibilidade, por exemplo tornando opcionais as versões minor e patch.
 
-## References
+## Referências
 
-For more information see the [encoding/json/v2](/pkg/encoding/json/v2) and [encoding/json/jsontext](/pkg/encoding/json/jsontext) package documentation.
+Para mais informações, veja a documentação dos pacotes [encoding/json/v2](/pkg/encoding/json/v2) e [encoding/json/jsontext](/pkg/encoding/json/jsontext).
