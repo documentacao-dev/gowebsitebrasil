@@ -47,7 +47,7 @@ GET https://golang.org/doc/
 redirect == https://go.dev/doc/
 
 GET https://go.dev/doc/
-body contains an introduction to using modules in a simple project
+body contains uma introdução ao uso de módulos em um projeto simples
 
 GET https://golang.org/doc/asm
 redirect == https://go.dev/doc/asm

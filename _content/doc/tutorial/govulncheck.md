@@ -1,44 +1,46 @@
 <!--{
-  "Title": "Tutorial: Find and fix vulnerable dependencies with govulncheck",
+  "ia-translated": true,
+  "Title": "Tutorial: Encontrar e corrigir dependências vulneráveis com govulncheck",
   "HideTOC": true,
   "Breadcrumb": true
 }-->
 
-Govulncheck is a low-noise tool that helps you find and fix vulnerable
-dependencies in your Go projects. It does this by scanning your project's
-dependencies for known vulnerabilities and then identifying any direct or
-indirect calls to those vulnerabilities in your code.
+Govulncheck é uma ferramenta de baixo ruído que ajuda você a encontrar e corrigir
+dependências vulneráveis nos seus projetos Go. Ela faz isso analisando as
+dependências do projeto em busca de vulnerabilidades conhecidas e, em seguida,
+identificando qualquer chamada direta ou indireta a essas vulnerabilidades no
+seu código.
 
-In this tutorial, you will learn how to use govulncheck to scan a simple
-program for vulnerabilities. You will also learn how to prioritize and
-evaluate vulnerabilities so that you can focus on fixing the most important
-ones first.
+Neste tutorial, você vai aprender a usar o govulncheck para analisar um programa
+simples em busca de vulnerabilidades. Você também vai aprender a priorizar e
+avaliar vulnerabilidades, para concentrar seus esforços primeiro nas mais
+importantes.
 
-To learn more about govulncheck, see the
-[govulncheck documentation](https://pkg.go.dev/golang.org/x/vuln/cmd/govulncheck),
-and this [blog post on vulnerability management](/blog/vuln) for Go.
-We'd also love to [hear your feedback](/s/govulncheck-feedback).
+Para saber mais sobre o govulncheck, veja a
+[documentação do govulncheck](https://pkg.go.dev/golang.org/x/vuln/cmd/govulncheck)
+e este [post do blog sobre gestão de vulnerabilidades](/blog/vuln) em Go.
+Também adoraríamos [ouvir o seu feedback](/s/govulncheck-feedback).
 
-## Prerequisites
+## Pré-requisitos
 
-- **Go.** We recommend using the latest version of Go to follow this tutorial.
-  For installation instructions, see [Installing Go](/doc/install).
-- **A code editor.** Any editor you have will work fine.
-- **A command terminal.** Go works well using any terminal on Linux and Mac, and on PowerShell or cmd in Windows.
+- **Go.** Recomendamos usar a versão mais recente do Go para seguir este tutorial.
+  Para as instruções de instalação, veja [Instalando o Go](/doc/install).
+- **Um editor de código.** Qualquer editor que você tenha vai funcionar bem.
+- **Um terminal de linha de comando.** O Go funciona bem em qualquer terminal no Linux e no Mac, e no PowerShell ou no cmd do Windows.
 
-The tutorial will take you through the following steps:
+O tutorial vai guiar você pelos seguintes passos:
 
-1. Create a sample Go module with a vulnerable dependency
-2. Install and run govulncheck
-3. Evaluate vulnerabilities
-4. Upgrade vulnerable dependencies
+1. Criar um módulo Go de exemplo com uma dependência vulnerável
+2. Instalar e executar o govulncheck
+3. Avaliar as vulnerabilidades
+4. Atualizar as dependências vulneráveis
 
-## Create a sample Go module with a vulnerable dependency
+## Criar um módulo Go de exemplo com uma dependência vulnerável
 
-**Step 1.** To begin, create a new folder called `vuln-tutorial` and initialize a Go module.
-(If you are new to Go modules, check out [go.dev/doc/tutorial/create-module](/doc/tutorial/create-module).
+**Passo 1.** Para começar, crie uma nova pasta chamada `vuln-tutorial` e inicialize um módulo Go.
+(Se você é novo nos módulos Go, veja [go.dev/doc/tutorial/create-module](/doc/tutorial/create-module).
 
-For example, from your home directory, run the following:
+Por exemplo, a partir do seu diretório home, execute o seguinte:
 
 ```
 $ mkdir vuln-tutorial
@@ -46,8 +48,8 @@ $ cd vuln-tutorial
 $ go mod init vuln.tutorial
 ```
 
-**Step 2.** Create a file called `main.go` within the `vuln-tutorial` folder, and copy
-the following code into it:
+**Passo 2.** Crie um arquivo chamado `main.go` dentro da pasta `vuln-tutorial` e copie
+o código a seguir para dentro dele:
 
 ```
 package main
@@ -73,20 +75,20 @@ func main() {
 }
 ```
 
-This sample program takes a list of language tags as command line arguments
-and prints a message for each tag indicating if it was parsed successfully,
-the tag is undefined, or whether there was an error while parsing the tag.
+Este programa de exemplo recebe uma lista de tags de idioma como argumentos da
+linha de comando e imprime uma mensagem para cada tag, indicando se ela foi
+interpretada com sucesso, se a tag é indefinida ou se houve erro ao interpretá-la.
 
-**Step 3.** Run `go mod tidy`, which will populate the `go.mod` file with all the
-dependencies required by the code you added to `main.go` in the previous step.
+**Passo 3.** Execute `go mod tidy`, que vai preencher o arquivo `go.mod` com todas as
+dependências exigidas pelo código que você adicionou em `main.go` no passo anterior.
 
-From the `vuln-tutorial` folder, run:
+Na pasta `vuln-tutorial`, execute:
 
 ```
 $ go mod tidy
 ```
 
-You should see this output:
+Você deve ver esta saída:
 
 ```
 go: finding module for package golang.org/x/text/language
@@ -94,7 +96,7 @@ go: downloading golang.org/x/text v0.9.0
 go: found golang.org/x/text/language in golang.org/x/text v0.9.0
 ```
 
-**Step 4.** Open your `go.mod` file to verify that it looks like this:
+**Passo 4.** Abra o seu arquivo `go.mod` para verificar se ele está assim:
 
 ```
 module vuln.tutorial
@@ -104,20 +106,20 @@ go 1.20
 require golang.org/x/text v0.9.0
 ```
 
-**Step 5.** Downgrade the version of `golang.org/x/text` to v0.3.5, which contains known
-vulnerabilities. Run:
+**Passo 5.** Faça o downgrade da versão de `golang.org/x/text` para a v0.3.5, que contém
+vulnerabilidades conhecidas. Execute:
 
 ```
 $ go get golang.org/x/text@v0.3.5
 ```
 
-You should see this output:
+Você deve ver esta saída:
 
 ```
 go: downgraded golang.org/x/text v0.9.0 => v0.3.5
 ```
 
-The `go.mod` file should now read:
+O arquivo `go.mod` agora deve estar assim:
 
 ```
 module vuln.tutorial
@@ -127,24 +129,24 @@ go 1.20
 require golang.org/x/text v0.3.5
 ```
 
-Now, let’s see govulncheck in action.
+Agora, vamos ver o govulncheck em ação.
 
 
-## Install and run govulncheck
+## Instalar e executar o govulncheck
 
-**Step 6.** Install govulncheck with the `go install` command:
+**Passo 6.** Instale o govulncheck com o comando `go install`:
 
 ```
 $ go install golang.org/x/vuln/cmd/govulncheck@latest
 ```
 
-**Step 7.** From the folder you want to analyze (in this case, `vuln-tutorial`). Run:
+**Passo 7.** Na pasta que você quer analisar (neste caso, `vuln-tutorial`), execute:
 
 ```
 $ govulncheck ./...
 ```
 
-You should see this output:
+Você deve ver esta saída:
 
 ```
 govulncheck is an experimental tool. Share feedback at https://go.dev/s/govulncheck-feedback.
@@ -187,80 +189,82 @@ Vulnerability #1: GO-2022-1059
 
 ```
 
-### Interpreting the output
+### Interpretando a saída
 
-<font size="2">  *Note: If you are not using the latest version of Go,
-you may see additional vulnerabilities from the standard library. </font>
+<font size="2">  *Observação: se você não estiver usando a versão mais recente do Go,
+pode ver vulnerabilidades adicionais da biblioteca padrão. </font>
 
-Our code is affected by one vulnerability,
-[GO-2021-0113](https://pkg.go.dev/vuln/GO-2021-0113), because it directly calls
-the `Parse` function of `golang.org/x/text/language` at a vulnerable version
+Nosso código é afetado por uma vulnerabilidade,
+[GO-2021-0113](https://pkg.go.dev/vuln/GO-2021-0113), porque ele chama diretamente
+a função `Parse` de `golang.org/x/text/language` em uma versão vulnerável
 (v0.3.5).
 
-Another vulnerability, [GO-2022-1059](https://pkg.go.dev/vuln/GO-2022-1059),
-exists in the `golang.org/x/text` module at v0.3.5.  However, it is reported as
-"Informational" because our code never (directly or indirectly) calls any of
-its vulnerable functions.
+Outra vulnerabilidade, [GO-2022-1059](https://pkg.go.dev/vuln/GO-2022-1059),
+existe no módulo `golang.org/x/text` na v0.3.5. No entanto, ela é reportada como
+"Informational" porque o nosso código nunca chama (direta ou indiretamente) nenhuma
+das funções vulneráveis dela.
 
-Now, let's evaluate the vulnerabilities and determine an action to take.
+Agora, vamos avaliar as vulnerabilidades e decidir qual ação tomar.
 
-### Evaluate vulnerabilities
+### Avaliar as vulnerabilidades
 
-a. Evaluate vulnerabilities.
+a. Avalie as vulnerabilidades.
 
-First, read the description of the vulnerability and determine if it actually
-applies to your code and your use case. If you need more information, visit
-the "More info" link.
+Primeiro, leia a descrição da vulnerabilidade e determine se ela realmente se
+aplica ao seu código e ao seu caso de uso. Se precisar de mais informações,
+acesse o link "More info".
 
-Based on the description, vulnerability GO-2021-0113 can cause a panic when
-`Parse` is used to process untrusted user inputs. Let's suppose that we intend
-our program to withstand untrusted inputs, and we are concerned about denial of
-service, so the vulnerability likely applies.
+Pela descrição, a vulnerabilidade GO-2021-0113 pode causar um panic quando
+`Parse` é usada para processar entradas de usuários não confiáveis. Vamos supor
+que o nosso programa deva suportar entradas não confiáveis e que estamos
+preocupados com negação de serviço, então a vulnerabilidade provavelmente se aplica.
 
-GO-2022-1059 likely does not affect our code, because our code does not call
-any vulnerable functions from that report.
+A GO-2022-1059 provavelmente não afeta o nosso código, porque ele não chama
+nenhuma das funções vulneráveis desse relatório.
 
-b. Decide on an action.
+b. Decida uma ação.
 
-To mitigate GO-2021-0113, we have a few options:
-- **Option 1: Upgrade to a fixed version.** If there is a fix available,
-  we can remove a vulnerable dependency by upgrading to a fixed version of the module.
-- **Option 2: Stop using the vulnerable symbol(s).** We could choose to
-  remove all calls to the vulnerable function in our code.
-  We would need to find an alternative or implement it ourselves.
+Para mitigar a GO-2021-0113, temos algumas opções:
+- **Opção 1: Atualizar para uma versão corrigida.** Se houver uma correção disponível,
+  podemos remover a dependência vulnerável atualizando para uma versão corrigida do módulo.
+- **Opção 2: Parar de usar os símbolos vulneráveis.** Poderíamos optar por
+  remover todas as chamadas à função vulnerável no nosso código.
+  Teríamos de encontrar uma alternativa ou implementá-la nós mesmos.
 
-In this case, a fix is available, and the `Parse` function is integral to our
-program. Let's upgrade our dependency to the "fixed in" version, v0.3.7.
+Neste caso, há uma correção disponível, e a função `Parse` é parte essencial do
+nosso programa. Vamos atualizar a nossa dependência para a versão indicada em
+"Fixed in", a v0.3.7.
 
-We decided to deprioritize fixing the informational vulnerability,
-GO-2022-1059, but because it is in the same module as GO-2021-0113, and because the fixed in version for it is v0.3.8, we can
-easily remove both at the same time by upgrading to v0.3.8.
+Decidimos adiar a correção da vulnerabilidade informativa GO-2022-1059, mas, como
+ela está no mesmo módulo que a GO-2021-0113, e como a versão corrigida dela é a
+v0.3.8, podemos remover as duas de uma só vez atualizando para a v0.3.8.
 
-## Upgrade vulnerable dependencies
+## Atualizar as dependências vulneráveis
 
-Luckily, upgrading vulnerable dependencies is quite simple.
+Felizmente, atualizar dependências vulneráveis é bem simples.
 
-**Step 8.** Upgrade `golang.org/x/text` to v0.3.8:
+**Passo 8.** Atualize `golang.org/x/text` para a v0.3.8:
 
 ```
 $ go get golang.org/x/text@v0.3.8
 ```
 
-You should see this output:
+Você deve ver esta saída:
 
 ```
 go: upgraded golang.org/x/text v0.3.5 => v0.3.8
 ```
 
-(Note that we could have also chosen to upgrade to `latest`, or any other version after v0.3.8).
+(Observe que poderíamos ter escolhido atualizar para `latest`, ou para qualquer
+outra versão posterior à v0.3.8.)
 
-**Step 9.** Now run govulncheck again:
+**Passo 9.** Agora, execute o govulncheck novamente:
 
 ```
 $ govulncheck ./...
 ```
 
-You will now see this output:
+Você verá esta saída:
 
 ```
 govulncheck is an experimental tool. Share feedback at https://go.dev/s/govulncheck-feedback.
@@ -272,8 +276,8 @@ Scanning your code and 46 packages across 1 dependent module for known vulnerabi
 No vulnerabilities found.
 ```
 
-Finally, govulncheck confirms that there are no vulnerabilities found.
+Por fim, o govulncheck confirma que nenhuma vulnerabilidade foi encontrada.
 
-By regularly scanning your dependencies with command govulncheck, you can
-safeguard your codebase by identifying, prioritizing, and addressing
-vulnerabilities.
+Ao analisar regularmente as suas dependências com o comando govulncheck, você
+protege a sua base de código identificando, priorizando e corrigindo
+vulnerabilidades.

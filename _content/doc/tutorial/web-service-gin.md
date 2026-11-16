@@ -1,91 +1,90 @@
 <!--{
-  "Title": "Tutorial: Developing a RESTful API with Go and Gin",
+  "ia-translated": true,
+  "Title": "Tutorial: Desenvolvendo uma API RESTful com Go e Gin",
   "Breadcrumb": true
 }-->
 
-This tutorial introduces the basics of writing a RESTful web service API with Go
-and the [Gin Web Framework](https://gin-gonic.com/en/docs/) (Gin).
+Este tutorial apresenta o básico de como escrever uma API de serviço web RESTful com Go
+e o [Gin Web Framework](https://gin-gonic.com/en/docs/) (Gin).
 
-You'll get the most out of this tutorial if you have a basic familiarity with Go
-and its tooling. If this is your first exposure to Go, please see
-[Tutorial: Get started with Go](/doc/tutorial/getting-started)
-for a quick introduction.
+Você vai tirar o melhor proveito deste tutorial se já tiver familiaridade básica com Go
+e suas ferramentas. Se este for seu primeiro contato com Go, veja
+[Tutorial: Comece com Go](/doc/tutorial/getting-started) para uma introdução rápida.
 
-Gin simplifies many coding tasks associated with building web applications,
-including web services. In this tutorial, you'll use Gin to route requests,
-retrieve request details, and marshal JSON for responses.
+O Gin simplifica muitas tarefas de programação associadas à criação de aplicações web,
+incluindo serviços web. Neste tutorial, você vai usar o Gin para rotear requisições,
+obter detalhes das requisições e serializar JSON para as respostas.
 
-In this tutorial, you will build a RESTful API server with two endpoints. Your
-example project will be a repository of data about vintage jazz records.
+Neste tutorial, você vai criar um servidor de API RESTful com dois endpoints. O seu projeto
+de exemplo será um repositório de dados sobre discos de jazz vintage.
 
-The tutorial includes the following sections:
+O tutorial inclui as seguintes seções:
 
-1. Design API endpoints.
-2. Create a folder for your code.
-3. Create the data.
-4. Write a handler to return all items.
-5. Write a handler to add a new item.
-6. Write a handler to return a specific item.
+1. Projetar os endpoints da API.
+2. Criar uma pasta para o seu código.
+3. Criar os dados.
+4. Escrever um handler para retornar todos os itens.
+5. Escrever um handler para adicionar um novo item.
+6. Escrever um handler para retornar um item específico.
 
-**Note:** For other tutorials, see [Tutorials](/doc/tutorial/index.html).
+**Observação:** para outros tutoriais, veja [Tutoriais](/doc/tutorial/index.html).
 
-To try this as an interactive tutorial you complete in Google Cloud Shell,
-click the button below.
+Para testar este tutorial como um tutorial interativo que você completa no Google Cloud Shell,
+clique no botão abaixo.
 
-[![Open in Cloud Shell](https://gstatic.com/cloudssh/images/open-btn.png)](https://ide.cloud.google.com/?cloudshell_workspace=~&walkthrough_tutorial_url=https://raw.githubusercontent.com/golang/tour/master/tutorial/web-service-gin.md)
+[![Abrir no Cloud Shell](https://gstatic.com/cloudssh/images/open-btn.png)](https://ide.cloud.google.com/?cloudshell_workspace=~&walkthrough_tutorial_url=https://raw.githubusercontent.com/golang/tour/master/tutorial/web-service-gin.md)
 
 
-## Prerequisites
+## Pré-requisitos
 
-*   **Go.** We recommend using the latest version of Go to follow this tutorial.
-    For installation instructions, see [Installing Go](/doc/install).
-*   **A tool to edit your code.** Any text editor you have will work fine.
-*   **A command terminal.** Go works well using any terminal on Linux and Mac,
-    and on PowerShell or cmd in Windows.
-*   **The curl tool.** On Linux and Mac, this should already be installed. On
-    Windows, it's included on Windows 10 Insider build 17063 and later. For earlier
-    Windows versions, you might need to install it. For more, see
-    [Tar and Curl Come to Windows](https://docs.microsoft.com/en-us/virtualization/community/team-blog/2017/20171219-tar-and-curl-come-to-windows).
+*   **Go.** Recomendamos usar a versão mais recente do Go para seguir este tutorial.
+    Para as instruções de instalação, veja [Instalando o Go](/doc/install).
+*   **Uma ferramenta para editar o seu código.** Qualquer editor de texto que você tenha vai funcionar bem.
+*   **Um terminal de linha de comando.** O Go funciona bem em qualquer terminal no Linux e no Mac,
+    e no PowerShell ou no cmd do Windows.
+*   **A ferramenta curl.** No Linux e no Mac, ela normalmente já está instalada. No Windows, ela
+    vem incluída no Windows 10 Insider build 17063 e posteriores. Para versões mais antigas do
+    Windows, talvez seja necessário instalá-la. Para mais detalhes, veja
+    [Tar e Curl chegam ao Windows](https://docs.microsoft.com/en-us/virtualization/community/team-blog/2017/20171219-tar-and-curl-come-to-windows).
 
-## Design API endpoints {#design_endpoints}
+## Projetar os endpoints da API {#design_endpoints}
 
-You'll build an API that provides access to a store selling vintage recordings
-on vinyl. So you'll need to provide endpoints through which a client can get
-and add albums for users.
+Você vai criar uma API que dá acesso a uma loja que vende gravações vintage em vinil. Assim,
+você precisará fornecer endpoints pelos quais um cliente possa obter e adicionar álbuns para os usuários.
 
-When developing an API, you typically begin by designing the endpoints. Your
-API's users will have more success if the endpoints are easy to understand.
+Ao desenvolver uma API, normalmente você começa projetando os endpoints. Os usuários da sua API
+terão mais sucesso se os endpoints forem fáceis de entender.
 
-Here are the endpoints you'll create in this tutorial.
+Estes são os endpoints que você vai criar neste tutorial.
 
 /albums
-*   `GET` – Get a list of all albums, returned as JSON.
-*   `POST` – Add a new album from request data sent as JSON.
+*   `GET` – Obter uma lista de todos os álbuns, retornada como JSON.
+*   `POST` – Adicionar um novo álbum a partir dos dados da requisição enviados como JSON.
 
 /albums/:id
-*   `GET` – Get an album by its ID, returning the album data as JSON.
+*   `GET` – Obter um álbum pelo seu ID, retornando os dados do álbum como JSON.
 
-Next, you'll create a folder for your code.
+Em seguida, você vai criar uma pasta para o seu código.
 
-## Create a folder for your code {#create_folder}
+## Criar uma pasta para o seu código {#create_folder}
 
-To begin, create a project for the code you'll write.
+Para começar, crie um projeto para o código que você vai escrever.
 
-1. Open a command prompt and change to your home directory.
+1. Abra um prompt de comando e mude para o seu diretório home.
 
-    On Linux or Mac:
+    No Linux ou Mac:
 
     ```
     $ cd
     ```
 
-    On Windows:
+    No Windows:
 
     ```
     C:\> cd %HOMEPATH%
     ```
 
-2. Using the command prompt, create a directory for your code called
+2. No prompt de comando, crie um diretório para o seu código chamado
     web-service-gin.
 
     ```
@@ -93,49 +92,47 @@ To begin, create a project for the code you'll write.
     $ cd web-service-gin
     ```
 
-3. Create a module in which you can manage dependencies.
+3. Crie um módulo no qual você possa gerenciar dependências.
 
-    Run the `go mod init` command, giving it the path of the module your code
-    will be in.
+    Execute o comando `go mod init`, informando o caminho do módulo em que o seu código ficará.
 
     ```
     $ go mod init example/web-service-gin
     go: creating new go.mod: module example/web-service-gin
     ```
 
-    This command creates a go.mod file in which dependencies you add will be
-    listed for tracking. For more about naming a module with a module path, see
-    [Managing dependencies](/doc/modules/managing-dependencies#naming_module).
+    Este comando cria um arquivo go.mod, no qual as dependências que você adicionar serão
+    listadas para controle. Para saber mais sobre como nomear um módulo com um caminho de módulo, veja
+    [Gerenciando dependências](/doc/modules/managing-dependencies#naming_module).
 
-Next, you'll design data structures for handling data.
+Em seguida, você vai projetar as estruturas de dados para lidar com os dados.
 
-## Create the data {#create_data}
+## Criar os dados {#create_data}
 
-To keep things simple for the tutorial, you'll store data in memory. A more
-typical API would interact with a database.
+Para manter as coisas simples no tutorial, você vai armazenar os dados em memória. Uma API mais
+típica interagiria com um banco de dados.
 
-Note that storing data in memory means that the set of albums will be lost each
-time you stop the server, then recreated when you start it.
+Observe que armazenar os dados em memória significa que o conjunto de álbuns será perdido sempre
+que você parar o servidor, e recriado quando você o iniciar.
 
-#### Write the code
+#### Escrever o código
 
-1. Using your text editor, create a file called main.go in the web-service
-    directory. You'll write your Go code in this file.
-2. Into main.go, at the top of the file, paste the following package declaration.
+1. Usando o seu editor de texto, crie um arquivo chamado main.go na pasta web-service-gin.
+    Você vai escrever o seu código Go neste arquivo.
+2. No main.go, no topo do arquivo, cole a seguinte declaração de pacote.
 
     ```
     package main
     ```
 
-    A standalone program (as opposed to a library) is always in package `main`.
+    Um programa independente (em oposição a uma biblioteca) sempre fica no pacote `main`.
 
-3. Beneath the package declaration, paste the following declaration of an
-    `album` struct. You'll use this to store album data in memory.
+3. Logo abaixo da declaração de pacote, cole a seguinte declaração da struct `album`. Você vai usá-la
+    para armazenar os dados dos álbuns em memória.
 
-    Struct tags such as ``json:"artist"`` specify what a field's name should be
-    when the struct's contents are serialized into JSON. Without them, the JSON
-    would use the struct's capitalized field names – a style not as common in
-    JSON.
+    Tags de struct, como ``json:"artist"``, especificam qual deve ser o nome de um campo quando o
+    conteúdo da struct é serializado em JSON. Sem elas, o JSON usaria os nomes dos campos com a inicial
+    maiúscula, um estilo menos comum em JSON.
 
     ```
     // album represents data about a record album.
@@ -147,8 +144,8 @@ time you stop the server, then recreated when you start it.
     }
     ```
 
-4. Beneath the struct declaration you just added, paste the following slice of
-    `album` structs containing data you'll use to start.
+4. Logo abaixo da declaração de struct que você acabou de adicionar, cole o seguinte slice de structs
+    `album`, com os dados que você vai usar para começar.
 
     ```
     // albums slice to seed record album data.
@@ -159,28 +156,26 @@ time you stop the server, then recreated when you start it.
     }
     ```
 
-Next, you'll write code to implement your first endpoint.
+Em seguida, você vai escrever o código para implementar o seu primeiro endpoint.
 
-## Write a handler to return all items {#all_items}
+## Escrever um handler para retornar todos os itens {#all_items}
 
-When the client makes a request at `GET /albums`, you want to return all the
-albums as JSON.
+Quando o cliente fizer uma requisição em `GET /albums`, você quer retornar todos os álbuns como JSON.
 
-To do this, you'll write the following:
+Para isso, você vai escrever o seguinte:
 
-*   Logic to prepare a response
-*   Code to map the request path to your logic
+*   Lógica para preparar a resposta
+*   Código que mapeia o caminho da requisição para a sua lógica
 
-Note that this is the reverse of how they'll be executed at runtime, but you're
-adding dependencies first, then the code that depends on them.
+Observe que essa é a ordem inversa da ordem de execução em tempo de execução, mas você está
+adicionando as dependências primeiro e, depois, o código que depende delas.
 
-#### Write the code
+#### Escrever o código
 
-1. Beneath the struct code you added in the preceding section, paste the
-    following code to get the album list.
+1. Logo abaixo do código da struct que você adicionou na seção anterior, cole o código a seguir para
+    obter a lista de álbuns.
 
-    This `getAlbums` function creates JSON from the slice of `album` structs,
-    writing the JSON into the response.
+    A função `getAlbums` cria JSON a partir do slice de structs `album`, escrevendo o JSON na resposta.
 
     ```
     // getAlbums responds with the list of all albums as JSON.
@@ -189,35 +184,33 @@ adding dependencies first, then the code that depends on them.
     }
     ```
 
-    In this code, you:
+    Neste código, você:
 
-    *   Write a `getAlbums` function that takes a
-        [`gin.Context`](https://pkg.go.dev/github.com/gin-gonic/gin#Context)
-        parameter. Note that you could have given this function any name – neither
-        Gin nor Go require a particular function name format.
+    *   Escreve uma função `getAlbums` que recebe um parâmetro
+        [`gin.Context`](https://pkg.go.dev/github.com/gin-gonic/gin#Context). Observe que você poderia ter
+        dado a esta função qualquer nome: nem o Gin nem o Go exigem um formato específico de nome de função.
 
-        `gin.Context` is the most important part of Gin. It carries request
-        details, validates and serializes JSON, and more. (Despite the similar
-        name, this is different from Go's built-in
-        [`context`](/pkg/context/) package.)
+        `gin.Context` é a parte mais importante do Gin. Ele carrega os detalhes da requisição, valida e
+        serializa JSON, entre outras coisas. (Apesar do nome parecido, isso é diferente do pacote embutido
+        [`context`](/pkg/context/) do Go.)
 
-    *   Call [`Context.IndentedJSON`](https://pkg.go.dev/github.com/gin-gonic/gin#Context.IndentedJSON)
-        to serialize the struct into JSON and add it to the response.
+    *   Chama [`Context.IndentedJSON`](https://pkg.go.dev/github.com/gin-gonic/gin#Context.IndentedJSON)
+        para serializar a struct em JSON e adicioná-la à resposta.
 
-        The function's first argument is the HTTP status code you want to send to
-        the client. Here, you're passing the [`StatusOK`](https://pkg.go.dev/net/http#StatusOK)
-        constant from the `net/http` package to indicate `200 OK`.
+        O primeiro argumento da função é o código de status HTTP que você quer enviar ao cliente. Aqui,
+        você está passando a constante [`StatusOK`](https://pkg.go.dev/net/http#StatusOK), do pacote
+        `net/http`, para indicar `200 OK`.
 
-        Note that you can replace `Context.IndentedJSON` with a call to
-        [`Context.JSON`](https://pkg.go.dev/github.com/gin-gonic/gin#Context.JSON)
-        to send more compact JSON. In practice, the indented form is much easier to
-        work with when debugging and the size difference is usually small.
+        Observe que você pode substituir `Context.IndentedJSON` por uma chamada a
+        [`Context.JSON`](https://pkg.go.dev/github.com/gin-gonic/gin#Context.JSON) para enviar um JSON mais
+        compacto. Na prática, a forma indentada é muito mais fácil de trabalhar ao depurar, e a diferença
+        de tamanho costuma ser pequena.
 
-2. Near the top of main.go, just beneath the `albums` slice declaration, paste
-    the code below to assign the handler function to an endpoint path.
+2. Perto do topo do main.go, logo abaixo da declaração do slice `albums`, cole o código abaixo para
+    associar a função handler a um caminho de endpoint.
 
-    This sets up an association in which `getAlbums` handles requests to the
-    `/albums` endpoint path.
+    Isso estabelece uma associação em que `getAlbums` trata as requisições ao caminho de endpoint
+    `/albums`.
 
     ```
     func main() {
@@ -228,25 +221,22 @@ adding dependencies first, then the code that depends on them.
     }
     ```
 
-    In this code, you:
+    Neste código, você:
 
-    *   Initialize a Gin router using
-        [`Default`](https://pkg.go.dev/github.com/gin-gonic/gin#Default).
-    *   Use the [`GET`](https://pkg.go.dev/github.com/gin-gonic/gin#RouterGroup.GET)
-        function to associate the `GET` HTTP method and `/albums` path with a handler
-        function.
+    *   Inicializa um roteador Gin usando [`Default`](https://pkg.go.dev/github.com/gin-gonic/gin#Default).
+    *   Usa a função [`GET`](https://pkg.go.dev/github.com/gin-gonic/gin#RouterGroup.GET) para associar o
+        método HTTP `GET` e o caminho `/albums` a uma função handler.
 
-        Note that you're passing the _name_ of the `getAlbums` function. This is
-        different from passing the _result_ of the function, which you would do by
-        passing `getAlbums()` (note the parenthesis).
+        Observe que você está passando o _nome_ da função `getAlbums`. Isso é diferente de passar o
+        _resultado_ da função, o que você faria passando `getAlbums()` (note os parênteses).
 
-    *   Use the [`Run`](https://pkg.go.dev/github.com/gin-gonic/gin#Engine.Run)
-        function to attach the router to an `http.Server` and start the server.
+    *   Usa a função [`Run`](https://pkg.go.dev/github.com/gin-gonic/gin#Engine.Run) para anexar o
+        roteador a um `http.Server` e iniciar o servidor.
 
-3. Near the top of main.go, just beneath the package declaration, import the
-    packages you'll need to support the code you've just written.
+3. Perto do topo do main.go, logo abaixo da declaração de pacote, importe os pacotes de que você vai
+    precisar para dar suporte ao código que acabou de escrever.
 
-    The first lines of code should look like this:
+    As primeiras linhas do código devem ficar assim:
 
     ```
     package main
@@ -258,43 +248,40 @@ adding dependencies first, then the code that depends on them.
     )
     ```
 
-4. Save main.go.
+4. Salve o main.go.
 
-#### Run the code
+#### Executar o código
 
-1. Begin tracking the Gin module as a dependency.
+1. Comece a rastrear o módulo Gin como dependência.
 
-    At the command line, use [`go get`](/cmd/go/#hdr-Add_dependencies_to_current_module_and_install_them)
-    to add the github.com/gin-gonic/gin module as a dependency for your module.
-    Use a dot argument to mean "get dependencies for code in the current
-    directory."
+    Na linha de comando, use [`go get`](/cmd/go/#hdr-Add_dependencies_to_current_module_and_install_them)
+    para adicionar o módulo github.com/gin-gonic/gin como dependência do seu módulo. Use um argumento de
+    ponto para indicar “obter as dependências do código no diretório atual”.
 
     ```
     $ go get .
     go get: added github.com/gin-gonic/gin v1.7.2
     ```
 
-    Go resolved and downloaded this dependency to satisfy the `import`
-    declaration you added in the previous step.
+    O Go resolveu e baixou essa dependência para satisfazer a declaração `import` que você adicionou na
+    etapa anterior.
 
-2. From the command line in the directory containing main.go, run the code.
-    Use a dot argument to mean "run code in the current directory."
+2. Na linha de comando, no diretório que contém o main.go, execute o código. Use um argumento de ponto
+    para indicar “executar o código no diretório atual”.
 
     ```
     $ go run .
     ```
 
-    Once the code is running, you have a running HTTP server to which you can
-    send requests.
+    Com o código em execução, você tem um servidor HTTP ativo para o qual pode enviar requisições.
 
-3. From a new command line window, use `curl` to make a request to your running
-    web service.
+3. Em uma nova janela de linha de comando, use `curl` para fazer uma requisição ao seu serviço web em execução.
 
     ```
     $ curl http://localhost:8080/albums
     ```
 
-    The command should display the data you seeded the service with.
+    O comando deve exibir os dados com que você populou o serviço.
 
     ```
     [
@@ -319,26 +306,24 @@ adding dependencies first, then the code that depends on them.
     ]
     ```
 
-You've started an API! In the next section, you'll create another endpoint with
-code to handle a `POST` request to add an item.
+Você iniciou uma API! Na próxima seção, você vai criar outro endpoint, com código para tratar uma
+requisição `POST` que adiciona um item.
 
-## Write a handler to add a new item {#add_item}
+## Escrever um handler para adicionar um novo item {#add_item}
 
-When the client makes a `POST` request at `/albums`, you want to add the album
-described in the request body to the existing albums' data.
+Quando o cliente fizer uma requisição `POST` em `/albums`, você quer adicionar o álbum descrito no corpo da requisição aos dados de álbuns existentes.
 
-To do this, you'll write the following:
+Para isso, você vai escrever o seguinte:
 
-*   Logic to add the new album to the existing list.
-*   A bit of code to route the `POST` request to your logic.
+*   Lógica para adicionar o novo álbum à lista existente.
+*   Um pouco de código para direcionar a requisição `POST` para a sua lógica.
 
-#### Write the code
+#### Escrever o código
 
-1. Add code to add albums data to the list of albums.
+1. Adicione código para incluir os dados de álbuns na lista de álbuns.
 
-    Somewhere after the `import` statements, paste the following code. (The end
-    of the file is a good place for this code, but Go doesn't enforce the order
-    in which you declare functions.)
+    Em algum lugar depois das declarações `import`, cole o código a seguir. (O final do arquivo é um bom
+    lugar para esse código, mas o Go não exige uma ordem para declarar funções.)
 
     ```
     // postAlbums adds an album from JSON received in the request body.
@@ -357,17 +342,14 @@ To do this, you'll write the following:
     }
     ```
 
-    In this code, you:
+    Neste código, você:
 
-    *   Use [`Context.BindJSON`](https://pkg.go.dev/github.com/gin-gonic/gin#Context.BindJSON)
-        to bind the request body to `newAlbum`.
-    *   Append the `album` struct initialized from the JSON to the `albums`
-        slice.
-    *   Add a `201` status code to the response, along with JSON representing
-        the album you added.
+    *   Usa [`Context.BindJSON`](https://pkg.go.dev/github.com/gin-gonic/gin#Context.BindJSON) para vincular
+        o corpo da requisição a `newAlbum`.
+    *   Adiciona a struct `album` inicializada a partir do JSON ao slice `albums`.
+    *   Adiciona um código de status `201` à resposta, junto com o JSON que representa o álbum adicionado.
 
-2. Change your `main` function so that it includes the `router.POST` function,
-    as in the following.
+2. Altere a função `main` para incluir a chamada a `router.POST`, como no exemplo a seguir.
 
     ```
     func main() {
@@ -379,26 +361,24 @@ To do this, you'll write the following:
     }
     ```
 
-    In this code, you:
+    Neste código, você:
 
-    *   Associate the `POST` method at the `/albums` path with the `postAlbums`
-        function.
+    *   Associa o método `POST` no caminho `/albums` à função `postAlbums`.
 
-        With Gin, you can associate a handler with an HTTP method-and-path
-        combination. In this way, you can separately route requests sent to a
-        single path based on the method the client is using.
+        Com o Gin, você pode associar um handler a uma combinação de método HTTP e caminho. Assim, você
+        pode rotear separadamente as requisições enviadas a um mesmo caminho conforme o método que o cliente
+        está usando.
 
-#### Run the code
+#### Executar o código
 
-1. If the server is still running from the last section, stop it.
-2. From the command line in the directory containing main.go, run the code.
+1. Se o servidor ainda estiver em execução da seção anterior, pare-o.
+2. Na linha de comando, no diretório que contém o main.go, execute o código.
 
     ```
     $ go run .
     ```
 
-3. From a different command line window, use `curl` to make a request to your
-    running web service.
+3. Em outra janela de linha de comando, use `curl` para fazer uma requisição ao seu serviço web em execução.
 
     ```
     $ curl http://localhost:8080/albums \
@@ -408,7 +388,7 @@ To do this, you'll write the following:
         --data '{"id": "4","title": "The Modern Sound of Betty Carter","artist": "Betty Carter","price": 49.99}'
     ```
 
-    The command should display headers and JSON for the added album.
+    O comando deve exibir os cabeçalhos e o JSON do álbum adicionado.
 
     ```
     HTTP/1.1 201 Created
@@ -424,8 +404,7 @@ To do this, you'll write the following:
     }
     ```
 
-4. As in the previous section, use `curl` to retrieve the full list of albums,
-    which you can use to confirm that the new album was added.
+4. Como na seção anterior, use `curl` para obter a lista completa de álbuns, o que permite confirmar que o novo álbum foi adicionado.
 
     ```
     $ curl http://localhost:8080/albums \
@@ -433,7 +412,7 @@ To do this, you'll write the following:
         --request "GET"
     ```
 
-    The command should display the album list.
+    O comando deve exibir a lista de álbuns.
 
     ```
     [
@@ -464,25 +443,25 @@ To do this, you'll write the following:
     ]
     ```
 
-In the next section, you'll add code to handle a `GET` for a specific item.
+Na próxima seção, você vai adicionar código para tratar um `GET` de um item específico.
 
-## Write a handler to return a specific item {#specific_item}
+## Escrever um handler para retornar um item específico {#specific_item}
 
-When the client makes a request to `GET /albums/[id]`, you want to return the
-album whose ID matches the `id` path parameter.
+Quando o cliente fizer uma requisição em `GET /albums/[id]`, você quer retornar o álbum cujo ID
+corresponde ao parâmetro de caminho `id`.
 
-To do this, you will:
+Para isso, você vai:
 
-*   Add logic to retrieve the requested album.
-*   Map the path to the logic.
+*   Adicionar lógica para buscar o álbum solicitado.
+*   Mapear o caminho para a lógica.
 
-#### Write the code
+#### Escrever o código
 
-1. Beneath the `postAlbums` function you added in the preceding section, paste
-    the following code to retrieve a specific album.
+1. Logo abaixo da função `postAlbums` que você adicionou na seção anterior, cole o código a seguir para
+    buscar um álbum específico.
 
-    This `getAlbumByID` function will extract the ID in the request path, then
-    locate an album that matches.
+    Esta função `getAlbumByID` vai extrair o ID presente no caminho da requisição e, em seguida,
+    localizar o álbum correspondente.
 
     ```
     // getAlbumByID locates the album whose ID value matches the id
@@ -502,25 +481,23 @@ To do this, you will:
     }
     ```
 
-    In this code, you:
+    Neste código, você:
 
-    *   Use [`Context.Param`](https://pkg.go.dev/github.com/gin-gonic/gin#Context.Param)
-        to retrieve the `id` path parameter from the URL. When you map this
-        handler to a path, you'll include a placeholder for the parameter in the
-        path.
-    *   Loop over the `album` structs in the slice, looking for one whose `ID`
-        field value matches the `id` parameter value. If it's found, you serialize
-        that `album` struct to JSON and return it as a response with a `200 OK`
-        HTTP code.
+    *   Usa [`Context.Param`](https://pkg.go.dev/github.com/gin-gonic/gin#Context.Param) para obter o
+        parâmetro de caminho `id` da URL. Ao mapear este handler para um caminho, você vai incluir um
+        marcador para o parâmetro nesse caminho.
+    *   Percorre as structs `album` do slice, procurando uma cujo campo `ID` tenha o mesmo valor do
+        parâmetro `id`. Se ela for encontrada, serializa essa struct `album` em JSON e a retorna como
+        resposta com o código HTTP `200 OK`.
 
-        As mentioned above, a real-world service would likely use a database
-        query to perform this lookup.
+        Como mencionado acima, um serviço do mundo real provavelmente usaria uma consulta a banco de dados
+        para fazer essa busca.
 
-    *   Return an HTTP `404` error with [`http.StatusNotFound`](https://pkg.go.dev/net/http#StatusNotFound)
-        if the album isn't found.
+    *   Retorna um erro HTTP `404` com [`http.StatusNotFound`](https://pkg.go.dev/net/http#StatusNotFound)
+        se o álbum não for encontrado.
 
-2. Finally, change your `main` so that it includes a new call to `router.GET`,
-    where the path is now `/albums/:id`, as shown in the following example.
+2. Por fim, altere o `main` para incluir uma nova chamada a `router.GET`, em que o caminho agora é
+    `/albums/:id`, como mostrado no exemplo a seguir.
 
     ```
     func main() {
@@ -533,31 +510,28 @@ To do this, you will:
     }
     ```
 
-    In this code, you:
+    Neste código, você:
 
-    *   Associate the `/albums/:id` path with the `getAlbumByID` function. In
-        Gin, the colon preceding an item in the path signifies that the item is
-        a path parameter.
+    *   Associa o caminho `/albums/:id` à função `getAlbumByID`. No Gin, os dois-pontos antes de um item
+        do caminho indicam que esse item é um parâmetro de caminho.
 
-#### Run the code
+#### Executar o código
 
-1. If the server is still running from the last section, stop it.
-2. From the command line in the directory containing main.go, run the code to
-    start the server.
+1. Se o servidor ainda estiver em execução da seção anterior, pare-o.
+2. Na linha de comando, no diretório que contém o main.go, execute o código para iniciar o servidor.
 
     ```
     $ go run .
     ```
 
-3. From a different command line window, use `curl` to make a request to your
-    running web service.
+3. Em outra janela de linha de comando, use `curl` para fazer uma requisição ao seu serviço web em execução.
 
     ```
     $ curl http://localhost:8080/albums/2
     ```
 
-    The command should display JSON for the album whose ID you used. If the
-    album wasn't found, you'll get JSON with an error message.
+    O comando deve exibir o JSON do álbum cujo ID você usou. Se o álbum não for encontrado, você verá
+    um JSON com uma mensagem de erro.
 
     ```
     {
@@ -568,24 +542,22 @@ To do this, you will:
     }
     ```
 
-## Conclusion {#conclusion}
+## Conclusão {#conclusion}
 
-Congratulations! You've just used Go and Gin to write a simple RESTful web
-service.
+Parabéns! Você acaba de usar Go e Gin para escrever um serviço web RESTful simples.
 
-Suggested next topics:
+Próximos tópicos sugeridos:
 
-*   If you're new to Go, you'll find useful best practices described in
-    [Effective Go](/doc/effective_go) and
-    [How to write Go code](/doc/code).
-*   The [Go Tour](/tour/) is a great step-by-step
-    introduction to Go fundamentals.
-*   For more about Gin, see the [Gin Web Framework package documentation](https://pkg.go.dev/github.com/gin-gonic/gin)
-    or the [Gin Web Framework docs](https://gin-gonic.com/en/docs/).
+*   Se você é novo em Go, vai encontrar boas práticas úteis descritas em [Effective Go](/doc/effective_go)
+    e [Como escrever código Go](/doc/code).
+*   O [Go Tour](/tour/) é uma ótima introdução passo a passo aos fundamentos do Go.
+*   Para saber mais sobre o Gin, veja a
+    [documentação do pacote Gin Web Framework](https://pkg.go.dev/github.com/gin-gonic/gin)
+    ou a [documentação do Gin Web Framework](https://gin-gonic.com/en/docs/).
 
-## Completed code {#completed_code}
+## Código completo {#completed_code}
 
-This section contains the code for the application you build with this tutorial.
+Esta seção contém o código da aplicação que você construiu neste tutorial.
 
 ```
 package main

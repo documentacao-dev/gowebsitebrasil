@@ -78,6 +78,7 @@ def check(path):
             errs.append("cabeçalho <!--{ }--> não é JSON válido")
 
     defined = {a[2:-1] for a in re.findall(r"\{#[^}\s]+\}", t)} | set(re.findall(r'\bid="([^"]+)"', t))
+    defined |= {"top"}  # o template da página define id="top" (link "voltar ao topo")
     if path.endswith((".md", ".html")) and defined:
         body = strip_fences(t)
         targets = set(re.findall(r"\]\(#([^)\s]+)\)", body)) | set(re.findall(r'href="#([^"]+)"', body))

@@ -1,0 +1,52 @@
+name: Deploy go.documentacao.dev
+
+# O go.dev é montado por um servidor Go. Aqui ele roda só durante o build:
+# tool/estatico/gerar.py salva as páginas traduzidas (com CSS, JS e imagens)
+# em public/ e o Firebase Hosting serve esses arquivos no site
+# go-documentacao (go.documentacao.dev). O resto redireciona para o go.dev.
+#
+# Precisa do secret FIREBASE_SERVICE_ACCOUNT (conta de serviço do projeto
+# transliteradu, a mesma dos outros sites da org).
+
+on:
+  push:
+    branches: [master]
+    paths: ['_content/**', 'tool/estatico/**', 'firebase.json', '.github/workflows/deploy-firebase.yml']
+  pull_request:
+    paths: ['_content/**', 'tool/estatico/**', 'firebase.json']
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      pull-requests: write
+      checks: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Conferir traduções
+        run: bash .claude/harness/verificar.sh --rapido
+
+      - name: Gerar o site estático
+        run: |
+          go build -o /tmp/golangorg ./cmd/golangorg
+          /tmp/golangorg -content=_content -http=localhost:6060 &
+          for i in $(seq 1 60); do curl -sf -o /dev/null -H 'Host: go.dev' -H 'X-Forwarded-Proto: https' http://localhost:6060/doc/ && break; sleep 2; done
+          python3 tool/estatico/gerar.py --servidor http://localhost:6060
+
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          projectId: transliteradu
+          channelId: ${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || 'live' }}

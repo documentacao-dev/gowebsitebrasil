@@ -1,37 +1,37 @@
 <!--{
-    "Title": "Return greetings for multiple people",
+  "ia-translated": true,
+    "Title": "Retornar saudações para várias pessoas",
     "Breadcrumb": true
 }-->
 
 <p>
-  In the last changes you'll make to your module's code, you'll add support for
-  getting greetings for multiple people in one request. In other words, you'll
-  handle a multiple-value input, then pair values in that input with a
-  multiple-value output. To do this, you'll need to pass a set of names to a
-  function that can return a greeting for each of them. 
+  Nas últimas alterações que você vai fazer no código do seu módulo, você vai adicionar suporte
+  para obter saudações para várias pessoas em uma única requisição. Em outras palavras, você vai
+  tratar uma entrada com múltiplos valores e, em seguida, associar os valores dessa entrada a
+  uma saída com múltiplos valores. Para isso, você vai precisar passar um conjunto de nomes para
+  uma função que consiga retornar uma saudação para cada um deles.
 </p>
 
 <aside class="Note">
-  <strong>Note:</strong> This topic is part of a multi-part tutorial that begins
-  with <a href="/doc/tutorial/create-module.html">Create a Go module</a>.
+  <strong>Observação:</strong> Este tópico faz parte de um tutorial em várias partes que começa
+  com <a href="/doc/tutorial/create-module.html">Criar um módulo Go</a>.
 </aside>
 
 <p>
-  But there's a hitch. Changing the <code>Hello</code> function's
-  parameter from a single name to a set of names would change the function's
-  signature. If you had already published the <code>example.com/greetings</code>
-  module and users had already written code calling <code>Hello</code>, that
-  change would break their programs.</p>
+  Mas há um porém. Trocar o parâmetro da função <code>Hello</code> de um único nome
+  por um conjunto de nomes mudaria a assinatura da função. Se você já tivesse publicado o módulo
+  <code>example.com/greetings</code> e os usuários já tivessem escrito código chamando
+  <code>Hello</code>, essa mudança quebraria os programas deles.</p>
 
 <p>
-  In this situation, a better choice is to write a new function with a different
-  name. The new function will take multiple parameters. That preserves the old
-  function for backward compatibility.
+  Nesta situação, uma escolha melhor é escrever uma nova função com outro
+  nome. A nova função vai receber múltiplos parâmetros. Assim, a função antiga é preservada
+  para manter a compatibilidade com versões anteriores.
 </p>
 
 <ol>
   <li>
-    In greetings/greetings.go, change your code so it looks like the following.
+    Em greetings/greetings.go, altere o seu código para que fique como o exemplo a seguir.
 
     <pre>
 package greetings
@@ -88,49 +88,49 @@ func randomFormat() string {
 </pre>
 
     <p>
-      In this code, you:
+      Neste código, você:
     </p>
 
     <ul>
       <li>
-        Add a <code>Hellos</code> function whose parameter is a slice of names
-        rather than a single name. Also, you change one of its return types from
-        a <code>string</code> to a <code>map</code> so you can return names
-        mapped to greeting messages.
+        Adiciona uma função <code>Hellos</code> cujo parâmetro é um slice de nomes
+        em vez de um único nome. Além disso, você altera um dos tipos de retorno dela de
+        <code>string</code> para <code>map</code>, para poder retornar nomes
+        associados a mensagens de saudação.
       </li>
       <li>
-        Have the new <code>Hellos</code> function call the existing
-        <code>Hello</code> function. This helps reduce duplication while also
-        leaving both functions in place.
+        Faz a nova função <code>Hellos</code> chamar a função existente
+        <code>Hello</code>. Isso ajuda a reduzir a duplicação e, ao mesmo tempo, mantém
+        as duas funções no lugar.
       </li>
       <li>
-        Create a <code>messages</code> map to associate each of the
-        received names (as a key) with a generated message (as a value). In Go,
-        you initialize a map with the following syntax:
-        <code>make(map[<em>key-type</em>]<em>value-type</em>)</code>. You have
-        the <code>Hellos</code> function return this map to the caller. For more
-        about maps, see <a href="/blog/maps">Go maps in
-        action</a> on the Go blog.
+        Cria um map <code>messages</code> para associar cada um dos
+        nomes recebidos (como chave) a uma mensagem gerada (como valor). Em Go,
+        você inicializa um map com a seguinte sintaxe:
+        <code>make(map[<em>key-type</em>]<em>value-type</em>)</code>. Você faz a
+        função <code>Hellos</code> retornar esse map para quem a chamou. Para saber
+        mais sobre maps, veja <a href="/blog/maps">Maps em Go na
+        prática</a> no blog do Go.
       </li>
       <li>
-        Loop through the names your function received, checking that each has a
-        non-empty value, then associate a message with each. In this
-        <code>for</code> loop, <code>range</code> returns two values: the index
-        of the current item in the loop and a copy of the item's value. You
-        don't need the index, so you use the Go blank identifier (an underscore)
-        to ignore it. For more, see
-        <a href="/doc/effective_go.html#blank">The blank
-        identifier</a> in Effective Go.
+        Percorre os nomes que a função recebeu, verificando se cada um tem um
+        valor não vazio, e então associa uma mensagem a cada um. Neste
+        loop <code>for</code>, <code>range</code> retorna dois valores: o índice
+        do item atual no loop e uma cópia do valor do item. Você
+        não precisa do índice, então usa o identificador em branco do Go (um sublinhado)
+        para ignorá-lo. Para saber mais, veja
+        <a href="/doc/effective_go.html#blank">O identificador
+        em branco</a> em Effective Go.
       </li>
     </ul>
   </li>
 
   <li>
-    In your hello/hello.go calling code, pass a slice of names, then print the
-    contents of the names/messages map you get back.
+    No código de chamada em hello/hello.go, passe um slice de nomes e, em seguida, imprima
+    o conteúdo do map de nomes/mensagens que você recebe de volta.
 
     <p>
-      In hello.go, change your code so it looks like the following.
+      Em hello.go, altere o seu código para que fique como o exemplo a seguir.
     </p>
 
     <pre>
@@ -165,28 +165,28 @@ func main() {
 </pre>
 
     <p>
-      With these changes, you:
+      Com essas alterações, você:
     </p>
 
     <ul>
       <li>
-        Create a <code>names</code> variable as a slice type holding three
-        names.
+        Cria uma variável <code>names</code> como um tipo slice que armazena três
+        nomes.
       </li>
       <li>
-        Pass the <code>names</code> variable as the argument to the
-        <code>Hellos</code> function.
+        Passa a variável <code>names</code> como argumento para a
+        função <code>Hellos</code>.
       </li>
     </ul>
   </li>
 
   <li>
-    At the command line, change to the directory that contains hello/hello.go,
-    then use <code>go run</code> to confirm that the code works.
+    Na linha de comando, vá para o diretório que contém hello/hello.go
+    e use <code>go run</code> para confirmar que o código funciona.
 
     <p>
-      The output should be a string representation of the map associating names
-      with messages, something like the following:
+      A saída deve ser uma representação em string do map que associa nomes
+      a mensagens, algo como o exemplo a seguir:
     </p>
 
     <pre>
@@ -198,19 +198,19 @@ map[Darrin:Hail, Darrin! Well met! Gladys:Hi, Gladys. Welcome! Samantha:Hail, Sa
 </ol>
 
 <p>
-  This topic introduced maps for representing name/value pairs. It also
-  introduced the idea of preserving backward compatibility
-  by implementing a new function for new or changed functionality in a module.
-  For more about backward compatibility, see
-  <a href="/blog/module-compatibility">Keeping your modules
-  compatible</a>.
+  Este tópico apresentou maps para representar pares nome/valor. Ele também apresentou a ideia
+  de preservar a compatibilidade com versões anteriores, implementando uma nova função para
+  funcionalidades novas ou alteradas em um módulo. Para saber mais sobre
+  compatibilidade com versões anteriores, veja
+  <a href="/blog/module-compatibility">Mantendo seus módulos
+  compatíveis</a>.
 </p>
 
-<p>Next, you'll use built-in Go features to create a unit test for your code.</p>
+<p>Em seguida, você vai usar os recursos embutidos do Go para criar um teste unitário para o seu código.</p>
 
 <p class="Navigation">
   <a class="Navigation-prev" href="/doc/tutorial/random-greeting.html"
-    >&lt; Return a random greeting</a
+    >&lt; Retornar uma saudação aleatória</a
   >
-  <a class="Navigation-next" href="/doc/tutorial/add-a-test.html">Add a test &gt;</a>
+  <a class="Navigation-next" href="/doc/tutorial/add-a-test.html">Adicionar um teste &gt;</a>
 </p>

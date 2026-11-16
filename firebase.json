@@ -1,0 +1,29 @@
+{
+  "hosting": {
+    "site": "go-documentacao",
+    "public": "public",
+    "cleanUrls": true,
+    "ignore": [
+      "firebase.json",
+      "**/.*"
+    ],
+    "redirects": [
+      {
+        "regex": "^/(pkg|cmd|dl|play|tour|s|x|mod|issue|cl|design|change|search|talks)(/.*)?$",
+        "destination": "https://go.dev/:1:2",
+        "type": 302
+      }
+    ],
+    "headers": [
+      {
+        "source": "**/*.@(css|js|svg|png|jpg|webp|woff2)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=86400"
+          }
+        ]
+      }
+    ]
+  }
+}

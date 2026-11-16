@@ -53,3 +53,11 @@ git merge upstream/master
 Em conflitos de arquivos traduzidos, mantenha a tradução e aplique a mudança do upstream já
 traduzida (`git diff $(git merge-base HEAD upstream/master) upstream/master -- <arquivo>`).
 Arquivo apagado no upstream é apagado aqui também. Rode o harness completo antes de commitar.
+
+## Publicação: go.documentacao.dev
+
+O go.dev é montado por um servidor Go, e o Firebase Hosting só serve arquivos. O deploy gera uma versão estática:
+
+- `go run ./cmd/golangorg -content=_content -http=localhost:6060 &` e depois `python3 tool/estatico/gerar.py` salvam em `public/` toda página com `ia-translated` (menos o Tour), com o CSS, o JS e as imagens que ela usa.
+- `firebase.json` (site `go-documentacao` no projeto `transliteradu`): os caminhos dinâmicos (`/pkg`, `/dl`, `/play`, `/tour`…) redirecionam para o go.dev, e o `404.html` leva qualquer página ainda não traduzida para a mesma página no go.dev.
+- Página nova traduzida entra no site no próximo deploy (workflow `deploy-firebase.yml`, a cada push na `master`; precisa do secret `FIREBASE_SERVICE_ACCOUNT`).

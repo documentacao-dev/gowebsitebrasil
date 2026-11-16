@@ -1,106 +1,106 @@
 <!--{
-	"Title": "Effective Go",
+  "ia-translated": true,
+	"Title": "Go Eficiente",
 	"Template": true,
 	"Breadcrumb": true
 }-->
 
 <div class="Note">
-<strong>Note:</strong> This document was written for Go's release in 2009 and
-is not actively updated. While it remains a good guide for using the core language,
-it does not cover significant changes to the language (generics), ecosystem (modules),
-or libraries added since. See <a href="/issue/28782">issue 28782</a> for context.
-For a complete list of changes,
-see the <a href="/doc/devel/release">release notes</a>.
+<strong>Nota:</strong> este documento foi escrito para o lançamento do Go em 2009 e
+não é mais atualizado ativamente. Ele continua sendo um bom guia para usar a linguagem central,
+mas não cobre mudanças significativas na linguagem (genéricos), no ecossistema (módulos)
+ou nas bibliotecas adicionadas desde então. Veja a <a href="/issue/28782">issue 28782</a> para contexto.
+Para a lista completa de mudanças,
+veja as <a href="/doc/devel/release">notas de lançamento</a>.
 </div>
 
-<h2 id="introduction">Introduction</h2>
+<h2 id="introduction">Introdução</h2>
 
 <p>
-Go is an open-source programming language that focuses on simplicity, reliability,
-and efficiency, specifically designed to make it easy to build software at scale.
-Although it borrows ideas from existing languages,
-it has unusual properties that make effective Go programs
-different in character from programs written in its relatives.
-A straightforward translation of a C++ or Java program into Go
-is unlikely to produce a satisfactory result&mdash;Java programs
-are written in Java, not Go.
-On the other hand, thinking about the problem from a Go
-perspective could produce a successful but quite different
-program.
-In other words,
-to write Go well, it's important to understand its properties
-and idioms.
-It's also important to know the established conventions for
-programming in Go, such as naming, formatting, program
-construction, and so on, so that programs you write
-will be easy for other Go programmers to understand.
+Go é uma linguagem de programação de código aberto que prioriza simplicidade, confiabilidade
+e eficiência, projetada especificamente para facilitar a construção de software em escala.
+Embora tome emprestadas ideias de linguagens existentes,
+ela tem propriedades incomuns que tornam os programas Go eficientes
+diferentes em essência dos programas escritos em suas parentes.
+Uma tradução direta de um programa C++ ou Java para Go
+dificilmente produz um resultado satisfatório&mdash;programas Java
+são escritos em Java, não em Go.
+Por outro lado, pensar no problema a partir de uma perspectiva Go
+pode produzir um programa bem-sucedido, mas bem diferente.
+Em outras palavras,
+para escrever Go bem, é importante entender suas propriedades
+e idiomas.
+Também é importante conhecer as convenções estabelecidas para
+programar em Go, como nomes, formatação, construção
+de programas e assim por diante, para que os programas que você escreve
+sejam fáceis de entender para outros programadores Go.
 </p>
 
 <p>
-This document gives tips for writing clear, idiomatic Go code.
-It augments the <a href="/ref/spec">language specification</a>,
-the <a href="/tour/">Tour of Go</a>,
-and <a href="/doc/code.html">How to Write Go Code</a>,
-all of which you
-should read first.
+Este documento dá dicas para escrever código Go claro e idiomático.
+Ele complementa a <a href="/ref/spec">especificação da linguagem</a>,
+o <a href="/tour/">Tour of Go</a>
+e <a href="/doc/code.html">Como escrever código Go</a>,
+todos os quais você
+deve ler primeiro.
 </p>
 
 
 
-<h3 id="examples">Examples</h3>
+<h3 id="examples">Exemplos</h3>
 
 <p>
-The <a href="/src/">Go package sources</a>
-are intended to serve not
-only as the core library but also as examples of how to
-use the language.
-Moreover, many of the packages contain working, self-contained
-executable examples you can run directly from the
-<a href="/">go.dev</a> web site, such as
-<a href="/pkg/strings/#example-Map">this one</a> (if
-necessary, click on the word "Example" to open it up).
-If you have a question about how to approach a problem or how something
-might be implemented, the documentation, code and examples in the
-library can provide answers, ideas and
-background.
+Os <a href="/src/">fontes dos pacotes Go</a>
+servem não apenas
+como a biblioteca central, mas também como exemplos de como
+usar a linguagem.
+Além disso, muitos dos pacotes contêm exemplos executáveis, funcionais e autocontidos
+que você pode rodar diretamente no site
+<a href="/">go.dev</a>, como
+<a href="/pkg/strings/#example-Map">este</a> (se
+necessário, clique na palavra "Example" para abri-lo).
+Se você tiver dúvida sobre como abordar um problema ou como algo
+poderia ser implementado, a documentação, o código e os exemplos na
+biblioteca podem oferecer respostas, ideias e
+contexto.
 </p>
 
 
-<h2 id="formatting">Formatting</h2>
+<h2 id="formatting">Formatação</h2>
 
 <p>
-Formatting issues are the most contentious
-but the least consequential.
-People can adapt to different formatting styles
-but it's better if they don't have to, and
-less time is devoted to the topic
-if everyone adheres to the same style.
-The problem is how to approach this Utopia without a long
-prescriptive style guide.
+Questões de formatação são as mais controversas,
+mas as de menor consequência.
+As pessoas se adaptam a diferentes estilos de formatação,
+mas é melhor que não precisem, e
+gasta-se menos tempo com o assunto
+se todos seguirem o mesmo estilo.
+O problema é como chegar a essa Utopia sem um longo
+guia de estilo prescritivo.
 </p>
 
 <p>
-With Go we take an unusual
-approach and let the machine
-take care of most formatting issues.
-The <code>gofmt</code> program
-(also available as <code>go fmt</code>, which
-operates at the package level rather than source file level)
-reads a Go program
-and emits the source in a standard style of indentation
-and vertical alignment, retaining and if necessary
-reformatting comments.
-If you want to know how to handle some new layout
-situation, run <code>gofmt</code>; if the answer doesn't
-seem right, rearrange your program (or file a bug about <code>gofmt</code>),
-don't work around it.
+Em Go, adotamos uma abordagem incomum
+e deixamos a máquina
+cuidar da maioria das questões de formatação.
+O programa <code>gofmt</code>
+(também disponível como <code>go fmt</code>, que
+opera no nível do pacote em vez do nível do arquivo de código-fonte)
+lê um programa Go
+e emite o código-fonte em um estilo padrão de indentação
+e alinhamento vertical, preservando e, se necessário,
+reformatando os comentários.
+Se você quiser saber como lidar com alguma nova situação
+de layout, execute <code>gofmt</code>; se a resposta não
+parecer certa, reorganize o programa (ou abra um bug sobre <code>gofmt</code>),
+mas não contorne o problema.
 </p>
 
 <p>
-As an example, there's no need to spend time lining up
-the comments on the fields of a structure.
-<code>Gofmt</code> will do that for you.  Given the
-declaration
+Como exemplo, não há necessidade de gastar tempo alinhando
+os comentários dos campos de uma struct.
+<code>Gofmt</code> faz isso por você. Dada a
+declaração
 </p>
 
 <pre>
@@ -111,7 +111,7 @@ type T struct {
 </pre>
 
 <p>
-<code>gofmt</code> will line up the columns:
+<code>gofmt</code> vai alinhar as colunas:
 </p>
 
 <pre>
@@ -122,71 +122,71 @@ type T struct {
 </pre>
 
 <p>
-All Go code in the standard packages has been formatted with <code>gofmt</code>.
+Todo o código da biblioteca padrão foi formatado com <code>gofmt</code>.
 </p>
 
 
 <p>
-Some formatting details remain.  Very briefly:
+Restam alguns detalhes de formatação. Muito brevemente:
 </p>
 
 <dl>
-    <dt>Indentation</dt>
-    <dd>We use tabs for indentation and <code>gofmt</code> emits them by default.
-    Use spaces only if you must.
+    <dt>Indentação</dt>
+    <dd>Usamos tabs para indentar e o <code>gofmt</code> os emite por padrão.
+    Use espaços somente se for necessário.
     </dd>
-    <dt>Line length</dt>
+    <dt>Tamanho da linha</dt>
     <dd>
-    Go has no line length limit.  Don't worry about overflowing a punched card.
-    If a line feels too long, wrap it and indent with an extra tab.
+    Go não tem limite de tamanho de linha. Não se preocupe em estourar um cartão perfurado.
+    Se uma linha parecer longa demais, quebre-a e indente com um tab extra.
     </dd>
-    <dt>Parentheses</dt>
+    <dt>Parênteses</dt>
     <dd>
-    Go needs fewer parentheses than C and Java: control structures (<code>if</code>,
-    <code>for</code>, <code>switch</code>) do not have parentheses in
-    their syntax.
-    Also, the operator precedence hierarchy is shorter and clearer, so
+    Go precisa de menos parênteses que C e Java: estruturas de controle (<code>if</code>,
+    <code>for</code>, <code>switch</code>) não têm parênteses na
+    sua sintaxe.
+    Além disso, a hierarquia de precedência de operadores é mais curta e mais clara, então
 <pre>
 x&lt;&lt;8 + y&lt;&lt;16
 </pre>
-    means what the spacing implies, unlike in the other languages.
+    significa o que o espaçamento sugere, ao contrário das outras linguagens.
     </dd>
 </dl>
 
-<h2 id="commentary">Commentary</h2>
+<h2 id="commentary">Comentários</h2>
 
 <p>
-Go provides C-style <code>/* */</code> block comments
-and C++-style <code>//</code> line comments.
-Line comments are the norm;
-block comments appear mostly as package comments, but
-are useful within an expression or to disable large swaths of code.
+Go oferece comentários de bloco no estilo C, <code>/* */</code>,
+e comentários de linha no estilo C++, <code>//</code>.
+Comentários de linha são o padrão;
+comentários de bloco aparecem principalmente como comentários de pacote, mas
+são úteis dentro de uma expressão ou para desativar trechos grandes de código.
 </p>
 
 <p>
-Comments that appear before top-level declarations, with no intervening newlines,
-are considered to document the declaration itself.
-These “doc comments” are the primary documentation for a given Go package or command.
-For more about doc comments, see “<a href="/doc/comment">Go Doc Comments</a>”.
+Comentários que aparecem antes de declarações de nível superior, sem linhas em branco entre eles,
+são considerados como documentando a própria declaração.
+Esses “comentários de documentação” são a principal documentação de um pacote ou comando Go.
+Para saber mais sobre comentários de documentação, veja “<a href="/doc/comment">Comentários de documentação em Go</a>”.
 </p>
 
-<h2 id="names">Names</h2>
+<h2 id="names">Nomes</h2>
 
 <p>
-Names are as important in Go as in any other language.
-They even have semantic effect:
-the visibility of a name outside a package is determined by whether its
-first character is upper case.
-It's therefore worth spending a little time talking about naming conventions
-in Go programs.
+Nomes são tão importantes em Go quanto em qualquer outra linguagem.
+Eles têm até efeito semântico:
+a visibilidade de um nome fora de um pacote é determinada por se o seu
+primeiro caractere é maiúsculo.
+Vale a pena, portanto, dedicar um pouco de tempo às convenções de nomenclatura
+em programas Go.
 </p>
 
 
-<h3 id="package-names">Package names</h3>
+<h3 id="package-names">Nomes de pacotes</h3>
 
 <p>
-When a package is imported, the package name becomes an accessor for the
-contents.  After
+Quando um pacote é importado, o nome do pacote se torna um acessador para o
+conteúdo. Depois de
 </p>
 
 <pre>
@@ -194,72 +194,72 @@ import "bytes"
 </pre>
 
 <p>
-the importing package can talk about <code>bytes.Buffer</code>.  It's
-helpful if everyone using the package can use the same name to refer to
-its contents, which implies that the package name should be good:
-short, concise, evocative.  By convention, packages are given
-lower case, single-word names; there should be no need for underscores
-or mixedCaps.
-Err on the side of brevity, since everyone using your
-package will be typing that name.
-And don't worry about collisions <i>a priori</i>.
-The package name is only the default name for imports; it need not be unique
-across all source code, and in the rare case of a collision the
-importing package can choose a different name to use locally.
-In any case, confusion is rare because the file name in the import
-determines just which package is being used.
+o pacote que importa pode usar <code>bytes.Buffer</code>. Ajuda
+se todos que usam o pacote puderem usar o mesmo nome para se referir a
+seu conteúdo, o que implica que o nome do pacote deve ser bom:
+curto, conciso, sugestivo. Por convenção, os pacotes recebem
+nomes em letras minúsculas, com uma única palavra; não deve haver necessidade de sublinhados
+ou mixedCaps.
+Prefira a brevidade, já que todos que usarem o seu
+pacote vão digitar esse nome.
+E não se preocupe com colisões <i>a priori</i>.
+O nome do pacote é apenas o nome padrão para importações; ele não precisa ser único
+em todo o código-fonte, e, no raro caso de colisão, o
+pacote que importa pode escolher outro nome para usar localmente.
+De qualquer forma, a confusão é rara, porque o nome do arquivo na importação
+determina exatamente qual pacote está sendo usado.
 </p>
 
 <p>
-Another convention is that the package name is the base name of
-its source directory;
-the package in <code>src/encoding/base64</code>
-is imported as <code>"encoding/base64"</code> but has name <code>base64</code>,
-not <code>encoding_base64</code> and not <code>encodingBase64</code>.
+Outra convenção é que o nome do pacote é o nome base de
+seu diretório de código-fonte;
+o pacote em <code>src/encoding/base64</code>
+é importado como <code>"encoding/base64"</code>, mas tem o nome <code>base64</code>,
+não <code>encoding_base64</code> e não <code>encodingBase64</code>.
 </p>
 
 <p>
-The importer of a package will use the name to refer to its contents,
-so exported names in the package can use that fact
-to avoid repetition.
-(Don't use the <code>import .</code> notation, which can simplify
-tests that must run outside the package they are testing, but should otherwise be avoided.)
-For instance, the buffered reader type in the <code>bufio</code> package is called <code>Reader</code>,
-not <code>BufReader</code>, because users see it as <code>bufio.Reader</code>,
-which is a clear, concise name.
-Moreover,
-because imported entities are always addressed with their package name, <code>bufio.Reader</code>
-does not conflict with <code>io.Reader</code>.
-Similarly, the function to make new instances of <code>ring.Ring</code>&mdash;which
-is the definition of a <em>constructor</em> in Go&mdash;would
-normally be called <code>NewRing</code>, but since
-<code>Ring</code> is the only type exported by the package, and since the
-package is called <code>ring</code>, it's called just <code>New</code>,
-which clients of the package see as <code>ring.New</code>.
-Use the package structure to help you choose good names.
+Quem importa um pacote vai usar o nome para se referir ao seu conteúdo,
+então os nomes exportados no pacote podem aproveitar esse fato
+para evitar repetição.
+(Não use a notação <code>import .</code>, que pode simplificar
+testes que precisam rodar fora do pacote que estão testando, mas que, de outro modo, deve ser evitada.)
+Por exemplo, o tipo de leitor com buffer no pacote <code>bufio</code> se chama <code>Reader</code>,
+não <code>BufReader</code>, porque os usuários o veem como <code>bufio.Reader</code>,
+que é um nome claro e conciso.
+Além disso,
+como entidades importadas são sempre acessadas com o nome do pacote, <code>bufio.Reader</code>
+não conflita com <code>io.Reader</code>.
+Da mesma forma, a função que cria novas instâncias de <code>ring.Ring</code>&mdash;que
+é a definição de um <em>construtor</em> em Go&mdash;normalmente seria
+chamada <code>NewRing</code>, mas, como
+<code>Ring</code> é o único tipo exportado pelo pacote, e como o
+pacote se chama <code>ring</code>, ela se chama apenas <code>New</code>,
+que quem usa o pacote enxerga como <code>ring.New</code>.
+Use a estrutura do pacote para ajudar a escolher bons nomes.
 </p>
 
 <p>
-Another short example is <code>once.Do</code>;
-<code>once.Do(setup)</code> reads well and would not be improved by
-writing <code>once.DoOrWaitUntilDone(setup)</code>.
-Long names don't automatically make things more readable.
-A helpful doc comment can often be more valuable than an extra long name.
+Outro exemplo curto é <code>once.Do</code>;
+<code>once.Do(setup)</code> lê bem e não seria melhorado ao
+escrever <code>once.DoOrWaitUntilDone(setup)</code>.
+Nomes longos não tornam as coisas mais legíveis automaticamente.
+Um comentário de documentação útil costuma ser mais valioso que um nome extra longo.
 </p>
 
 <h3 id="Getters">Getters</h3>
 
 <p>
-Go doesn't provide automatic support for getters and setters.
-There's nothing wrong with providing getters and setters yourself,
-and it's often appropriate to do so, but it's neither idiomatic nor necessary
-to put <code>Get</code> into the getter's name.  If you have a field called
-<code>owner</code> (lower case, unexported), the getter method should be
-called <code>Owner</code> (upper case, exported), not <code>GetOwner</code>.
-The use of upper-case names for export provides the hook to discriminate
-the field from the method.
-A setter function, if needed, will likely be called <code>SetOwner</code>.
-Both names read well in practice:
+Go não oferece suporte automático a getters e setters.
+Não há nada de errado em você mesmo criar getters e setters,
+e muitas vezes isso é apropriado, mas não é idiomático nem necessário
+colocar <code>Get</code> no nome do getter. Se você tiver um campo chamado
+<code>owner</code> (minúsculo, não exportado), o método getter deve se
+chamar <code>Owner</code> (maiúsculo, exportado), não <code>GetOwner</code>.
+O uso de nomes com inicial maiúscula para exportação oferece o mecanismo para distinguir
+o campo do método.
+Uma função setter, se necessária, provavelmente se chamará <code>SetOwner</code>.
+Na prática, os dois nomes ficam bem:
 </p>
 <pre>
 owner := obj.Owner()
@@ -268,84 +268,84 @@ if owner != user {
 }
 </pre>
 
-<h3 id="interface-names">Interface names</h3>
+<h3 id="interface-names">Nomes de interfaces</h3>
 
 <p>
-By convention, one-method interfaces are named by
-the method name plus an -er suffix or similar modification
-to construct an agent noun: <code>Reader</code>,
+Por convenção, interfaces com um único método recebem o nome do
+método com o sufixo -er ou uma modificação semelhante
+para formar um substantivo de agente: <code>Reader</code>,
 <code>Writer</code>, <code>Formatter</code>,
 <code>CloseNotifier</code> etc.
 </p>
 
 <p>
-There are a number of such names and it's productive to honor them and the function
-names they capture.
+Existem vários nomes assim, e vale a pena respeitá-los e às funções
+que eles capturam.
 <code>Read</code>, <code>Write</code>, <code>Close</code>, <code>Flush</code>,
-<code>String</code> and so on have
-canonical signatures and meanings.  To avoid confusion,
-don't give your method one of those names unless it
-has the same signature and meaning.
-Conversely, if your type implements a method with the
-same meaning as a method on a well-known type,
-give it the same name and signature;
-call your string-converter method <code>String</code> not <code>ToString</code>.
+<code>String</code> e assim por diante têm
+assinaturas e significados canônicos. Para evitar confusão,
+não dê ao seu método um desses nomes, a menos que ele
+tenha a mesma assinatura e o mesmo significado.
+Inversamente, se o seu tipo implementar um método com o
+mesmo significado de um método de um tipo conhecido,
+dê a ele o mesmo nome e assinatura;
+chame o seu método conversor de string de <code>String</code>, não <code>ToString</code>.
 </p>
 
 <h3 id="mixed-caps">MixedCaps</h3>
 
 <p>
-Finally, the convention in Go is to use <code>MixedCaps</code>
-or <code>mixedCaps</code> rather than underscores to write
-multiword names.
+Por fim, a convenção em Go é usar <code>MixedCaps</code>
+ou <code>mixedCaps</code>, em vez de sublinhados, para escrever
+nomes com várias palavras.
 </p>
 
-<h2 id="semicolons">Semicolons</h2>
+<h2 id="semicolons">Ponto e vírgula</h2>
 
 <p>
-Like C, Go's formal grammar uses semicolons to terminate statements,
-but unlike in C, those semicolons do not appear in the source.
-Instead the lexer uses a simple rule to insert semicolons automatically
-as it scans, so the input text is mostly free of them.
+Assim como em C, a gramática formal de Go usa ponto e vírgula para terminar instruções,
+mas, diferentemente de C, esses pontos e vírgulas não aparecem no código-fonte.
+Em vez disso, o analisador léxico usa uma regra simples para inserir pontos e vírgulas automaticamente
+enquanto lê o texto, então o texto de entrada fica quase sempre sem eles.
 </p>
 
 <p>
-The rule is this. If the last token before a newline is an identifier
-(which includes words like <code>int</code> and <code>float64</code>),
-a basic literal such as a number or string constant, or one of the
+A regra é esta. Se o último token antes de uma quebra de linha for um identificador
+(o que inclui palavras como <code>int</code> e <code>float64</code>),
+um literal básico, como um número ou uma constante de string, ou um dos
 tokens
 </p>
 <pre>
 break continue fallthrough return ++ -- ) }
 </pre>
 <p>
-the lexer always inserts a semicolon after the token.
-This could be summarized as, &ldquo;if the newline comes
-after a token that could end a statement, insert a semicolon&rdquo;.
+o analisador léxico sempre insere um ponto e vírgula depois do token.
+Isso pode ser resumido assim: &ldquo;se a quebra de linha vier
+depois de um token que poderia terminar uma instrução, insira um ponto e vírgula&rdquo;.
 </p>
 
 <p>
-A semicolon can also be omitted immediately before a closing brace,
-so a statement such as
+Um ponto e vírgula também pode ser omitido imediatamente antes de uma chave de fechamento,
+então uma instrução como
 </p>
 <pre>
     go func() { for { dst &lt;- &lt;-src } }()
 </pre>
 <p>
-needs no semicolons.
-Idiomatic Go programs have semicolons only in places such as
-<code>for</code> loop clauses, to separate the initializer, condition, and
-continuation elements.  They are also necessary to separate multiple
-statements on a line, should you write code that way.
+não precisa de pontos e vírgulas.
+Programas Go idiomáticos têm pontos e vírgulas apenas em lugares como
+as cláusulas de um laço <code>for</code>, para separar os elementos de inicialização, condição e
+continuação. Eles também são necessários para separar várias
+instruções em uma mesma linha, caso você escreva código assim.
 </p>
 
 <p>
-One consequence of the semicolon insertion rules
-is that you cannot put the opening brace of a
-control structure (<code>if</code>, <code>for</code>, <code>switch</code>,
-or <code>select</code>) on the next line.  If you do, a semicolon
-will be inserted before the brace, which could cause unwanted
-effects.  Write them like this
+Uma consequência das regras de inserção de ponto e vírgula
+é que você não pode colocar a chave de abertura de uma
+estrutura de controle (<code>if</code>, <code>for</code>, <code>switch</code>,
+ou <code>select</code>) na linha seguinte. Se fizer isso, um ponto e vírgula
+será inserido antes da chave, o que pode causar efeitos
+indesejados. Escreva assim
 </p>
 
 <pre>
@@ -354,7 +354,7 @@ if i &lt; f() {
 }
 </pre>
 <p>
-not like this
+e não assim
 </p>
 <pre>
 if i &lt; f()  // wrong!
@@ -364,30 +364,29 @@ if i &lt; f()  // wrong!
 </pre>
 
 
-<h2 id="control-structures">Control structures</h2>
+<h2 id="control-structures">Estruturas de controle</h2>
 
 <p>
-The control structures of Go are related to those of C but differ
-in important ways.
-There is no <code>do</code> or <code>while</code> loop, only a
-slightly generalized
+As estruturas de controle de Go são parecidas com as de C, mas diferem
+em aspectos importantes.
+Não há laço <code>do</code> nem <code>while</code>, apenas um
+<code>for</code> um pouco mais generalizado;
+<code>switch</code> é mais flexível;
+<code>if</code> e <code>switch</code> aceitam uma instrução de inicialização opcional, como a do
 <code>for</code>;
-<code>switch</code> is more flexible;
-<code>if</code> and <code>switch</code> accept an optional
-initialization statement like that of <code>for</code>;
-<code>break</code> and <code>continue</code> statements
-take an optional label to identify what to break or continue;
-and there are new control structures including a type switch and a
-multiway communications multiplexer, <code>select</code>.
-The syntax is also slightly different:
-there are no parentheses
-and the bodies must always be brace-delimited.
+as instruções <code>break</code> e <code>continue</code>
+aceitam um rótulo opcional para identificar o que interromper ou continuar;
+e há novas estruturas de controle, incluindo o switch de tipos e um
+multiplexador de comunicação de múltiplas vias, o <code>select</code>.
+A sintaxe também é um pouco diferente:
+não há parênteses,
+e os blocos devem sempre ser delimitados por chaves.
 </p>
 
 <h3 id="if">If</h3>
 
 <p>
-In Go a simple <code>if</code> looks like this:
+Em Go, um <code>if</code> simples fica assim:
 </p>
 <pre>
 if x &gt; 0 {
@@ -396,15 +395,15 @@ if x &gt; 0 {
 </pre>
 
 <p>
-Mandatory braces encourage writing simple <code>if</code> statements
-on multiple lines.  It's good style to do so anyway,
-especially when the body contains a control statement such as a
-<code>return</code> or <code>break</code>.
+As chaves obrigatórias incentivam a escrita de instruções <code>if</code> simples
+em várias linhas. De qualquer forma, esse é um bom estilo,
+especialmente quando o bloco contém uma instrução de controle, como um
+<code>return</code> ou <code>break</code>.
 </p>
 
 <p>
-Since <code>if</code> and <code>switch</code> accept an initialization
-statement, it's common to see one used to set up a local variable.
+Como <code>if</code> e <code>switch</code> aceitam uma instrução de inicialização,
+é comum ver uma delas usada para configurar uma variável local.
 </p>
 
 <pre>
@@ -415,11 +414,11 @@ if err := file.Chmod(0664); err != nil {
 </pre>
 
 <p id="else">
-In the Go libraries, you'll find that
-when an <code>if</code> statement doesn't flow into the next statement—that is,
-the body ends in <code>break</code>, <code>continue</code>,
-<code>goto</code>, or <code>return</code>—the unnecessary
-<code>else</code> is omitted.
+Nas bibliotecas de Go, você vai notar que
+quando uma instrução <code>if</code> não segue para a próxima instrução, ou seja,
+o bloco termina em <code>break</code>, <code>continue</code>,
+<code>goto</code> ou <code>return</code>, o
+<code>else</code> desnecessário é omitido.
 </p>
 
 <pre>
@@ -431,11 +430,11 @@ codeUsing(f)
 </pre>
 
 <p>
-This is an example of a common situation where code must guard against a
-sequence of error conditions.  The code reads well if the
-successful flow of control runs down the page, eliminating error cases
-as they arise.  Since error cases tend to end in <code>return</code>
-statements, the resulting code needs no <code>else</code> statements.
+Este é um exemplo de uma situação comum em que o código precisa se proteger contra uma
+sequência de condições de erro. O código fica legível se o
+fluxo de sucesso descer pela página, eliminando os casos de erro
+à medida que surgem. Como os casos de erro tendem a terminar em instruções
+<code>return</code>, o código resultante não precisa de instruções <code>else</code>.
 </p>
 
 <pre>
@@ -452,12 +451,12 @@ codeUsing(f, d)
 </pre>
 
 
-<h3 id="redeclaration">Redeclaration and reassignment</h3>
+<h3 id="redeclaration">Redeclaração e reatribuição</h3>
 
 <p>
-An aside: The last example in the previous section demonstrates a detail of how the
-<code>:=</code> short declaration form works.
-The declaration that calls <code>os.Open</code> reads,
+Um parêntese: o último exemplo da seção anterior demonstra um detalhe de como
+a forma de declaração curta <code>:=</code> funciona.
+A declaração que chama <code>os.Open</code> lê-se assim:
 </p>
 
 <pre>
@@ -465,8 +464,8 @@ f, err := os.Open(name)
 </pre>
 
 <p>
-This statement declares two variables, <code>f</code> and <code>err</code>.
-A few lines later, the call to <code>f.Stat</code> reads,
+Essa instrução declara duas variáveis, <code>f</code> e <code>err</code>.
+Algumas linhas depois, a chamada a <code>f.Stat</code> lê-se assim:
 </p>
 
 <pre>
@@ -474,46 +473,46 @@ d, err := f.Stat()
 </pre>
 
 <p>
-which looks as if it declares <code>d</code> and <code>err</code>.
-Notice, though, that <code>err</code> appears in both statements.
-This duplication is legal: <code>err</code> is declared by the first statement,
-but only <em>re-assigned</em> in the second.
-This means that the call to <code>f.Stat</code> uses the existing
-<code>err</code> variable declared above, and just gives it a new value.
+que parece declarar <code>d</code> e <code>err</code>.
+Note, porém, que <code>err</code> aparece nas duas instruções.
+Essa duplicação é válida: <code>err</code> é declarada pela primeira instrução,
+mas só é <em>reatribuída</em> na segunda.
+Isso significa que a chamada a <code>f.Stat</code> usa a variável
+<code>err</code> já declarada acima e apenas lhe dá um novo valor.
 </p>
 
 <p>
-In a <code>:=</code> declaration a variable <code>v</code> may appear even
-if it has already been declared, provided:
+Em uma declaração <code>:=</code>, uma variável <code>v</code> pode aparecer mesmo
+que já tenha sido declarada, desde que:
 </p>
 
 <ul>
-<li>this declaration is in the same scope as the existing declaration of <code>v</code>
-(if <code>v</code> is already declared in an outer scope, the declaration will create a new variable §),</li>
-<li>the corresponding value in the initialization is assignable to <code>v</code>, and</li>
-<li>there is at least one other variable that is created by the declaration.</li>
+<li>esta declaração esteja no mesmo escopo da declaração existente de <code>v</code>
+(se <code>v</code> já estiver declarada em um escopo externo, a declaração criará uma nova variável §),</li>
+<li>o valor correspondente na inicialização seja atribuível a <code>v</code>, e</li>
+<li>haja pelo menos mais uma variável criada pela declaração.</li>
 </ul>
 
 <p>
-This unusual property is pure pragmatism,
-making it easy to use a single <code>err</code> value, for example,
-in a long <code>if-else</code> chain.
-You'll see it used often.
+Essa propriedade incomum é puro pragmatismo,
+tornando fácil usar um único valor <code>err</code>, por exemplo,
+em uma longa cadeia <code>if-else</code>.
+Você vai vê-la usada com frequência.
 </p>
 
 <p>
-§ It's worth noting here that in Go the scope of function parameters and return values
-is the same as the function body, even though they appear lexically outside the braces
-that enclose the body.
+§ Vale notar aqui que, em Go, o escopo dos parâmetros e dos valores de retorno de uma função
+é o mesmo do corpo da função, mesmo que eles apareçam lexicalmente fora das chaves
+que delimitam o corpo.
 </p>
 
 <h3 id="for">For</h3>
 
 <p>
-The Go <code>for</code> loop is similar to&mdash;but not the same as&mdash;C's.
-It unifies <code>for</code>
-and <code>while</code> and there is no <code>do-while</code>.
-There are three forms, only one of which has semicolons.
+O laço <code>for</code> de Go é parecido com o de C, mas não é igual.
+Ele unifica <code>for</code>
+e <code>while</code>, e não existe <code>do-while</code>.
+Há três formas, e apenas uma delas tem ponto e vírgula.
 </p>
 <pre>
 // Like a C for
@@ -527,7 +526,7 @@ for { }
 </pre>
 
 <p>
-Short declarations make it easy to declare the index variable right in the loop.
+Declarações curtas facilitam declarar a variável de índice bem no laço.
 </p>
 <pre>
 sum := 0
@@ -537,9 +536,9 @@ for i := 0; i &lt; 10; i++ {
 </pre>
 
 <p>
-If you're looping over an array, slice, string, or map,
-or reading from a channel, a <code>range</code> clause can
-manage the loop.
+Se você estiver percorrendo um array, slice, string ou map,
+ou lendo de um canal, uma cláusula <code>range</code> pode
+cuidar do laço.
 </p>
 <pre>
 for key, value := range oldMap {
@@ -548,7 +547,7 @@ for key, value := range oldMap {
 </pre>
 
 <p>
-If you only need the first item in the range (the key or index), drop the second:
+Se você só precisar do primeiro item do range (a chave ou o índice), omita o segundo:
 </p>
 <pre>
 for key := range m {
@@ -559,7 +558,7 @@ for key := range m {
 </pre>
 
 <p>
-If you only need the second item in the range (the value), use the <em>blank identifier</em>, an underscore, to discard the first:
+Se você só precisar do segundo item do range (o valor), use o <em>identificador em branco</em>, um sublinhado, para descartar o primeiro:
 </p>
 <pre>
 sum := 0
@@ -569,19 +568,19 @@ for _, value := range array {
 </pre>
 
 <p>
-The blank identifier has many uses, as described in <a href="#blank">a later section</a>.
+O identificador em branco tem muitos usos, como descrito em <a href="#blank">uma seção posterior</a>.
 </p>
 
 <p>
-For strings, the <code>range</code> does more work for you, breaking out individual
-Unicode code points by parsing the UTF-8.
-Erroneous encodings consume one byte and produce the
-replacement rune U+FFFD.
-(The name (with associated builtin type) <code>rune</code> is Go terminology for a
-single Unicode code point.
-See <a href="/ref/spec#Rune_literals">the language specification</a>
-for details.)
-The loop
+Para strings, o <code>range</code> faz mais trabalho por você, separando cada
+ponto de código Unicode ao interpretar o UTF-8.
+Codificações erradas consomem um byte e produzem a
+runa de substituição U+FFFD.
+(O nome <code>rune</code>, com o tipo embutido associado, é a terminologia de Go para um
+único ponto de código Unicode.
+Veja <a href="/ref/spec#Rune_literals">a especificação da linguagem</a>
+para detalhes.)
+O laço
 </p>
 <pre>
 for pos, char := range "日本\x80語" { // \x80 is an illegal UTF-8 encoding
@@ -589,7 +588,7 @@ for pos, char := range "日本\x80語" { // \x80 is an illegal UTF-8 encoding
 }
 </pre>
 <p>
-prints
+imprime
 </p>
 <pre>
 character U+65E5 '日' starts at byte position 0
@@ -599,10 +598,10 @@ character U+8A9E '語' starts at byte position 7
 </pre>
 
 <p>
-Finally, Go has no comma operator and <code>++</code> and <code>--</code>
-are statements not expressions.
-Thus if you want to run multiple variables in a <code>for</code>
-you should use parallel assignment (although that precludes <code>++</code> and <code>--</code>).
+Por fim, Go não tem operador vírgula, e <code>++</code> e <code>--</code>
+são instruções, não expressões.
+Assim, se você quiser executar várias variáveis em um <code>for</code>,
+deve usar atribuição paralela (embora isso exclua <code>++</code> e <code>--</code>).
 </p>
 <pre>
 // Reverse a
@@ -614,14 +613,14 @@ for i, j := 0, len(a)-1; i &lt; j; i, j = i+1, j-1 {
 <h3 id="switch">Switch</h3>
 
 <p>
-Go's <code>switch</code> is more general than C's.
-The expressions need not be constants or even integers,
-the cases are evaluated top to bottom until a match is found,
-and if the <code>switch</code> has no expression it switches on
+O <code>switch</code> de Go é mais geral que o de C.
+As expressões não precisam ser constantes nem mesmo inteiros,
+os casos são avaliados de cima para baixo até encontrar uma correspondência,
+e, se o <code>switch</code> não tiver expressão, ele compara com
 <code>true</code>.
-It's therefore possible&mdash;and idiomatic&mdash;to write an
-<code>if</code>-<code>else</code>-<code>if</code>-<code>else</code>
-chain as a <code>switch</code>.
+Por isso é possível&mdash;e idiomático&mdash;escrever uma
+cadeia de <code>if</code>-<code>else</code>-<code>if</code>-<code>else</code>
+como um <code>switch</code>.
 </p>
 
 <pre>
@@ -639,8 +638,8 @@ func unhex(c byte) byte {
 </pre>
 
 <p>
-There is no automatic fall through, but cases can be presented
-in comma-separated lists.
+Não há continuação automática para o próximo caso (fall through), mas os casos podem ser apresentados
+em listas separadas por vírgula.
 </p>
 <pre>
 func shouldEscape(c byte) bool {
@@ -653,13 +652,13 @@ func shouldEscape(c byte) bool {
 </pre>
 
 <p>
-Although they are not nearly as common in Go as some other C-like
-languages, <code>break</code> statements can be used to terminate
-a <code>switch</code> early.
-Sometimes, though, it's necessary to break out of a surrounding loop,
-not the switch, and in Go that can be accomplished by putting a label
-on the loop and "breaking" to that label.
-This example shows both uses.
+Embora sejam bem menos comuns em Go do que em outras linguagens parecidas com C,
+as instruções <code>break</code> podem ser usadas para encerrar um
+<code>switch</code> mais cedo.
+Às vezes, porém, é preciso sair de um laço externo,
+e não do switch; em Go, isso se faz colocando um rótulo
+no laço e "quebrando" até esse rótulo.
+Este exemplo mostra os dois usos.
 </p>
 
 <pre>
@@ -688,13 +687,13 @@ Loop:
 </pre>
 
 <p>
-Of course, the <code>continue</code> statement also accepts an optional label
-but it applies only to loops.
+Claro, a instrução <code>continue</code> também aceita um rótulo opcional,
+mas ela se aplica somente a laços.
 </p>
 
 <p>
-To close this section, here's a comparison routine for byte slices that uses two
-<code>switch</code> statements:
+Para encerrar esta seção, aqui está uma rotina de comparação para slices de bytes que usa duas
+instruções <code>switch</code>:
 </p>
 <pre>
 // Compare returns an integer comparing the two byte slices,
@@ -719,16 +718,16 @@ func Compare(a, b []byte) int {
 }
 </pre>
 
-<h3 id="type_switch">Type switch</h3>
+<h3 id="type_switch">Switch de tipo</h3>
 
 <p>
-A switch can also be used to discover the dynamic type of an interface
-variable.  Such a <em>type switch</em> uses the syntax of a type
-assertion with the keyword <code>type</code> inside the parentheses.
-If the switch declares a variable in the expression, the variable will
-have the corresponding type in each clause.
-It's also idiomatic to reuse the name in such cases, in effect declaring
-a new variable with the same name but a different type in each case.
+Um switch também pode ser usado para descobrir o tipo dinâmico de uma variável
+de interface. Esse <em>switch de tipo</em> usa a sintaxe de uma
+asserção de tipo, com a palavra-chave <code>type</code> dentro dos parênteses.
+Se o switch declarar uma variável na expressão, a variável terá
+o tipo correspondente em cada cláusula.
+Também é idiomático reutilizar o nome nesses casos, declarando na prática
+uma nova variável com o mesmo nome, mas com um tipo diferente em cada caso.
 </p>
 <pre>
 var t interface{}
@@ -747,26 +746,26 @@ case *int:
 }
 </pre>
 
-<h2 id="functions">Functions</h2>
+<h2 id="functions">Funções</h2>
 
-<h3 id="multiple-returns">Multiple return values</h3>
+<h3 id="multiple-returns">Múltiplos valores de retorno</h3>
 
 <p>
-One of Go's unusual features is that functions and methods
-can return multiple values.  This form can be used to
-improve on a couple of clumsy idioms in C programs: in-band
-error returns such as <code>-1</code> for <code>EOF</code>
-and modifying an argument passed by address.
+Uma das características incomuns de Go é que funções e métodos
+podem retornar múltiplos valores. Essa forma pode ser usada para
+melhorar alguns idiomas desajeitados dos programas em C: retornos de erro
+misturados ao próprio valor de retorno, como <code>-1</code> para <code>EOF</code>,
+e a modificação de um argumento passado por endereço.
 </p>
 
 <p>
-In C, a write error is signaled by a negative count with the
-error code secreted away in a volatile location.
-In Go, <code>Write</code>
-can return a count <i>and</i> an error: &ldquo;Yes, you wrote some
-bytes but not all of them because you filled the device&rdquo;.
-The signature of the <code>Write</code> method on files from
-package <code>os</code> is:
+Em C, um erro de escrita é sinalizado por uma contagem negativa, com o
+código de erro guardado em uma posição volátil.
+Em Go, <code>Write</code>
+pode retornar uma contagem <i>e</i> um erro: &ldquo;Sim, você escreveu alguns
+bytes, mas não todos, porque encheu o dispositivo&rdquo;.
+A assinatura do método <code>Write</code> em arquivos do
+pacote <code>os</code> é:
 </p>
 
 <pre>
@@ -774,18 +773,18 @@ func (file *File) Write(b []byte) (n int, err error)
 </pre>
 
 <p>
-and as the documentation says, it returns the number of bytes
-written and a non-nil <code>error</code> when <code>n</code>
+e, como diz a documentação, ele retorna o número de bytes
+escritos e um <code>error</code> não nulo quando <code>n</code>
 <code>!=</code> <code>len(b)</code>.
-This is a common style; see the section on error handling for more examples.
+Este é um estilo comum; veja a seção sobre tratamento de erros para mais exemplos.
 </p>
 
 <p>
-A similar approach obviates the need to pass a pointer to a return
-value to simulate a reference parameter.
-Here's a simple-minded function to
-grab a number from a position in a byte slice, returning the number
-and the next position.
+Uma abordagem semelhante dispensa a necessidade de passar um ponteiro para um valor
+de retorno para simular um parâmetro por referência.
+Aqui está uma função simplificada para
+pegar um número de uma posição em um slice de bytes, retornando o número
+e a próxima posição.
 </p>
 
 <pre>
@@ -801,7 +800,7 @@ func nextInt(b []byte, i int) (int, int) {
 </pre>
 
 <p>
-You could use it to scan the numbers in an input slice <code>b</code> like this:
+Você poderia usá-la para percorrer os números em um slice de entrada <code>b</code> assim:
 </p>
 
 <pre>
@@ -811,23 +810,23 @@ You could use it to scan the numbers in an input slice <code>b</code> like this:
     }
 </pre>
 
-<h3 id="named-results">Named result parameters</h3>
+<h3 id="named-results">Parâmetros de resultado nomeados</h3>
 
 <p>
-The return or result "parameters" of a Go function can be given names and
-used as regular variables, just like the incoming parameters.
-When named, they are initialized to the zero values for their types when
-the function begins; if the function executes a <code>return</code> statement
-with no arguments, the current values of the result parameters are
-used as the returned values.
+Os "parâmetros" de retorno ou de resultado de uma função Go podem receber nomes e
+ser usados como variáveis comuns, assim como os parâmetros de entrada.
+Quando nomeados, são inicializados com os valores zero de seus tipos quando
+a função começa; se a função executar uma instrução <code>return</code>
+sem argumentos, os valores atuais dos parâmetros de resultado são
+usados como valores retornados.
 </p>
 
 <p>
-The names are not mandatory but they can make code shorter and clearer:
-they're documentation.
-If we name the results of <code>nextInt</code> it becomes
-obvious which returned <code>int</code>
-is which.
+Os nomes não são obrigatórios, mas podem tornar o código mais curto e mais claro:
+eles são documentação.
+Se nomearmos os resultados de <code>nextInt</code>, fica
+óbvio qual <code>int</code> retornado
+é qual.
 </p>
 
 <pre>
@@ -835,9 +834,9 @@ func nextInt(b []byte, pos int) (value, nextPos int) {
 </pre>
 
 <p>
-Because named results are initialized and tied to an unadorned return, they can simplify
-as well as clarify.  Here's a version
-of <code>io.ReadFull</code> that uses them well:
+Como os resultados nomeados são inicializados e vinculados a um <code>return</code> sem argumentos, eles podem simplificar
+e também esclarecer. Aqui está uma versão
+de <code>io.ReadFull</code> que os usa bem:
 </p>
 
 <pre>
@@ -855,12 +854,12 @@ func ReadFull(r Reader, buf []byte) (n int, err error) {
 <h3 id="defer">Defer</h3>
 
 <p>
-Go's <code>defer</code> statement schedules a function call (the
-<i>deferred</i> function) to be run immediately before the function
-executing the <code>defer</code> returns.  It's an unusual but
-effective way to deal with situations such as resources that must be
-released regardless of which path a function takes to return.  The
-canonical examples are unlocking a mutex or closing a file.
+A instrução <code>defer</code> de Go agenda uma chamada de função (a função
+<i>adiada</i>) para ser executada imediatamente antes de a função
+que executa o <code>defer</code> retornar. É uma forma incomum, mas
+eficaz, de lidar com situações como recursos que precisam ser
+liberados independentemente do caminho que a função toma para retornar. Os
+exemplos canônicos são destravar um mutex ou fechar um arquivo.
 </p>
 
 <pre>
@@ -889,20 +888,20 @@ func Contents(filename string) (string, error) {
 </pre>
 
 <p>
-Deferring a call to a function such as <code>Close</code> has two advantages.  First, it
-guarantees that you will never forget to close the file, a mistake
-that's easy to make if you later edit the function to add a new return
-path.  Second, it means that the close sits near the open,
-which is much clearer than placing it at the end of the function.
+Adiar a chamada de uma função como <code>Close</code> tem duas vantagens. Primeiro, ela
+garante que você nunca vai esquecer de fechar o arquivo, um erro
+fácil de cometer se você editar a função depois para incluir um novo caminho
+de retorno. Segundo, faz com que o fechamento fique perto da abertura,
+o que é muito mais claro do que colocá-lo no final da função.
 </p>
 
 <p>
-The arguments to the deferred function (which include the receiver if
-the function is a method) are evaluated when the <i>defer</i>
-executes, not when the <i>call</i> executes.  Besides avoiding worries
-about variables changing values as the function executes, this means
-that a single deferred call site can defer multiple function
-executions.  Here's a silly example.
+Os argumentos da função adiada (que incluem o receptor, se
+a função for um método) são avaliados quando o <i>defer</i>
+é executado, não quando a <i>chamada</i> é executada. Além de evitar preocupações
+com variáveis mudando de valor enquanto a função executa, isso significa
+que um único ponto de chamada com <code>defer</code> pode adiar várias
+execuções de função. Aqui está um exemplo bobo.
 </p>
 
 <pre>
@@ -912,11 +911,11 @@ for i := 0; i &lt; 5; i++ {
 </pre>
 
 <p>
-Deferred functions are executed in LIFO order, so this code will cause
-<code>4 3 2 1 0</code> to be printed when the function returns.  A
-more plausible example is a simple way to trace function execution
-through the program.  We could write a couple of simple tracing
-routines like this:
+Funções adiadas são executadas em ordem LIFO (último a entrar, primeiro a sair), então este código fará
+<code>4 3 2 1 0</code> ser impresso quando a função retornar. Um
+exemplo mais plausível é uma forma simples de rastrear a execução de funções
+pelo programa. Poderíamos escrever algumas rotinas simples de rastreamento
+assim:
 </p>
 
 <pre>
@@ -932,10 +931,10 @@ func a() {
 </pre>
 
 <p>
-We can do better by exploiting the fact that arguments to deferred
-functions are evaluated when the <code>defer</code> executes.  The
-tracing routine can set up the argument to the untracing routine.
-This example:
+Podemos fazer melhor aproveitando o fato de que os argumentos das funções
+adiadas são avaliados quando o <code>defer</code> é executado. A
+rotina de rastreamento pode preparar o argumento para a rotina de encerramento do rastreamento.
+Este exemplo:
 </p>
 
 <pre>
@@ -965,7 +964,7 @@ func main() {
 </pre>
 
 <p>
-prints
+imprime
 </p>
 
 <pre>
@@ -978,57 +977,57 @@ leaving: b
 </pre>
 
 <p>
-For programmers accustomed to block-level resource management from
-other languages, <code>defer</code> may seem peculiar, but its most
-interesting and powerful applications come precisely from the fact
-that it's not block-based but function-based.  In the section on
-<code>panic</code> and <code>recover</code> we'll see another
-example of its possibilities.
+Para programadores acostumados ao gerenciamento de recursos por bloco de outras
+linguagens, o <code>defer</code> pode parecer estranho, mas suas aplicações mais
+interessantes e poderosas vêm justamente do fato de ele não ser baseado em blocos,
+e sim em funções. Na seção sobre
+<code>panic</code> e <code>recover</code> veremos outro
+exemplo de suas possibilidades.
 </p>
 
-<h2 id="data">Data</h2>
+<h2 id="data">Dados</h2>
 
-<h3 id="allocation_new">Allocation with <code>new</code></h3>
+<h3 id="allocation_new">Alocação com <code>new</code></h3>
 
 <p>
-Go has two allocation primitives, the built-in functions
-<code>new</code> and <code>make</code>.
-They do different things and apply to different types, which can be confusing,
-but the rules are simple.
-Let's talk about <code>new</code> first.
-It's a built-in function that allocates memory, but unlike its namesakes
-in some other languages it does not <em>initialize</em> the memory,
-it only <em>zeros</em> it.
-That is,
-<code>new(T)</code> allocates zeroed storage for a new variable of type
-<code>T</code> and returns its address, a value of type <code>*T</code>.
-In Go terminology, it returns a pointer to a newly allocated zero value of type
+Go tem duas primitivas de alocação, as funções embutidas
+<code>new</code> e <code>make</code>.
+Elas fazem coisas diferentes e se aplicam a tipos diferentes, o que pode ser confuso,
+mas as regras são simples.
+Vamos falar de <code>new</code> primeiro.
+É uma função embutida que aloca memória, mas, diferentemente das homônimas
+em outras linguagens, ela não <em>inicializa</em> a memória,
+apenas a <em>zera</em>.
+Ou seja,
+<code>new(T)</code> aloca armazenamento zerado para uma nova variável do tipo
+<code>T</code> e retorna o seu endereço, um valor do tipo <code>*T</code>.
+Na terminologia de Go, ela retorna um ponteiro para um valor zero recém-alocado do tipo
 <code>T</code>.
 </p>
 
 <p>
-Starting with Go 1.26, <code>new</code> also accepts an (value) expression as
-an argument, which specifies the initial value of the variable.
-For example, <code>new(int64(300))</code> allocates a new variable of type <code>int64</code>,
-initialized to 300, and returns its address.
+A partir do Go 1.26, <code>new</code> também aceita uma expressão (de valor) como
+argumento, que especifica o valor inicial da variável.
+Por exemplo, <code>new(int64(300))</code> aloca uma nova variável do tipo <code>int64</code>,
+inicializada com 300, e retorna o seu endereço.
 </p>
 
 <p>
-Since the memory returned by <code>new</code> is zeroed, it's helpful to arrange
-when designing your data structures that the
-zero value of each type can be used without further initialization.  This means a user of
-the data structure can create one with <code>new</code> and get right to
-work.
-For example, the documentation for <code>bytes.Buffer</code> states that
-"the zero value for <code>Buffer</code> is an empty buffer ready to use."
-Similarly, <code>sync.Mutex</code> does not
-have an explicit constructor or <code>Init</code> method.
-Instead, the zero value for a <code>sync.Mutex</code>
-is defined to be an unlocked mutex.
+Como a memória retornada por <code>new</code> é zerada, é útil planejar,
+ao projetar suas estruturas de dados, que o
+valor zero de cada tipo possa ser usado sem inicialização adicional. Isso significa que quem usa a
+estrutura de dados pode criar uma com <code>new</code> e começar a
+trabalhar logo.
+Por exemplo, a documentação de <code>bytes.Buffer</code> diz que
+"o valor zero de <code>Buffer</code> é um buffer vazio pronto para uso."
+De forma semelhante, <code>sync.Mutex</code> não
+tem um construtor explícito nem um método <code>Init</code>.
+Em vez disso, o valor zero de um <code>sync.Mutex</code>
+é definido como um mutex destravado.
 </p>
 
 <p>
-The zero-value-is-useful property works transitively. Consider this type declaration.
+A propriedade de que o valor zero é útil funciona de forma transitiva. Considere esta declaração de tipo.
 </p>
 
 <pre>
@@ -1039,9 +1038,9 @@ type SyncedBuffer struct {
 </pre>
 
 <p>
-Values of type <code>SyncedBuffer</code> are also ready to use immediately upon allocation
-or just declaration.  In the next snippet, both <code>p</code> and <code>v</code> will work
-correctly without further arrangement.
+Valores do tipo <code>SyncedBuffer</code> também ficam prontos para uso imediatamente após a alocação
+ou apenas a declaração. No próximo trecho, tanto <code>p</code> quanto <code>v</code> vão funcionar
+corretamente sem mais preparação.
 </p>
 
 <pre>
@@ -1049,12 +1048,12 @@ p := new(SyncedBuffer)  // type *SyncedBuffer
 var v SyncedBuffer      // type  SyncedBuffer
 </pre>
 
-<h3 id="composite_literals">Constructors and composite literals</h3>
+<h3 id="composite_literals">Construtores e literais compostos</h3>
 
 <p>
-Sometimes the zero value isn't good enough and an initializing
-constructor is necessary, as in this example derived from
-package <code>os</code>.
+Às vezes o valor zero não basta, e um construtor de inicialização
+é necessário, como neste exemplo derivado do
+pacote <code>os</code>.
 </p>
 
 <pre>
@@ -1072,10 +1071,10 @@ func NewFile(fd int, name string) *File {
 </pre>
 
 <p>
-There's a lot of boilerplate in there.  We can simplify it
-using a <i>composite literal</i>, which is
-an expression that creates a
-new instance each time it is evaluated.
+Há muito código repetitivo aí. Podemos simplificá-lo
+usando um <i>literal composto</i>, que é
+uma expressão que cria uma
+nova instância sempre que é avaliada.
 </p>
 
 <pre>
@@ -1089,12 +1088,12 @@ func NewFile(fd int, name string) *File {
 </pre>
 
 <p>
-Note that, unlike in C, it's perfectly OK to return the address of a local variable;
-the storage associated with the variable survives after the function
-returns.
-In fact, taking the address of a composite literal
-allocates a fresh instance each time it is evaluated,
-so we can combine these last two lines.
+Observe que, diferentemente de C, é perfeitamente válido retornar o endereço de uma variável local;
+o armazenamento associado à variável sobrevive depois que a
+função retorna.
+Na verdade, tomar o endereço de um literal composto
+aloca uma nova instância sempre que ele é avaliado,
+então podemos combinar essas duas últimas linhas.
 </p>
 
 <pre>
@@ -1102,10 +1101,10 @@ so we can combine these last two lines.
 </pre>
 
 <p>
-The fields of a composite literal are laid out in order and must all be present.
-However, by labeling the elements explicitly as <i>field</i><code>:</code><i>value</i>
-pairs, the initializers can appear in any
-order, with the missing ones left as their respective zero values.  Thus we could say
+Os campos de um literal composto são dispostos em ordem e precisam estar todos presentes.
+No entanto, ao rotular os elementos explicitamente como pares <i>campo</i><code>:</code><i>valor</i>,
+os inicializadores podem aparecer em qualquer
+ordem, e os que faltarem ficam com seus respectivos valores zero. Assim, poderíamos escrever
 </p>
 
 <pre>
@@ -1113,15 +1112,15 @@ order, with the missing ones left as their respective zero values.  Thus we coul
 </pre>
 
 <p>
-As a limiting case, if a composite literal contains no fields at all, it creates
-a zero value for the type.  The expressions <code>new(File)</code> and <code>&amp;File{}</code> are equivalent.
+Como caso-limite, se um literal composto não tiver nenhum campo, ele cria
+um valor zero para o tipo. As expressões <code>new(File)</code> e <code>&amp;File{}</code> são equivalentes.
 </p>
 
 <p>
-Composite literals can also be created for arrays, slices, and maps,
-with the field labels being indices or map keys as appropriate.
-In these examples, the initializations work regardless of the values of <code>Enone</code>,
-<code>Eio</code>, and <code>Einval</code>, as long as they are distinct.
+Literais compostos também podem ser criados para arrays, slices e maps,
+com os rótulos dos campos sendo índices ou chaves de map, conforme o caso.
+Nestes exemplos, as inicializações funcionam independentemente dos valores de <code>Enone</code>,
+<code>Eio</code> e <code>Einval</code>, desde que sejam distintos.
 </p>
 
 <pre>
@@ -1130,25 +1129,24 @@ s := []string      {Enone: "no error", Eio: "Eio", Einval: "invalid argument"}
 m := map[int]string{Enone: "no error", Eio: "Eio", Einval: "invalid argument"}
 </pre>
 
-<h3 id="allocation_make">Allocation with <code>make</code></h3>
+<h3 id="allocation_make">Alocação com <code>make</code></h3>
 
 <p>
-Back to allocation.
-The built-in function <code>make(T, </code><i>args</i><code>)</code> serves
-a purpose different from <code>new(T)</code>.
-It creates slices, maps, and channels only, and it returns an <em>initialized</em>
-(not <em>zeroed</em>)
-value of type <code>T</code> (not <code>*T</code>).
-The reason for the distinction
-is that these three types represent, under the covers, references to data structures that
-must be initialized before use.
-A slice, for example, is a three-item descriptor
-containing a pointer to the data (inside an array), the length, and the
-capacity, and until those items are initialized, the slice is <code>nil</code>.
-For slices, maps, and channels,
-<code>make</code> initializes the internal data structure and prepares
-the value for use.
-For instance,
+Voltando à alocação.
+A função embutida <code>make(T, </code><i>args</i><code>)</code> tem
+uma finalidade diferente de <code>new(T)</code>.
+Ela cria apenas slices, maps e canais, e retorna um valor <em>inicializado</em>
+(não <em>zerado</em>) do tipo <code>T</code> (não <code>*T</code>).
+A razão da distinção
+é que esses três tipos representam, por baixo dos panos, referências a estruturas de dados que
+precisam ser inicializadas antes do uso.
+Um slice, por exemplo, é um descritor de três itens
+contendo um ponteiro para os dados (dentro de um array), o comprimento e a
+capacidade; enquanto esses itens não forem inicializados, o slice é <code>nil</code>.
+Para slices, maps e canais,
+<code>make</code> inicializa a estrutura de dados interna e prepara
+o valor para uso.
+Por exemplo,
 </p>
 
 <pre>
@@ -1156,17 +1154,17 @@ make([]int, 10, 100)
 </pre>
 
 <p>
-allocates an array of 100 ints and then creates a slice
-structure with length 10 and a capacity of 100 pointing at the first
-10 elements of the array.
-(When making a slice, the capacity can be omitted; see the section on slices
-for more information.)
-In contrast, <code>new([]int)</code> returns a pointer to a newly allocated, zeroed slice
-structure, that is, a pointer to a <code>nil</code> slice value.
+aloca um array de 100 ints e então cria uma estrutura de slice
+com comprimento 10 e capacidade 100 apontando para os primeiros
+10 elementos do array.
+(Ao criar um slice, a capacidade pode ser omitida; veja a seção sobre slices
+para mais informações.)
+Já <code>new([]int)</code> retorna um ponteiro para uma estrutura de slice recém-alocada e zerada,
+ou seja, um ponteiro para um valor de slice <code>nil</code>.
 </p>
 
 <p>
-These examples illustrate the difference between <code>new</code> and
+Estes exemplos ilustram a diferença entre <code>new</code> e
 <code>make</code>.
 </p>
 
@@ -1183,41 +1181,41 @@ v := make([]int, 100)
 </pre>
 
 <p>
-Remember that <code>make</code> applies only to maps, slices and channels
-and does not return a pointer.
-To obtain an explicit pointer allocate with <code>new</code> or take the address
-of a variable explicitly.
+Lembre-se de que <code>make</code> se aplica apenas a maps, slices e canais
+e não retorna um ponteiro.
+Para obter um ponteiro explícito, aloque com <code>new</code> ou tome o endereço
+de uma variável explicitamente.
 </p>
 
 <h3 id="arrays">Arrays</h3>
 
 <p>
-Arrays are useful when planning the detailed layout of memory and sometimes
-can help avoid allocation, but primarily
-they are a building block for slices, the subject of the next section.
-To lay the foundation for that topic, here are a few words about arrays.
+Arrays são úteis ao planejar o layout detalhado da memória e às vezes
+podem ajudar a evitar alocações, mas, principalmente,
+são um bloco de construção para slices, o assunto da próxima seção.
+Para preparar a base desse tópico, seguem algumas palavras sobre arrays.
 </p>
 
 <p>
-There are major differences between the ways arrays work in Go and C.
-In Go,
+Há diferenças importantes entre a forma como arrays funcionam em Go e em C.
+Em Go,
 </p>
 <ul>
 <li>
-Arrays are values. Assigning one array to another copies all the elements.
+Arrays são valores. Atribuir um array a outro copia todos os elementos.
 </li>
 <li>
-In particular, if you pass an array to a function, it
-will receive a <i>copy</i> of the array, not a pointer to it.
+Em particular, se você passar um array para uma função, ela
+receberá uma <i>cópia</i> do array, não um ponteiro para ele.
 <li>
-The size of an array is part of its type.  The types <code>[10]int</code>
-and <code>[20]int</code> are distinct.
+O tamanho de um array faz parte do seu tipo. Os tipos <code>[10]int</code>
+e <code>[20]int</code> são distintos.
 </li>
 </ul>
 
 <p>
-The value property can be useful but also expensive; if you want C-like behavior and efficiency,
-you can pass a pointer to the array.
+A propriedade de valor pode ser útil, mas também custosa; se você quiser o comportamento e a eficiência de C,
+pode passar um ponteiro para o array.
 </p>
 
 <pre>
@@ -1233,45 +1231,45 @@ x := Sum(&amp;array)  // Note the explicit address-of operator
 </pre>
 
 <p>
-But even this style isn't idiomatic Go.
-Use slices instead.
+Mesmo assim, esse estilo também não é Go idiomático.
+Use slices.
 </p>
 
 <h3 id="slices">Slices</h3>
 
 <p>
-Slices wrap arrays to give a more general, powerful, and convenient
-interface to sequences of data.  Except for items with explicit
-dimension such as transformation matrices, most array programming in
-Go is done with slices rather than simple arrays.
+Slices envolvem arrays para oferecer uma
+interface mais geral, poderosa e conveniente para sequências de dados. Exceto para itens com
+dimensão explícita, como matrizes de transformação, a maior parte da programação com arrays em
+Go é feita com slices, e não com arrays simples.
 </p>
 <p>
-Slices hold references to an underlying array, and if you assign one
-slice to another, both refer to the same array.
-If a function takes a slice argument, changes it makes to
-the elements of the slice will be visible to the caller, analogous to
-passing a pointer to the underlying array.  A <code>Read</code>
-function can therefore accept a slice argument rather than a pointer
-and a count; the length within the slice sets an upper
-limit of how much data to read.  Here is the signature of the
-<code>Read</code> method of the <code>File</code> type in package
+Slices guardam referências a um array subjacente, e, se você atribuir um
+slice a outro, ambos se referem ao mesmo array.
+Se uma função recebe um argumento slice, as mudanças que ela fizer
+nos elementos do slice ficarão visíveis para quem chamou, de forma análoga a
+passar um ponteiro para o array subjacente. Por isso, uma função <code>Read</code>
+pode aceitar um argumento slice em vez de um ponteiro
+e uma contagem; o comprimento dentro do slice define um limite máximo
+de quantos dados ler. Esta é a assinatura do
+método <code>Read</code> do tipo <code>File</code> do pacote
 <code>os</code>:
 </p>
 <pre>
 func (f *File) Read(buf []byte) (n int, err error)
 </pre>
 <p>
-The method returns the number of bytes read and an error value, if
-any.
-To read into the first 32 bytes of a larger buffer
-<code>buf</code>, <i>slice</i> (here used as a verb) the buffer.
+O método retorna o número de bytes lidos e um valor de erro, se
+houver.
+Para ler nos primeiros 32 bytes de um buffer maior
+<code>buf</code>, <i>fatie</i> (aqui usado como verbo) o buffer.
 </p>
 <pre>
     n, err := f.Read(buf[0:32])
 </pre>
 <p>
-Such slicing is common and efficient.  In fact, leaving efficiency aside for
-the moment, the following snippet would also read the first 32 bytes of the buffer.
+Esse fatiamento é comum e eficiente. Na verdade, deixando a eficiência de lado por
+enquanto, o trecho a seguir também leria os primeiros 32 bytes do buffer.
 </p>
 <pre>
     var n int
@@ -1286,15 +1284,15 @@ the moment, the following snippet would also read the first 32 bytes of the buff
     }
 </pre>
 <p>
-The length of a slice may be changed as long as it still fits within
-the limits of the underlying array; just assign it to a slice of
-itself.  The <i>capacity</i> of a slice, accessible by the built-in
-function <code>cap</code>, reports the maximum length the slice may
-assume.  Here is a function to append data to a slice.  If the data
-exceeds the capacity, the slice is reallocated.  The
-resulting slice is returned.  The function uses the fact that
-<code>len</code> and <code>cap</code> are legal when applied to the
-<code>nil</code> slice, and return 0.
+O comprimento de um slice pode ser alterado desde que ele continue cabendo
+nos limites do array subjacente; basta atribuí-lo a um slice de
+si mesmo. A <i>capacidade</i> de um slice, acessível pela função embutida
+<code>cap</code>, informa o comprimento máximo que o slice pode
+assumir. Aqui está uma função para anexar dados a um slice. Se os dados
+excederem a capacidade, o slice é realocado. O
+slice resultante é retornado. A função usa o fato de que
+<code>len</code> e <code>cap</code> são válidos quando aplicados ao
+slice <code>nil</code>, e retornam 0.
 </p>
 <pre>
 func Append(slice, data []byte) []byte {
@@ -1312,24 +1310,24 @@ func Append(slice, data []byte) []byte {
 }
 </pre>
 <p>
-We must return the slice afterwards because, although <code>Append</code>
-can modify the elements of <code>slice</code>, the slice itself (the run-time data
-structure holding the pointer, length, and capacity) is passed by value.
+Precisamos retornar o slice depois porque, embora <code>Append</code>
+possa modificar os elementos de <code>slice</code>, o próprio slice (a estrutura de dados em tempo de execução que guarda o ponteiro, o comprimento e a capacidade)
+é passado por valor.
 </p>
 
 <p>
-The idea of appending to a slice is so useful it's captured by the
-<code>append</code> built-in function.  To understand that function's
-design, though, we need a little more information, so we'll return
-to it later.
+A ideia de anexar a um slice é tão útil que foi incorporada à
+função embutida <code>append</code>. Para entender o projeto dessa função,
+porém, precisamos de um pouco mais de informação, então voltaremos
+a ela depois.
 </p>
 
-<h3 id="two_dimensional_slices">Two-dimensional slices</h3>
+<h3 id="two_dimensional_slices">Slices bidimensionais</h3>
 
 <p>
-Go's arrays and slices are one-dimensional.
-To create the equivalent of a 2D array or slice, it is necessary to define an array-of-arrays
-or slice-of-slices, like this:
+Os arrays e slices de Go são unidimensionais.
+Para criar o equivalente a um array ou slice 2D, é necessário definir um array de arrays
+ou um slice de slices, assim:
 </p>
 
 <pre>
@@ -1338,10 +1336,10 @@ type LinesOfText [][]byte     // A slice of byte slices.
 </pre>
 
 <p>
-Because slices are variable-length, it is possible to have each inner
-slice be a different length.
-That can be a common situation, as in our <code>LinesOfText</code>
-example: each line has an independent length.
+Como slices têm comprimento variável, é possível que cada slice interno
+tenha um comprimento diferente.
+Isso pode ser uma situação comum, como no nosso exemplo <code>LinesOfText</code>:
+cada linha tem um comprimento independente.
 </p>
 
 <pre>
@@ -1353,17 +1351,17 @@ text := LinesOfText{
 </pre>
 
 <p>
-Sometimes it's necessary to allocate a 2D slice, a situation that can arise when
-processing scan lines of pixels, for instance.
-There are two ways to achieve this.
-One is to allocate each slice independently; the other
-is to allocate a single array and point the individual slices into it.
-Which to use depends on your application.
-If the slices might grow or shrink, they should be allocated independently
-to avoid overwriting the next line; if not, it can be more efficient to construct
-the object with a single allocation.
-For reference, here are sketches of the two methods.
-First, a line at a time:
+Às vezes é necessário alocar um slice 2D, situação que pode surgir ao
+processar linhas de varredura de pixels, por exemplo.
+Há duas formas de fazer isso.
+Uma é alocar cada slice independentemente; a outra
+é alocar um único array e apontar os slices individuais para ele.
+Qual usar depende da sua aplicação.
+Se os slices puderem crescer ou encolher, devem ser alocados independentemente
+para não sobrescrever a linha seguinte; se não, pode ser mais eficiente construir
+o objeto com uma única alocação.
+Para referência, seguem esboços dos dois métodos.
+Primeiro, uma linha por vez:
 </p>
 
 <pre>
@@ -1376,7 +1374,7 @@ for i := range picture {
 </pre>
 
 <p>
-And now as one allocation, sliced into lines:
+E agora como uma única alocação, fatiada em linhas:
 </p>
 
 <pre>
@@ -1393,25 +1391,25 @@ for i := range picture {
 <h3 id="maps">Maps</h3>
 
 <p>
-Maps are a convenient and powerful built-in data structure that associate
-values of one type (the <em>key</em>) with values of another type
-(the <em>element</em> or <em>value</em>).
-The key can be of any type for which the equality operator is defined,
-such as integers,
-floating point and complex numbers,
-strings, pointers, interfaces (as long as the dynamic type
-supports equality), structs and arrays.
-Slices cannot be used as map keys,
-because equality is not defined on them.
-Like slices, maps hold references to an underlying data structure.
-If you pass a map to a function
-that changes the contents of the map, the changes will be visible
-in the caller.
+Maps são uma estrutura de dados embutida, conveniente e poderosa, que associa
+valores de um tipo (a <em>chave</em>) a valores de outro tipo
+(o <em>elemento</em> ou <em>valor</em>).
+A chave pode ser de qualquer tipo para o qual o operador de igualdade esteja definido,
+como inteiros,
+números de ponto flutuante e complexos,
+strings, ponteiros, interfaces (desde que o tipo dinâmico
+suporte igualdade), structs e arrays.
+Slices não podem ser usados como chaves de map,
+porque a igualdade não é definida para eles.
+Assim como os slices, os maps guardam referências a uma estrutura de dados subjacente.
+Se você passar um map para uma função
+que altera o conteúdo do map, as mudanças ficarão visíveis
+para quem chamou.
 </p>
 <p>
-Maps can be constructed using the usual composite literal syntax
-with colon-separated key-value pairs,
-so it's easy to build them during initialization.
+Maps podem ser construídos com a sintaxe usual de literais compostos
+com pares chave-valor separados por dois-pontos,
+então é fácil construí-los durante a inicialização.
 </p>
 <pre>
 var timeZone = map[string]int{
@@ -1423,22 +1421,21 @@ var timeZone = map[string]int{
 }
 </pre>
 <p>
-Assigning and fetching map values looks syntactically just like
-doing the same for arrays and slices except that the index doesn't
-need to be an integer.
+Atribuir e buscar valores de map tem a mesma sintaxe de fazer o mesmo com arrays e slices,
+exceto que o índice não precisa ser um inteiro.
 </p>
 <pre>
 offset := timeZone["EST"]
 </pre>
 <p>
-An attempt to fetch a map value with a key that
-is not present in the map will return the zero value for the type
-of the entries
-in the map.  For instance, if the map contains integers, looking
-up a non-existent key will return <code>0</code>.
-A set can be implemented as a map with value type <code>bool</code>.
-Set the map entry to <code>true</code> to put the value in the set, and then
-test it by simple indexing.
+Uma tentativa de buscar um valor de map com uma chave que
+não está presente no map retorna o valor zero do tipo
+das entradas
+do map. Por exemplo, se o map contiver inteiros, consultar
+uma chave inexistente retorna <code>0</code>.
+Um conjunto (set) pode ser implementado como um map com tipo de valor <code>bool</code>.
+Atribua <code>true</code> à entrada do map para colocar o valor no conjunto e, em seguida,
+teste-o com uma indexação simples.
 </p>
 <pre>
 attended := map[string]bool{
@@ -1452,10 +1449,10 @@ if attended[person] { // will be false if person is not in the map
 }
 </pre>
 <p>
-Sometimes you need to distinguish a missing entry from
-a zero value.  Is there an entry for <code>"UTC"</code>
-or is that 0 because it's not in the map at all?
-You can discriminate with a form of multiple assignment.
+Às vezes você precisa distinguir uma entrada ausente de
+um valor zero. Existe uma entrada para <code>"UTC"</code>
+ou esse 0 está ali porque ela não está no map?
+Você pode distinguir isso com uma forma de atribuição múltipla.
 </p>
 <pre>
 var seconds int
@@ -1463,12 +1460,12 @@ var ok bool
 seconds, ok = timeZone[tz]
 </pre>
 <p>
-For obvious reasons this is called the &ldquo;comma ok&rdquo; idiom.
-In this example, if <code>tz</code> is present, <code>seconds</code>
-will be set appropriately and <code>ok</code> will be true; if not,
-<code>seconds</code> will be set to zero and <code>ok</code> will
-be false.
-Here's a function that puts it together with a nice error report:
+Por razões óbvias, isso é chamado de idioma &ldquo;vírgula ok&rdquo;.
+Neste exemplo, se <code>tz</code> estiver presente, <code>seconds</code>
+será definido adequadamente e <code>ok</code> será verdadeiro; se não,
+<code>seconds</code> será definido como zero e <code>ok</code> será
+falso.
+Aqui está uma função que junta tudo com um bom relatório de erro:
 </p>
 <pre>
 func offset(tz string) int {
@@ -1480,41 +1477,41 @@ func offset(tz string) int {
 }
 </pre>
 <p>
-To test for presence in the map without worrying about the actual value,
-you can use the <a href="#blank">blank identifier</a> (<code>_</code>)
-in place of the usual variable for the value.
+Para testar a presença no map sem se preocupar com o valor em si,
+você pode usar o <a href="#blank">identificador em branco</a> (<code>_</code>)
+no lugar da variável usual do valor.
 </p>
 <pre>
 _, present := timeZone[tz]
 </pre>
 <p>
-To delete a map entry, use the <code>delete</code>
-built-in function, whose arguments are the map and the key to be deleted.
-It's safe to do this even if the key is already absent
-from the map.
+Para remover uma entrada de map, use a função embutida <code>delete</code>,
+cujos argumentos são o map e a chave a ser removida.
+É seguro fazer isso mesmo que a chave já esteja ausente
+do map.
 </p>
 <pre>
 delete(timeZone, "PDT")  // Now on Standard Time
 </pre>
 
-<h3 id="printing">Printing</h3>
+<h3 id="printing">Impressão</h3>
 
 <p>
-Formatted printing in Go uses a style similar to C's <code>printf</code>
-family but is richer and more general. The functions live in the <code>fmt</code>
-package and have capitalized names: <code>fmt.Printf</code>, <code>fmt.Fprintf</code>,
-<code>fmt.Sprintf</code> and so on.  The string functions (<code>Sprintf</code> etc.)
-return a string rather than filling in a provided buffer.
+A impressão formatada em Go usa um estilo semelhante ao da família
+<code>printf</code> de C, mas é mais rica e mais geral. As funções ficam no pacote <code>fmt</code>
+e têm nomes com inicial maiúscula: <code>fmt.Printf</code>, <code>fmt.Fprintf</code>,
+<code>fmt.Sprintf</code> e assim por diante. As funções de string (<code>Sprintf</code> etc.)
+retornam uma string em vez de preencher um buffer fornecido.
 </p>
 <p>
-You don't need to provide a format string.  For each of <code>Printf</code>,
-<code>Fprintf</code> and <code>Sprintf</code> there is another pair
-of functions, for instance <code>Print</code> and <code>Println</code>.
-These functions do not take a format string but instead generate a default
-format for each argument. The <code>Println</code> versions also insert a blank
-between arguments and append a newline to the output while
-the <code>Print</code> versions add blanks only if the operand on neither side is a string.
-In this example each line produces the same output.
+Você não precisa fornecer uma string de formato. Para cada um de <code>Printf</code>,
+<code>Fprintf</code> e <code>Sprintf</code> existe outro conjunto
+de funções, por exemplo <code>Print</code> e <code>Println</code>.
+Essas funções não recebem uma string de formato, mas geram um formato padrão
+para cada argumento. As versões <code>Println</code> também inserem um espaço
+entre os argumentos e acrescentam uma quebra de linha à saída, enquanto
+as versões <code>Print</code> só adicionam espaços quando nenhum dos operandos vizinhos é uma string.
+Neste exemplo, cada linha produz a mesma saída.
 </p>
 <pre>
 fmt.Printf("Hello %d\n", 23)
@@ -1523,49 +1520,49 @@ fmt.Println("Hello", 23)
 fmt.Println(fmt.Sprint("Hello ", 23))
 </pre>
 <p>
-The formatted print functions <code>fmt.Fprint</code>
-and friends take as a first argument any object
-that implements the <code>io.Writer</code> interface; the variables <code>os.Stdout</code>
-and <code>os.Stderr</code> are familiar instances.
+As funções de impressão formatada, como <code>fmt.Fprint</code>
+e similares, recebem como primeiro argumento qualquer objeto
+que implemente a interface <code>io.Writer</code>; as variáveis <code>os.Stdout</code>
+e <code>os.Stderr</code> são exemplos conhecidos.
 </p>
 <p>
-Here things start to diverge from C.  First, the numeric formats such as <code>%d</code>
-do not take flags for signedness or size; instead, the printing routines use the
-type of the argument to decide these properties.
+Aqui as coisas começam a divergir de C. Primeiro, os formatos numéricos, como <code>%d</code>,
+não recebem flags de sinal ou tamanho; em vez disso, as rotinas de impressão usam o
+tipo do argumento para decidir essas propriedades.
 </p>
 <pre>
 var x uint64 = 1&lt;&lt;64 - 1
 fmt.Printf("%d %x; %d %x\n", x, x, int64(x), int64(x))
 </pre>
 <p>
-prints
+imprime
 </p>
 <pre>
 18446744073709551615 ffffffffffffffff; -1 -1
 </pre>
 <p>
-If you just want the default conversion, such as decimal for integers, you can use
-the catchall format <code>%v</code> (for &ldquo;value&rdquo;); the result is exactly
-what <code>Print</code> and <code>Println</code> would produce.
-Moreover, that format can print <em>any</em> value, even arrays, slices, structs, and
-maps.  Here is a print statement for the time zone map defined in the previous section.
+Se você quiser apenas a conversão padrão, como decimal para inteiros, pode usar
+o formato genérico <code>%v</code> (de &ldquo;valor&rdquo;); o resultado é exatamente
+o que <code>Print</code> e <code>Println</code> produziriam.
+Além disso, esse formato pode imprimir <em>qualquer</em> valor, até arrays, slices, structs e
+maps. Aqui está uma instrução de impressão para o map de fusos horários definido na seção anterior.
 </p>
 <pre>
 fmt.Printf("%v\n", timeZone)  // or just fmt.Println(timeZone)
 </pre>
 <p>
-which gives output:
+que produz a saída:
 </p>
 <pre>
 map[CST:-21600 EST:-18000 MST:-25200 PST:-28800 UTC:0]
 </pre>
 <p>
-For maps, <code>Printf</code> and friends sort the output lexicographically by key.
+Para maps, <code>Printf</code> e similares ordenam a saída lexicograficamente pela chave.
 </p>
 <p>
-When printing a struct, the modified format <code>%+v</code> annotates the
-fields of the structure with their names, and for any value the alternate
-format <code>%#v</code> prints the value in full Go syntax.
+Ao imprimir uma struct, o formato modificado <code>%+v</code> anota os
+campos da estrutura com seus nomes, e, para qualquer valor, o formato alternativo
+<code>%#v</code> imprime o valor em sintaxe Go completa.
 </p>
 <pre>
 type T struct {
@@ -1580,7 +1577,7 @@ fmt.Printf("%#v\n", t)
 fmt.Printf("%#v\n", timeZone)
 </pre>
 <p>
-prints
+imprime
 </p>
 <pre>
 &amp;{7 -2.35 abc   def}
@@ -1589,32 +1586,32 @@ prints
 map[string]int{"CST":-21600, "EST":-18000, "MST":-25200, "PST":-28800, "UTC":0}
 </pre>
 <p>
-(Note the ampersands.)
-That quoted string format is also available through <code>%q</code> when
-applied to a value of type <code>string</code> or <code>[]byte</code>.
-The alternate format <code>%#q</code> will use backquotes instead if possible.
-(The <code>%q</code> format also applies to integers and runes, producing a
-single-quoted rune constant.)
-Also, <code>%x</code> works on strings, byte arrays and byte slices as well as
-on integers, generating a long hexadecimal string, and with
-a space in the format (<code>%&nbsp;x</code>) it puts spaces between the bytes.
+(Observe os e comerciais.)
+Esse formato de string entre aspas também está disponível por meio de <code>%q</code> quando
+aplicado a um valor do tipo <code>string</code> ou <code>[]byte</code>.
+O formato alternativo <code>%#q</code> usará crases, se possível.
+(O formato <code>%q</code> também se aplica a inteiros e runas, produzindo uma
+constante de runa entre aspas simples.)
+Além disso, <code>%x</code> funciona com strings, arrays de bytes e slices de bytes, assim como
+com inteiros, gerando uma longa string hexadecimal, e, com
+um espaço no formato (<code>%&nbsp;x</code>), ele coloca espaços entre os bytes.
 </p>
 <p>
-Another handy format is <code>%T</code>, which prints the <em>type</em> of a value.
+Outro formato útil é <code>%T</code>, que imprime o <em>tipo</em> de um valor.
 </p>
 <pre>
 fmt.Printf(&quot;%T\n&quot;, timeZone)
 </pre>
 <p>
-prints
+imprime
 </p>
 <pre>
 map[string]int
 </pre>
 <p>
-If you want to control the default format for a custom type, all that's required is to define
-a method with the signature <code>String() string</code> on the type.
-For our simple type <code>T</code>, that might look like this.
+Se você quiser controlar o formato padrão de um tipo personalizado, basta definir
+um método com a assinatura <code>String() string</code> no tipo.
+Para o nosso tipo simples <code>T</code>, isso poderia ficar assim.
 </p>
 <pre>
 func (t *T) String() string {
@@ -1623,28 +1620,28 @@ func (t *T) String() string {
 fmt.Printf("%v\n", t)
 </pre>
 <p>
-to print in the format
+para imprimir no formato
 </p>
 <pre>
 7/-2.35/"abc\tdef"
 </pre>
 <p>
-(If you need to print <em>values</em> of type <code>T</code> as well as pointers to <code>T</code>,
-the receiver for <code>String</code> must be of value type; this example used a pointer because
-that's more efficient and idiomatic for struct types.
-See the section below on <a href="#pointers_vs_values">pointers vs. value receivers</a> for more information.)
+(Se você precisar imprimir <em>valores</em> do tipo <code>T</code> e também ponteiros para <code>T</code>,
+o receptor de <code>String</code> precisa ser do tipo valor; este exemplo usou um ponteiro porque
+isso é mais eficiente e idiomático para tipos struct.
+Veja a seção abaixo sobre <a href="#pointers_vs_values">ponteiros versus receptores por valor</a> para mais informações.)
 </p>
 
 <p>
-Our <code>String</code> method is able to call <code>Sprintf</code> because the
-print routines are fully reentrant and can be wrapped this way.
-There is one important detail to understand about this approach,
-however: don't construct a <code>String</code> method by calling
-<code>Sprintf</code> in a way that will recur into your <code>String</code>
-method indefinitely.  This can happen if the <code>Sprintf</code>
-call attempts to print the receiver directly as a string, which in
-turn will invoke the method again.  It's a common and easy mistake
-to make, as this example shows.
+Nosso método <code>String</code> consegue chamar <code>Sprintf</code> porque as
+rotinas de impressão são totalmente reentrantes e podem ser encapsuladas dessa forma.
+Há, porém, um detalhe importante a entender sobre essa abordagem:
+não construa um método <code>String</code> chamando
+<code>Sprintf</code> de um jeito que volte a chamar o seu método <code>String</code>
+indefinidamente. Isso pode acontecer se a chamada a <code>Sprintf</code>
+tentar imprimir o receptor diretamente como string, o que, por sua vez,
+invocará o método de novo. É um erro comum e fácil de cometer,
+como mostra este exemplo.
 </p>
 
 <pre>
@@ -1656,8 +1653,8 @@ func (m MyString) String() string {
 </pre>
 
 <p>
-It's also easy to fix: convert the argument to the basic string type, which does not have the
-method.
+Também é fácil de corrigir: converta o argumento para o tipo básico string, que não tem o
+método.
 </p>
 
 <pre>
@@ -1668,25 +1665,25 @@ func (m MyString) String() string {
 </pre>
 
 <p>
-In the <a href="#initialization">initialization section</a> we'll see another technique that avoids this recursion.
+Na <a href="#initialization">seção de inicialização</a> veremos outra técnica que evita essa recursão.
 </p>
 
 <p>
-Another printing technique is to pass a print routine's arguments directly to another such routine.
-The signature of <code>Printf</code> uses the type <code>...interface{}</code>
-for its final argument to specify that an arbitrary number of parameters (of arbitrary type)
-can appear after the format.
+Outra técnica de impressão é passar os argumentos de uma rotina de impressão diretamente para outra rotina semelhante.
+A assinatura de <code>Printf</code> usa o tipo <code>...interface{}</code>
+para o último argumento, especificando que um número arbitrário de parâmetros (de tipo arbitrário)
+pode aparecer depois do formato.
 </p>
 <pre>
 func Printf(format string, v ...interface{}) (n int, err error) {
 </pre>
 <p>
-Within the function <code>Printf</code>, <code>v</code> acts like a variable of type
-<code>[]interface{}</code> but if it is passed to another variadic function, it acts like
-a regular list of arguments.
-Here is the implementation of the
-function <code>log.Println</code> we used above. It passes its arguments directly to
-<code>fmt.Sprintln</code> for the actual formatting.
+Dentro da função <code>Printf</code>, <code>v</code> se comporta como uma variável do tipo
+<code>[]interface{}</code>, mas, se for passada a outra função variádica, se comporta como uma
+lista comum de argumentos.
+Aqui está a implementação da
+função <code>log.Println</code> que usamos acima. Ela passa seus argumentos diretamente para
+<code>fmt.Sprintln</code>, que faz a formatação de fato.
 </p>
 <pre>
 // Println prints to the standard logger in the manner of fmt.Println.
@@ -1695,17 +1692,17 @@ func Println(v ...interface{}) {
 }
 </pre>
 <p>
-We write <code>...</code> after <code>v</code> in the nested call to <code>Sprintln</code> to tell the
-compiler to treat <code>v</code> as a list of arguments; otherwise it would just pass
-<code>v</code> as a single slice argument.
+Escrevemos <code>...</code> depois de <code>v</code> na chamada aninhada a <code>Sprintln</code> para dizer ao
+compilador que trate <code>v</code> como uma lista de argumentos; caso contrário, ele apenas passaria
+<code>v</code> como um único argumento do tipo slice.
 </p>
 <p>
-There's even more to printing than we've covered here.  See the <code>godoc</code> documentation
-for package <code>fmt</code> for the details.
+Há ainda mais coisas sobre impressão do que as que cobrimos aqui. Veja a documentação do
+<code>godoc</code> do pacote <code>fmt</code> para os detalhes.
 </p>
 <p>
-By the way, a <code>...</code> parameter can be of a specific type, for instance <code>...int</code>
-for a min function that chooses the least of a list of integers:
+A propósito, um parâmetro <code>...</code> pode ser de um tipo específico, por exemplo <code>...int</code>
+para uma função min que escolhe o menor de uma lista de inteiros:
 </p>
 <pre>
 func Min(a ...int) int {
@@ -1721,26 +1718,26 @@ func Min(a ...int) int {
 
 <h3 id="append">Append</h3>
 <p>
-Now we have the missing piece we needed to explain the design of
-the <code>append</code> built-in function.  The signature of <code>append</code>
-is different from our custom <code>Append</code> function above.
-Schematically, it's like this:
+Agora temos a peça que faltava para explicar o projeto da
+função embutida <code>append</code>. A assinatura de <code>append</code>
+é diferente da nossa função <code>Append</code> personalizada acima.
+Esquematicamente, ela é assim:
 </p>
 <pre>
 func append(slice []<i>T</i>, elements ...<i>T</i>) []<i>T</i>
 </pre>
 <p>
-where <i>T</i> is a placeholder for any given type.  You can't
-actually write a function in Go where the type <code>T</code>
-is determined by the caller.
-That's why <code>append</code> is built in: it needs support from the
-compiler.
+onde <i>T</i> é um marcador para qualquer tipo dado. Você não consegue
+de fato escrever em Go uma função em que o tipo <code>T</code>
+seja determinado por quem chama.
+Por isso <code>append</code> é embutida: ela precisa de suporte do
+compilador.
 </p>
 <p>
-What <code>append</code> does is append the elements to the end of
-the slice and return the result.  The result needs to be returned
-because, as with our hand-written <code>Append</code>, the underlying
-array may change.  This simple example
+O que <code>append</code> faz é anexar os elementos ao final do
+slice e retornar o resultado. O resultado precisa ser retornado
+porque, assim como na nossa <code>Append</code> escrita à mão, o array subjacente
+pode mudar. Este exemplo simples
 </p>
 <pre>
 x := []int{1,2,3}
@@ -1748,15 +1745,15 @@ x = append(x, 4, 5, 6)
 fmt.Println(x)
 </pre>
 <p>
-prints <code>[1 2 3 4 5 6]</code>.  So <code>append</code> works a
-little like <code>Printf</code>, collecting an arbitrary number of
-arguments.
+imprime <code>[1 2 3 4 5 6]</code>. Assim, <code>append</code> funciona um
+pouco como <code>Printf</code>, coletando um número arbitrário de
+argumentos.
 </p>
 <p>
-But what if we wanted to do what our <code>Append</code> does and
-append a slice to a slice?  Easy: use <code>...</code> at the call
-site, just as we did in the call to <code>Output</code> above.  This
-snippet produces identical output to the one above.
+Mas e se quiséssemos fazer o que a nossa <code>Append</code> faz e
+anexar um slice a outro slice? Fácil: use <code>...</code> no ponto de
+chamada, assim como fizemos na chamada a <code>Output</code> acima. Este
+trecho produz a mesma saída do anterior.
 </p>
 <pre>
 x := []int{1,2,3}
@@ -1765,71 +1762,70 @@ x = append(x, y...)
 fmt.Println(x)
 </pre>
 <p>
-Without that <code>...</code>, it wouldn't compile because the types
-would be wrong; <code>y</code> is not of type <code>int</code>.
+Sem esse <code>...</code>, não compilaria, porque os tipos
+estariam errados; <code>y</code> não é do tipo <code>int</code>.
 </p>
 
-<h2 id="initialization">Initialization</h2>
+<h2 id="initialization">Inicialização</h2>
 
 <p>
-Although it doesn't look superficially very different from
-initialization in C or C++, initialization in Go is more powerful.
-Complex structures can be built during initialization and the ordering
-issues among initialized objects, even among different packages, are handled
-correctly.
+Embora, à primeira vista, não pareça muito diferente da
+inicialização em C ou C++, a inicialização em Go é mais poderosa.
+Estruturas complexas podem ser construídas durante a inicialização, e as questões
+de ordem entre objetos inicializados, mesmo entre pacotes diferentes, são tratadas
+corretamente.
 </p>
 
-<h3 id="constants">Constants</h3>
+<h3 id="constants">Constantes</h3>
 
 <p>
-Constants in Go are just that&mdash;constant.
-They are created at compile time, even when defined as
-locals in functions,
-and can only be numbers, characters (runes), strings or booleans.
-Because of the compile-time restriction, the expressions
-that define them must be constant expressions,
-evaluatable by the compiler.  For instance,
-<code>1&lt;&lt;3</code> is a constant expression, while
-<code>math.Sin(math.Pi/4)</code> is not because
-the function call to <code>math.Sin</code> needs
-to happen at run time.
+Constantes em Go são exatamente isso: constantes.
+Elas são criadas em tempo de compilação, mesmo quando definidas como
+variáveis locais em funções,
+e só podem ser números, caracteres (runas), strings ou booleanos.
+Por causa da restrição de tempo de compilação, as expressões
+que as definem precisam ser expressões constantes,
+avaliáveis pelo compilador. Por exemplo,
+<code>1&lt;&lt;3</code> é uma expressão constante, enquanto
+<code>math.Sin(math.Pi/4)</code> não é, porque
+a chamada de função a <code>math.Sin</code> precisa
+acontecer em tempo de execução.
 </p>
 
 <p>
-In Go, enumerated constants are created using the <code>iota</code>
-enumerator.  Since <code>iota</code> can be part of an expression and
-expressions can be implicitly repeated, it is easy to build intricate
-sets of values.
+Em Go, constantes enumeradas são criadas com o enumerador
+<code>iota</code>. Como <code>iota</code> pode fazer parte de uma expressão e
+expressões podem ser repetidas implicitamente, é fácil construir
+conjuntos complexos de valores.
 </p>
 {{code "/doc/progs/eff_bytesize.go" `/^type ByteSize/` `/^\)/`}}
 <p>
-The ability to attach a method such as <code>String</code> to any
-user-defined type makes it possible for arbitrary values to format themselves
-automatically for printing.
-Although you'll see it most often applied to structs, this technique is also useful for
-scalar types such as floating-point types like <code>ByteSize</code>.
+A capacidade de anexar um método como <code>String</code> a qualquer
+tipo definido pelo usuário torna possível que valores arbitrários se formatem
+automaticamente para impressão.
+Embora você veja isso com mais frequência aplicado a structs, essa técnica também é útil para
+tipos escalares, como os de ponto flutuante, por exemplo <code>ByteSize</code>.
 </p>
 {{code "/doc/progs/eff_bytesize.go" `/^func.*ByteSize.*String/` `/^}/`}}
 <p>
-The expression <code>YB</code> prints as <code>1.00YB</code>,
-while <code>ByteSize(1e13)</code> prints as <code>9.09TB</code>.
+A expressão <code>YB</code> é impressa como <code>1.00YB</code>,
+enquanto <code>ByteSize(1e13)</code> é impresso como <code>9.09TB</code>.
 </p>
 
 <p>
-The use here of <code>Sprintf</code>
-to implement <code>ByteSize</code>'s <code>String</code> method is safe
-(avoids recurring indefinitely) not because of a conversion but
-because it calls <code>Sprintf</code> with <code>%f</code>,
-which is not a string format: <code>Sprintf</code> will only call
-the <code>String</code> method when it wants a string, and <code>%f</code>
-wants a floating-point value.
+O uso de <code>Sprintf</code> aqui para implementar o método <code>String</code> de <code>ByteSize</code>
+é seguro (evita a recursão infinita) não por causa de uma conversão, mas
+porque chama <code>Sprintf</code> com <code>%f</code>,
+que não é um formato de string: <code>Sprintf</code> só vai
+chamar o método <code>String</code> quando quiser uma string, e <code>%f</code>
+quer um valor de ponto flutuante.
 </p>
 
-<h3 id="variables">Variables</h3>
+<h3 id="variables">Variáveis</h3>
 
 <p>
-Variables can be initialized just like constants but the
-initializer can be a general expression computed at run time.
+Variáveis podem ser inicializadas da mesma forma que constantes, mas o
+inicializador pode ser uma expressão geral calculada em tempo de execução.
 </p>
 <pre>
 var (
@@ -1839,21 +1835,20 @@ var (
 )
 </pre>
 
-<h3 id="init">The init function</h3>
+<h3 id="init">A função init</h3>
 
 <p>
-Finally, each source file can define its own niladic <code>init</code> function to
-set up whatever state is required.  (Actually each file can have multiple
-<code>init</code> functions.)
-And finally means finally: <code>init</code> is called after all the
-variable declarations in the package have evaluated their initializers,
-and those are evaluated only after all the imported packages have been
-initialized.
+Por fim, cada arquivo-fonte pode definir sua própria função <code>init</code>, sem parâmetros, para
+preparar o estado que for necessário. (Na verdade, cada arquivo pode ter várias
+funções <code>init</code>.)
+E "por fim" quer dizer por fim mesmo: <code>init</code> é chamada depois que todas as
+declarações de variáveis do pacote avaliaram seus inicializadores, e estas só são avaliadas depois que todos os
+pacotes importados foram inicializados.
 </p>
 <p>
-Besides initializations that cannot be expressed as declarations,
-a common use of <code>init</code> functions is to verify or repair
-correctness of the program state before real execution begins.
+Além das inicializações que não podem ser expressas como declarações,
+um uso comum das funções <code>init</code> é verificar ou corrigir a
+consistência do estado do programa antes de a execução de fato começar.
 </p>
 
 <pre>
@@ -1872,19 +1867,19 @@ func init() {
 }
 </pre>
 
-<h2 id="methods">Methods</h2>
+<h2 id="methods">Métodos</h2>
 
-<h3 id="pointers_vs_values">Pointers vs. Values</h3>
+<h3 id="pointers_vs_values">Ponteiros versus valores</h3>
 <p>
-As we saw with <code>ByteSize</code>,
-methods can be defined for any named type (except a pointer or an interface);
-the receiver does not have to be a struct.
+Como vimos com <code>ByteSize</code>,
+métodos podem ser definidos para qualquer tipo nomeado (exceto um ponteiro ou uma interface);
+o receptor não precisa ser uma struct.
 </p>
 <p>
-In the discussion of slices above, we wrote an <code>Append</code>
-function.  We can define it as a method on slices instead.  To do
-this, we first declare a named type to which we can bind the method, and
-then make the receiver for the method a value of that type.
+Na discussão sobre slices acima, escrevemos uma função <code>Append</code>.
+Podemos defini-la como um método em slices. Para isso,
+primeiro declaramos um tipo nomeado ao qual possamos vincular o método, e
+depois tornamos o receptor do método um valor desse tipo.
 </p>
 <pre>
 type ByteSlice []byte
@@ -1894,10 +1889,10 @@ func (slice ByteSlice) Append(data []byte) []byte {
 }
 </pre>
 <p>
-This still requires the method to return the updated slice.  We can
-eliminate that clumsiness by redefining the method to take a
-<i>pointer</i> to a <code>ByteSlice</code> as its receiver, so the
-method can overwrite the caller's slice.
+Isso ainda exige que o método retorne o slice atualizado. Podemos
+eliminar essa desajeitação redefinindo o método para receber, como receptor,
+um <i>ponteiro</i> para <code>ByteSlice</code>, de modo que o
+método possa sobrescrever o slice de quem chamou.
 </p>
 <pre>
 func (p *ByteSlice) Append(data []byte) {
@@ -1907,8 +1902,8 @@ func (p *ByteSlice) Append(data []byte) {
 }
 </pre>
 <p>
-In fact, we can do even better.  If we modify our function so it looks
-like a standard <code>Write</code> method, like this,
+Na verdade, podemos fazer ainda melhor. Se modificarmos nossa função para que ela pareça
+com um método <code>Write</code> padrão, assim,
 </p>
 <pre>
 func (p *ByteSlice) Write(data []byte) (n int, err error) {
@@ -1919,73 +1914,73 @@ func (p *ByteSlice) Write(data []byte) (n int, err error) {
 }
 </pre>
 <p>
-then the type <code>*ByteSlice</code> satisfies the standard interface
-<code>io.Writer</code>, which is handy.  For instance, we can
-print into one.
+então o tipo <code>*ByteSlice</code> satisfaz a interface padrão
+<code>io.Writer</code>, o que é útil. Por exemplo, podemos
+imprimir dentro dele.
 </p>
 <pre>
     var b ByteSlice
     fmt.Fprintf(&amp;b, "This hour has %d days\n", 7)
 </pre>
 <p>
-We pass the address of a <code>ByteSlice</code>
-because only <code>*ByteSlice</code> satisfies <code>io.Writer</code>.
-The rule about pointers vs. values for receivers is that value methods
-can be invoked on pointers and values, but pointer methods can only be
-invoked on pointers.
+Passamos o endereço de um <code>ByteSlice</code>
+porque apenas <code>*ByteSlice</code> satisfaz <code>io.Writer</code>.
+A regra sobre ponteiros versus valores para receptores é que métodos com receptor de valor
+podem ser invocados em ponteiros e valores, mas métodos com receptor de ponteiro só podem ser
+invocados em ponteiros.
 </p>
 
 <p>
-This rule arises because pointer methods can modify the receiver; invoking
-them on a value would cause the method to receive a copy of the value, so
-any modifications would be discarded.
-The language therefore disallows this mistake.
-There is a handy exception, though. When the value is addressable, the
-language takes care of the common case of invoking a pointer method on a
-value by inserting the address operator automatically.
-In our example, the variable <code>b</code> is addressable, so we can call
-its <code>Write</code> method with just <code>b.Write</code>. The compiler
-will rewrite that to <code>(&amp;b).Write</code> for us.
+Essa regra existe porque métodos com ponteiro podem modificar o receptor; invocá-los sobre um valor
+faria o método receber uma cópia do valor, então quaisquer
+modificações seriam descartadas.
+Por isso a linguagem proíbe esse erro.
+Há, porém, uma exceção útil. Quando o valor é endereçável, a
+linguagem cuida do caso comum de invocar um método com ponteiro sobre um
+valor, inserindo automaticamente o operador de endereço.
+No nosso exemplo, a variável <code>b</code> é endereçável, então podemos chamar
+o método <code>Write</code> dela apenas com <code>b.Write</code>. O compilador
+reescreve isso para <code>(&amp;b).Write</code> para nós.
 </p>
 
 <p>
-By the way, the idea of using <code>Write</code> on a slice of bytes
-is central to the implementation of <code>bytes.Buffer</code>.
+A propósito, a ideia de usar <code>Write</code> sobre um slice de bytes
+é central para a implementação de <code>bytes.Buffer</code>.
 </p>
 
-<h2 id="interfaces_and_types">Interfaces and other types</h2>
+<h2 id="interfaces_and_types">Interfaces e outros tipos</h2>
 
 <h3 id="interfaces">Interfaces</h3>
 <p>
-Interfaces in Go provide a way to specify the behavior of an
-object: if something can do <em>this</em>, then it can be used
-<em>here</em>.  We've seen a couple of simple examples already;
-custom printers can be implemented by a <code>String</code> method
-while <code>Fprintf</code> can generate output to anything
-with a <code>Write</code> method.
-Interfaces with only one or two methods are common in Go code, and are
-usually given a name derived from the method, such as <code>io.Writer</code>
-for something that implements <code>Write</code>.
+Interfaces em Go oferecem uma forma de especificar o comportamento de um
+objeto: se algo pode fazer <em>isto</em>, então ele pode ser usado
+<em>aqui</em>. Já vimos alguns exemplos simples;
+impressores personalizados podem ser implementados por um método <code>String</code>,
+enquanto <code>Fprintf</code> pode gerar saída para qualquer coisa
+com um método <code>Write</code>.
+Interfaces com apenas um ou dois métodos são comuns no código Go, e normalmente
+recebem um nome derivado do método, como <code>io.Writer</code>
+para algo que implementa <code>Write</code>.
 </p>
 <p>
-A type can implement multiple interfaces.
-For instance, a collection can be sorted
-by the routines in package <code>sort</code> if it implements
-<code>sort.Interface</code>, which contains <code>Len()</code>,
-<code>Less(i, j int) bool</code>, and <code>Swap(i, j int)</code>,
-and it could also have a custom formatter.
-In this contrived example <code>Sequence</code> satisfies both.
+Um tipo pode implementar várias interfaces.
+Por exemplo, uma coleção pode ser ordenada
+pelas rotinas do pacote <code>sort</code> se implementar
+<code>sort.Interface</code>, que contém <code>Len()</code>,
+<code>Less(i, j int) bool</code> e <code>Swap(i, j int)</code>,
+e também poderia ter um formatador personalizado.
+Neste exemplo artificial, <code>Sequence</code> satisfaz as duas.
 </p>
 {{code "/doc/progs/eff_sequence.go" `/^type/` "$"}}
 
-<h3 id="conversions">Conversions</h3>
+<h3 id="conversions">Conversões</h3>
 
 <p>
-The <code>String</code> method of <code>Sequence</code> is recreating the
-work that <code>Sprint</code> already does for slices.
-(It also has complexity O(N²), which is poor.) We can share the
-effort (and also speed it up) if we convert the <code>Sequence</code> to a plain
-<code>[]int</code> before calling <code>Sprint</code>.
+O método <code>String</code> de <code>Sequence</code> está refazendo o
+trabalho que <code>Sprint</code> já faz para slices.
+(Ele também tem complexidade O(N²), o que é ruim.) Podemos dividir o
+esforço (e ainda acelerar) se convertermos o <code>Sequence</code> para um
+<code>[]int</code> simples antes de chamar <code>Sprint</code>.
 </p>
 <pre>
 func (s Sequence) String() string {
@@ -1995,21 +1990,21 @@ func (s Sequence) String() string {
 }
 </pre>
 <p>
-This method is another example of the conversion technique for calling
-<code>Sprintf</code> safely from a <code>String</code> method.
-Because the two types (<code>Sequence</code> and <code>[]int</code>)
-are the same if we ignore the type name, it's legal to convert between them.
-The conversion doesn't create a new value, it just temporarily acts
-as though the existing value has a new type.
-(There are other legal conversions, such as from integer to floating point, that
-do create a new value.)
+Este método é outro exemplo da técnica de conversão para chamar
+<code>Sprintf</code> com segurança a partir de um método <code>String</code>.
+Como os dois tipos (<code>Sequence</code> e <code>[]int</code>)
+são iguais se ignorarmos o nome do tipo, é válido converter entre eles.
+A conversão não cria um novo valor; ela apenas age temporariamente
+como se o valor existente tivesse um novo tipo.
+(Há outras conversões válidas, como de inteiro para ponto flutuante, que
+criam um novo valor.)
 </p>
 <p>
-It's an idiom in Go programs to convert the
-type of an expression to access a different
-set of methods. As an example, we could use the existing
-type <code>sort.IntSlice</code> to reduce the entire example
-to this:
+É um idioma em programas Go converter o
+tipo de uma expressão para acessar um conjunto
+diferente de métodos. Como exemplo, poderíamos usar o tipo existente
+<code>sort.IntSlice</code> para reduzir todo o exemplo
+a isto:
 </p>
 <pre>
 type Sequence []int
@@ -2022,22 +2017,22 @@ func (s Sequence) String() string {
 }
 </pre>
 <p>
-Now, instead of having <code>Sequence</code> implement multiple
-interfaces (sorting and printing), we're using the ability of a data item to be
-converted to multiple types (<code>Sequence</code>, <code>sort.IntSlice</code>
-and <code>[]int</code>), each of which does some part of the job.
-That's more unusual in practice but can be effective.
+Agora, em vez de fazer <code>Sequence</code> implementar várias
+interfaces (ordenação e impressão), estamos usando a capacidade de um item de dados ser
+convertido em vários tipos (<code>Sequence</code>, <code>sort.IntSlice</code>
+e <code>[]int</code>), cada um dos quais faz uma parte do trabalho.
+Isso é mais incomum na prática, mas pode ser eficaz.
 </p>
 
-<h3 id="interface_conversions">Interface conversions and type assertions</h3>
+<h3 id="interface_conversions">Conversões de interface e asserções de tipo</h3>
 
 <p>
-<a href="#type_switch">Type switches</a> are a form of conversion: they take an interface and, for
-each case in the switch, in a sense convert it to the type of that case.
-Here's a simplified version of how the code under <code>fmt.Printf</code> turns a value into
-a string using a type switch.
-If it's already a string, we want the actual string value held by the interface, while if it has a
-<code>String</code> method we want the result of calling the method.
+<a href="#type_switch">Switches de tipo</a> são uma forma de conversão: eles recebem uma interface e, para
+cada caso do switch, em certo sentido a convertem para o tipo desse caso.
+Aqui está uma versão simplificada de como o código sob <code>fmt.Printf</code> transforma um valor em
+uma string usando um switch de tipo.
+Se já for uma string, queremos o valor de string real guardado pela interface; se tiver um
+método <code>String</code>, queremos o resultado da chamada do método.
 </p>
 
 <pre>
@@ -2055,17 +2050,17 @@ case Stringer:
 </pre>
 
 <p>
-The first case finds a concrete value; the second converts the interface into another interface.
-It's perfectly fine to mix types this way.
+O primeiro caso encontra um valor concreto; o segundo converte a interface em outra interface.
+É perfeitamente válido misturar tipos dessa forma.
 </p>
 
 <p>
-What if there's only one type we care about? If we know the value holds a <code>string</code>
-and we just want to extract it?
-A one-case type switch would do, but so would a <em>type assertion</em>.
-A type assertion takes an interface value and extracts from it a value of the specified explicit type.
-The syntax borrows from the clause opening a type switch, but with an explicit
-type rather than the <code>type</code> keyword:
+E se houver apenas um tipo que nos interessa? Se soubermos que o valor guarda uma <code>string</code>
+e quisermos apenas extraí-la?
+Um switch de tipo com um único caso serviria, mas uma <em>asserção de tipo</em> também.
+Uma asserção de tipo recebe um valor de interface e extrai dele um valor do tipo explícito especificado.
+A sintaxe toma emprestada a cláusula que abre um switch de tipo, mas com um tipo
+explícito em vez da palavra-chave <code>type</code>:
 </p>
 
 <pre>
@@ -2073,10 +2068,10 @@ value.(typeName)
 </pre>
 
 <p>
-and the result is a new value with the static type <code>typeName</code>.
-That type must either be the concrete type held by the interface, or a second interface
-type that the value can be converted to.
-To extract the string we know is in the value, we could write:
+e o resultado é um novo valor com o tipo estático <code>typeName</code>.
+Esse tipo deve ser o tipo concreto guardado pela interface, ou um segundo tipo de interface
+para o qual o valor possa ser convertido.
+Para extrair a string que sabemos estar no valor, podemos escrever:
 </p>
 
 <pre>
@@ -2084,8 +2079,8 @@ str := value.(string)
 </pre>
 
 <p>
-But if it turns out that the value does not contain a string, the program will crash with a run-time error.
-To guard against that, use the "comma, ok" idiom to test, safely, whether the value is a string:
+Mas se acontecer de o valor não conter uma string, o programa vai travar com um erro de tempo de execução.
+Para se proteger disso, use o idioma "vírgula, ok" para testar, com segurança, se o valor é uma string:
 </p>
 
 <pre>
@@ -2098,13 +2093,13 @@ if ok {
 </pre>
 
 <p>
-If the type assertion fails, <code>str</code> will still exist and be of type string, but it will have
-the zero value, an empty string.
+Se a asserção de tipo falhar, <code>str</code> continuará existindo e será do tipo string, mas terá
+o valor zero, uma string vazia.
 </p>
 
 <p>
-As an illustration of the capability, here's an <code>if</code>-<code>else</code>
-statement that's equivalent to the type switch that opened this section.
+Como ilustração da capacidade, aqui está uma instrução <code>if</code>-<code>else</code>
+equivalente ao switch de tipo que abriu esta seção.
 </p>
 
 <pre>
@@ -2115,43 +2110,43 @@ if str, ok := value.(string); ok {
 }
 </pre>
 
-<h3 id="generality">Generality</h3>
+<h3 id="generality">Generalidade</h3>
 <p>
-If a type exists only to implement an interface and will
-never have exported methods beyond that interface, there is
-no need to export the type itself.
-Exporting just the interface makes it clear the value has no
-interesting behavior beyond what is described in the
+Se um tipo existe apenas para implementar uma interface e nunca
+terá métodos exportados além dessa interface, não há
+necessidade de exportar o próprio tipo.
+Exportar apenas a interface deixa claro que o valor não tem
+nenhum comportamento interessante além do que está descrito na
 interface.
-It also avoids the need to repeat the documentation
-on every instance of a common method.
+Isso também evita a necessidade de repetir a documentação
+em cada instância de um método comum.
 </p>
 <p>
-In such cases, the constructor should return an interface value
-rather than the implementing type.
-As an example, in the hash libraries
-both <code>crc32.NewIEEE</code> and <code>adler32.New</code>
-return the interface type <code>hash.Hash32</code>.
-Substituting the CRC-32 algorithm for Adler-32 in a Go program
-requires only changing the constructor call;
-the rest of the code is unaffected by the change of algorithm.
+Nesses casos, o construtor deve retornar um valor de interface
+em vez do tipo que implementa a interface.
+Por exemplo, nas bibliotecas de hash,
+tanto <code>crc32.NewIEEE</code> quanto <code>adler32.New</code>
+retornam o tipo de interface <code>hash.Hash32</code>.
+Trocar o algoritmo CRC-32 pelo Adler-32 em um programa Go
+exige apenas mudar a chamada do construtor;
+o restante do código não é afetado pela troca do algoritmo.
 </p>
 <p>
-A similar approach allows the streaming cipher algorithms
-in the various <code>crypto</code> packages to be
-separated from the block ciphers they chain together.
-The <code>Block</code> interface
-in the <code>crypto/cipher</code> package specifies the
-behavior of a block cipher, which provides encryption
-of a single block of data.
-Then, by analogy with the <code>bufio</code> package,
-cipher packages that implement this interface
-can be used to construct streaming ciphers, represented
-by the <code>Stream</code> interface, without
-knowing the details of the block encryption.
+Uma abordagem semelhante permite que os algoritmos de cifra de fluxo
+nos vários pacotes <code>crypto</code> sejam
+separados das cifras de bloco que eles encadeiam.
+A interface <code>Block</code>
+no pacote <code>crypto/cipher</code> especifica o
+comportamento de uma cifra de bloco, que faz a cifragem
+de um único bloco de dados.
+Então, por analogia com o pacote <code>bufio</code>,
+pacotes de cifra que implementam essa interface
+podem ser usados para construir cifras de fluxo, representadas
+pela interface <code>Stream</code>, sem
+conhecer os detalhes da cifragem de blocos.
 </p>
 <p>
-The  <code>crypto/cipher</code> interfaces look like this:
+As interfaces de <code>crypto/cipher</code> são assim:
 </p>
 <pre>
 type Block interface {
@@ -2166,9 +2161,9 @@ type Stream interface {
 </pre>
 
 <p>
-Here's the definition of the counter mode (CTR) stream,
-which turns a block cipher into a streaming cipher; notice
-that the block cipher's details are abstracted away:
+Aqui está a definição do fluxo em modo contador (CTR),
+que transforma uma cifra de bloco em uma cifra de fluxo; observe
+que os detalhes da cifra de bloco são abstraídos:
 </p>
 
 <pre>
@@ -2177,22 +2172,22 @@ that the block cipher's details are abstracted away:
 func NewCTR(block Block, iv []byte) Stream
 </pre>
 <p>
-<code>NewCTR</code> applies not
-just to one specific encryption algorithm and data source but to any
-implementation of the <code>Block</code> interface and any
-<code>Stream</code>.  Because they return
-interface values, replacing CTR
-encryption with other encryption modes is a localized change.  The constructor
-calls must be edited, but because the surrounding code must treat the result only
-as a <code>Stream</code>, it won't notice the difference.
+<code>NewCTR</code> se aplica não
+apenas a um algoritmo de cifragem e fonte de dados específicos, mas a qualquer
+implementação da interface <code>Block</code> e a qualquer
+<code>Stream</code>. Como retornam
+valores de interface, trocar a cifragem CTR
+por outros modos de cifragem é uma mudança localizada. Os construtores
+precisam ser editados, mas, como o código ao redor deve tratar o resultado apenas
+como um <code>Stream</code>, ele não percebe a diferença.
 </p>
 
-<h3 id="interface_methods">Interfaces and methods</h3>
+<h3 id="interface_methods">Interfaces e métodos</h3>
 <p>
-Since almost anything can have methods attached, almost anything can
-satisfy an interface.  One illustrative example is in the <code>http</code>
-package, which defines the <code>Handler</code> interface.  Any object
-that implements <code>Handler</code> can serve HTTP requests.
+Como quase qualquer coisa pode ter métodos anexados, quase qualquer coisa pode
+satisfazer uma interface. Um exemplo ilustrativo está no pacote <code>http</code>,
+que define a interface <code>Handler</code>. Qualquer objeto
+que implemente <code>Handler</code> pode atender requisições HTTP.
 </p>
 <pre>
 type Handler interface {
@@ -2200,19 +2195,19 @@ type Handler interface {
 }
 </pre>
 <p>
-<code>ResponseWriter</code> is itself an interface that provides access
-to the methods needed to return the response to the client.
-Those methods include the standard <code>Write</code> method, so an
-<code>http.ResponseWriter</code> can be used wherever an <code>io.Writer</code>
-can be used.
-<code>Request</code> is a struct containing a parsed representation
-of the request from the client.
+<code>ResponseWriter</code> é ela mesma uma interface que dá acesso
+aos métodos necessários para devolver a resposta ao cliente.
+Esses métodos incluem o método padrão <code>Write</code>, então um
+<code>http.ResponseWriter</code> pode ser usado em qualquer lugar onde um <code>io.Writer</code>
+pode ser usado.
+<code>Request</code> é uma struct que contém uma representação analisada
+da requisição do cliente.
 </p>
 <p>
-For brevity, let's ignore POSTs and assume HTTP requests are always
-GETs; that simplification does not affect the way the handlers are set up.
-Here's a trivial implementation of a handler to count the number of times
-the page is visited.
+Por brevidade, vamos ignorar os POSTs e supor que as requisições HTTP são sempre
+GETs; essa simplificação não afeta a forma como os handlers são configurados.
+Aqui está uma implementação trivial de um handler que conta quantas vezes
+a página foi visitada.
 </p>
 <pre>
 // Simple counter server.
@@ -2226,14 +2221,14 @@ func (ctr *Counter) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 }
 </pre>
 <p>
-(Keeping with our theme, note how <code>Fprintf</code> can print to an
+(Seguindo o nosso tema, observe como <code>Fprintf</code> pode imprimir em um
 <code>http.ResponseWriter</code>.)
-In a real server, access to <code>ctr.n</code> would need protection from
-concurrent access.
-See the <code>sync</code> and <code>atomic</code> packages for suggestions.
+Em um servidor real, o acesso a <code>ctr.n</code> precisaria de proteção contra
+acesso concorrente.
+Veja os pacotes <code>sync</code> e <code>atomic</code> para sugestões.
 </p>
 <p>
-For reference, here's how to attach such a server to a node on the URL tree.
+Para referência, veja como anexar esse servidor a um nó da árvore de URLs.
 </p>
 <pre>
 import "net/http"
@@ -2242,8 +2237,8 @@ ctr := new(Counter)
 http.Handle("/counter", ctr)
 </pre>
 <p>
-But why make <code>Counter</code> a struct?  An integer is all that's needed.
-(The receiver needs to be a pointer so the increment is visible to the caller.)
+Mas por que tornar <code>Counter</code> uma struct? Um inteiro é tudo o que é necessário.
+(O receptor precisa ser um ponteiro para que o incremento seja visível para quem chama.)
 </p>
 <pre>
 // Simpler counter server.
@@ -2255,8 +2250,8 @@ func (ctr *Counter) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 }
 </pre>
 <p>
-What if your program has some internal state that needs to be notified that a page
-has been visited?  Tie a channel to the web page.
+E se o seu programa tiver algum estado interno que precisa ser notificado de que uma página
+foi visitada? Associe um canal à página web.
 </p>
 <pre>
 // A channel that sends a notification on each visit.
@@ -2269,9 +2264,9 @@ func (ch Chan) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 }
 </pre>
 <p>
-Finally, let's say we wanted to present on <code>/args</code> the arguments
-used when invoking the server binary.
-It's easy to write a function to print the arguments.
+Por fim, digamos que quiséssemos apresentar em <code>/args</code> os argumentos
+usados ao invocar o binário do servidor.
+É fácil escrever uma função para imprimir os argumentos.
 </p>
 <pre>
 func ArgServer() {
@@ -2279,11 +2274,11 @@ func ArgServer() {
 }
 </pre>
 <p>
-How do we turn that into an HTTP server?  We could make <code>ArgServer</code>
-a method of some type whose value we ignore, but there's a cleaner way.
-Since we can define a method for any type except pointers and interfaces,
-we can write a method for a function.
-The <code>http</code> package contains this code:
+Como transformar isso em um servidor HTTP? Poderíamos tornar <code>ArgServer</code>
+um método de algum tipo cujo valor ignoramos, mas há um jeito mais limpo.
+Como podemos definir um método para qualquer tipo exceto ponteiros e interfaces,
+podemos escrever um método para uma função.
+O pacote <code>http</code> contém este código:
 </p>
 <pre>
 // The HandlerFunc type is an adapter to allow the use of
@@ -2298,15 +2293,15 @@ func (f HandlerFunc) ServeHTTP(w ResponseWriter, req *Request) {
 }
 </pre>
 <p>
-<code>HandlerFunc</code> is a type with a method, <code>ServeHTTP</code>,
-so values of that type can serve HTTP requests.  Look at the implementation
-of the method: the receiver is a function, <code>f</code>, and the method
-calls <code>f</code>.  That may seem odd but it's not that different from, say,
-the receiver being a channel and the method sending on the channel.
+<code>HandlerFunc</code> é um tipo com um método, <code>ServeHTTP</code>,
+então valores desse tipo podem atender requisições HTTP. Observe a implementação
+do método: o receptor é uma função, <code>f</code>, e o método
+chama <code>f</code>. Pode parecer estranho, mas não é tão diferente de, digamos,
+o receptor ser um canal e o método enviar para o canal.
 </p>
 <p>
-To make <code>ArgServer</code> into an HTTP server, we first modify it
-to have the right signature.
+Para transformar <code>ArgServer</code> em um servidor HTTP, primeiro a modificamos
+para ter a assinatura certa.
 </p>
 <pre>
 // Argument server.
@@ -2315,63 +2310,63 @@ func ArgServer(w http.ResponseWriter, req *http.Request) {
 }
 </pre>
 <p>
-<code>ArgServer</code> now has the same signature as <code>HandlerFunc</code>,
-so it can be converted to that type to access its methods,
-just as we converted <code>Sequence</code> to <code>IntSlice</code>
-to access <code>IntSlice.Sort</code>.
-The code to set it up is concise:
+<code>ArgServer</code> agora tem a mesma assinatura de <code>HandlerFunc</code>,
+então pode ser convertida para esse tipo para acessar seus métodos,
+assim como convertemos <code>Sequence</code> para <code>IntSlice</code>
+para acessar <code>IntSlice.Sort</code>.
+O código para configurar isso é conciso:
 </p>
 <pre>
 http.Handle("/args", http.HandlerFunc(ArgServer))
 </pre>
 <p>
-When someone visits the page <code>/args</code>,
-the handler installed at that page has value <code>ArgServer</code>
-and type <code>HandlerFunc</code>.
-The HTTP server will invoke the method <code>ServeHTTP</code>
-of that type, with <code>ArgServer</code> as the receiver, which will in turn call
-<code>ArgServer</code> (via the invocation <code>f(w, req)</code>
-inside <code>HandlerFunc.ServeHTTP</code>).
-The arguments will then be displayed.
+Quando alguém visita a página <code>/args</code>,
+o handler instalado nessa página tem o valor <code>ArgServer</code>
+e o tipo <code>HandlerFunc</code>.
+O servidor HTTP vai invocar o método <code>ServeHTTP</code>
+desse tipo, com <code>ArgServer</code> como receptor, que por sua vez vai chamar
+<code>ArgServer</code> (pela invocação <code>f(w, req)</code>
+dentro de <code>HandlerFunc.ServeHTTP</code>).
+Os argumentos serão então exibidos.
 </p>
 <p>
-In this section we have made an HTTP server from a struct, an integer,
-a channel, and a function, all because interfaces are just sets of
-methods, which can be defined for (almost) any type.
+Nesta seção, fizemos um servidor HTTP a partir de uma struct, de um inteiro,
+de um canal e de uma função, tudo isso porque interfaces são apenas conjuntos de
+métodos, que podem ser definidos para (quase) qualquer tipo.
 </p>
 
-<h2 id="blank">The blank identifier</h2>
+<h2 id="blank">O identificador em branco</h2>
 
 <p>
-We've mentioned the blank identifier a couple of times now, in the context of
-<a href="#for"><code>for</code> <code>range</code> loops</a>
-and <a href="#maps">maps</a>.
-The blank identifier can be assigned or declared with any value of any type, with the
-value discarded harmlessly.
-It's a bit like writing to the Unix <code>/dev/null</code> file:
-it represents a write-only value
-to be used as a place-holder
-where a variable is needed but the actual value is irrelevant.
-It has uses beyond those we've seen already.
+Já mencionamos o identificador em branco algumas vezes, no contexto de
+<a href="#for">laços <code>for</code> <code>range</code></a>
+e <a href="#maps">maps</a>.
+O identificador em branco pode ser atribuído ou declarado com qualquer valor de qualquer tipo, com o
+valor descartado sem problemas.
+É um pouco como escrever no arquivo <code>/dev/null</code> do Unix:
+ele representa um valor somente de escrita
+usado como marcador
+onde uma variável é necessária, mas o valor real é irrelevante.
+Ele tem usos além dos que já vimos.
 </p>
 
-<h3 id="blank_assign">The blank identifier in multiple assignment</h3>
+<h3 id="blank_assign">O identificador em branco em atribuição múltipla</h3>
 
 <p>
-The use of a blank identifier in a <code>for</code> <code>range</code> loop is a
-special case of a general situation: multiple assignment.
+O uso de um identificador em branco em um laço <code>for</code> <code>range</code> é um
+caso particular de uma situação geral: a atribuição múltipla.
 </p>
 
 <p>
-If an assignment requires multiple values on the left side,
-but one of the values will not be used by the program,
-a blank identifier on the left-hand-side of
-the assignment avoids the need
-to create a dummy variable and makes it clear that the
-value is to be discarded.
-For instance, when calling a function that returns
-a value and an error, but only the error is important,
-use the blank identifier to discard the irrelevant value.
+Se uma atribuição exigir vários valores do lado esquerdo,
+mas um dos valores não for usado pelo programa,
+um identificador em branco do lado esquerdo da
+atribuição evita a necessidade
+de criar uma variável fictícia e deixa claro que o
+valor será descartado.
+Por exemplo, ao chamar uma função que retorna
+um valor e um erro, mas só o erro importa,
+use o identificador em branco para descartar o valor irrelevante.
 </p>
 
 <pre>
@@ -2381,9 +2376,8 @@ if _, err := os.Stat(path); os.IsNotExist(err) {
 </pre>
 
 <p>
-Occasionally you'll see code that discards the error value in order
-to ignore the error; this is terrible practice. Always check error returns;
-they're provided for a reason.
+Às vezes você verá código que descarta o valor de erro para ignorar o erro; isso é uma péssima prática. Sempre verifique os erros retornados;
+eles existem por um motivo.
 </p>
 
 <pre>
@@ -2394,90 +2388,90 @@ if fi.IsDir() {
 }
 </pre>
 
-<h3 id="blank_unused">Unused imports and variables</h3>
+<h3 id="blank_unused">Importações e variáveis não usadas</h3>
 
 <p>
-It is an error to import a package or to declare a variable without using it.
-Unused imports bloat the program and slow compilation,
-while a variable that is initialized but not used is at least
-a wasted computation and perhaps indicative of a
-larger bug.
-When a program is under active development, however,
-unused imports and variables often arise and it can
-be annoying to delete them just to have the compilation proceed,
-only to have them be needed again later.
-The blank identifier provides a workaround.
+É erro importar um pacote ou declarar uma variável sem usá-la.
+Importações não usadas incham o programa e deixam a compilação mais lenta,
+enquanto uma variável inicializada mas não usada é, no mínimo,
+um cálculo desperdiçado e talvez um indício de um
+bug maior.
+Quando um programa está em desenvolvimento ativo, porém,
+importações e variáveis não usadas surgem com frequência, e pode
+ser irritante apagá-las só para a compilação prosseguir,
+para depois precisar delas de novo.
+O identificador em branco oferece uma solução alternativa.
 </p>
 <p>
-This half-written program has two unused imports
-(<code>fmt</code> and <code>io</code>)
-and an unused variable (<code>fd</code>),
-so it will not compile, but it would be nice to see if the
-code so far is correct.
+Este programa meio escrito tem duas importações não usadas
+(<code>fmt</code> e <code>io</code>)
+e uma variável não usada (<code>fd</code>),
+então não vai compilar, mas seria bom ver se
+o código até agora está correto.
 </p>
 {{code "/doc/progs/eff_unused1.go" `/package/` `$`}}
 <p>
-To silence complaints about the unused imports, use a
-blank identifier to refer to a symbol from the imported package.
-Similarly, assigning the unused variable <code>fd</code>
-to the blank identifier will silence the unused variable error.
-This version of the program does compile.
+Para silenciar as reclamações sobre as importações não usadas, use um
+identificador em branco para se referir a um símbolo do pacote importado.
+De modo semelhante, atribuir a variável não usada <code>fd</code>
+ao identificador em branco silenciará o erro de variável não usada.
+Esta versão do programa compila.
 </p>
 {{code "/doc/progs/eff_unused2.go" `/package/` `$`}}
 
 <p>
-By convention, the global declarations to silence import errors
-should come right after the imports and be commented,
-both to make them easy to find and as a reminder to clean things up later.
+Por convenção, as declarações globais que silenciam erros de importação
+devem vir logo após as importações e ser comentadas,
+tanto para facilitar encontrá-las quanto como lembrete para limpar tudo depois.
 </p>
 
-<h3 id="blank_import">Import for side effect</h3>
+<h3 id="blank_import">Importação por efeito colateral</h3>
 
 <p>
-An unused import like <code>fmt</code> or <code>io</code> in the
-previous example should eventually be used or removed:
-blank assignments identify code as a work in progress.
-But sometimes it is useful to import a package only for its
-side effects, without any explicit use.
-For example, during its <code>init</code> function,
-the <code><a href="/pkg/net/http/pprof/">net/http/pprof</a></code>
-package registers HTTP handlers that provide
-debugging information. It has an exported API, but
-most clients need only the handler registration and
-access the data through a web page.
-To import the package only for its side effects, rename the package
-to the blank identifier:
+Uma importação não usada, como <code>fmt</code> ou <code>io</code> no
+exemplo anterior, deve eventualmente ser usada ou removida:
+atribuições em branco identificam o código como um trabalho em andamento.
+Mas às vezes é útil importar um pacote apenas por seus
+efeitos colaterais, sem nenhum uso explícito.
+Por exemplo, durante a sua função <code>init</code>,
+o pacote <code><a href="/pkg/net/http/pprof/">net/http/pprof</a></code>
+registra handlers HTTP que fornecem
+informações de depuração. Ele tem uma API exportada, mas
+a maioria dos clientes precisa apenas do registro dos handlers e
+acessa os dados por uma página web.
+Para importar o pacote apenas por seus efeitos colaterais, renomeie o pacote
+para o identificador em branco:
 </p>
 <pre>
 import _ "net/http/pprof"
 </pre>
 <p>
-This form of import makes clear that the package is being
-imported for its side effects, because there is no other possible
-use of the package: in this file, it doesn't have a name.
-(If it did, and we didn't use that name, the compiler would reject the program.)
+Essa forma de importação deixa claro que o pacote está sendo
+importado por seus efeitos colaterais, pois não há outro uso possível
+para o pacote: neste arquivo, ele não tem nome.
+(Se tivesse, e não usássemos esse nome, o compilador rejeitaria o programa.)
 </p>
 
-<h3 id="blank_implements">Interface checks</h3>
+<h3 id="blank_implements">Verificações de interface</h3>
 
 <p>
-As we saw in the discussion of <a href="#interfaces_and_types">interfaces</a> above,
-a type need not declare explicitly that it implements an interface.
-Instead, a type implements the interface just by implementing the interface's methods.
-In practice, most interface conversions are static and therefore checked at compile time.
-For example, passing an <code>*os.File</code> to a function
-expecting an <code>io.Reader</code> will not compile unless
-<code>*os.File</code> implements the <code>io.Reader</code> interface.
+Como vimos na discussão sobre <a href="#interfaces_and_types">interfaces</a> acima,
+um tipo não precisa declarar explicitamente que implementa uma interface.
+Em vez disso, um tipo implementa a interface apenas ao implementar os métodos da interface.
+Na prática, a maioria das conversões de interface é estática e, portanto, verificada em tempo de compilação.
+Por exemplo, passar um <code>*os.File</code> para uma função
+que espera um <code>io.Reader</code> não compila a menos que
+<code>*os.File</code> implemente a interface <code>io.Reader</code>.
 </p>
 
 <p>
-Some interface checks do happen at run-time, though.
-One instance is in the <code><a href="/pkg/encoding/json/">encoding/json</a></code>
-package, which defines a <code><a href="/pkg/encoding/json/#Marshaler">Marshaler</a></code>
-interface. When the JSON encoder receives a value that implements that interface,
-the encoder invokes the value's marshaling method to convert it to JSON
-instead of doing the standard conversion.
-The encoder checks this property at run time with a <a href="#interface_conversions">type assertion</a> like:
+Algumas verificações de interface, porém, acontecem em tempo de execução.
+Um exemplo está no pacote <code><a href="/pkg/encoding/json/">encoding/json</a></code>,
+que define uma interface <code><a href="/pkg/encoding/json/#Marshaler">Marshaler</a></code>.
+Quando o codificador JSON recebe um valor que implementa essa interface,
+ele invoca o método de serialização do valor para convertê-lo em JSON,
+em vez de fazer a conversão padrão.
+O codificador verifica essa propriedade em tempo de execução com uma <a href="#interface_conversions">asserção de tipo</a> como:
 </p>
 
 <pre>
@@ -2485,9 +2479,9 @@ m, ok := val.(json.Marshaler)
 </pre>
 
 <p>
-If it's necessary only to ask whether a type implements an interface, without
-actually using the interface itself, perhaps as part of an error check, use the blank
-identifier to ignore the type-asserted value:
+Se for necessário apenas perguntar se um tipo implementa uma interface, sem
+de fato usar a própria interface, talvez como parte de uma verificação de erro, use o identificador em
+branco para ignorar o valor da asserção de tipo:
 </p>
 
 <pre>
@@ -2497,53 +2491,53 @@ if _, ok := val.(json.Marshaler); ok {
 </pre>
 
 <p>
-One place this situation arises is when it is necessary to guarantee within the package implementing the type that
-it actually satisfies the interface.
-If a type—for example,
-<code><a href="/pkg/encoding/json/#RawMessage">json.RawMessage</a></code>—needs
-a custom JSON representation, it should implement
-<code>json.Marshaler</code>, but there are no static conversions that would
-cause the compiler to verify this automatically.
-If the type inadvertently fails to satisfy the interface, the JSON encoder will still work,
-but will not use the custom implementation.
-To guarantee that the implementation is correct,
-a global declaration using the blank identifier can be used in the package:
+Uma situação em que isso acontece é quando é preciso garantir, dentro do pacote que implementa o tipo, que
+ele realmente satisfaz a interface.
+Se um tipo—por exemplo,
+<code><a href="/pkg/encoding/json/#RawMessage">json.RawMessage</a></code>—precisar
+de uma representação JSON personalizada, ele deve implementar
+<code>json.Marshaler</code>, mas não há conversões estáticas que fariam o compilador
+verificar isso automaticamente.
+Se o tipo não satisfizer a interface por descuido, o codificador JSON ainda vai funcionar,
+mas não vai usar a implementação personalizada.
+Para garantir que a implementação está correta,
+pode-se usar, no pacote, uma declaração global com o identificador em branco:
 </p>
 <pre>
 var _ json.Marshaler = (*RawMessage)(nil)
 </pre>
 <p>
-In this declaration, the assignment involving a conversion of a
-<code>*RawMessage</code> to a <code>Marshaler</code>
-requires that <code>*RawMessage</code> implements <code>Marshaler</code>,
-and that property will be checked at compile time.
-Should the <code>json.Marshaler</code> interface change, this package
-will no longer compile and we will be on notice that it needs to be updated.
+Nessa declaração, a atribuição que envolve a conversão de um
+<code>*RawMessage</code> para um <code>Marshaler</code>
+exige que <code>*RawMessage</code> implemente <code>Marshaler</code>,
+e essa propriedade será verificada em tempo de compilação.
+Se a interface <code>json.Marshaler</code> mudar, este pacote
+deixará de compilar e saberemos que ele precisa ser atualizado.
 </p>
 
 <p>
-The appearance of the blank identifier in this construct indicates that
-the declaration exists only for the type checking,
-not to create a variable.
-Don't do this for every type that satisfies an interface, though.
-By convention, such declarations are only used
-when there are no static conversions already present in the code,
-which is a rare event.
+A presença do identificador em branco nessa construção indica que
+a declaração existe apenas para a verificação de tipos,
+e não para criar uma variável.
+Não faça isso para todo tipo que satisfaz uma interface, porém.
+Por convenção, essas declarações só são usadas
+quando não há conversões estáticas já presentes no código,
+o que é um evento raro.
 </p>
 
 
-<h2 id="embedding">Embedding</h2>
+<h2 id="embedding">Incorporação</h2>
 
 <p>
-Go does not provide the typical, type-driven notion of subclassing,
-but it does have the ability to &ldquo;borrow&rdquo; pieces of an
-implementation by <em>embedding</em> types within a struct or
+Go não oferece a noção típica de herança baseada em tipo (subclasses),
+mas tem a capacidade de &ldquo;tomar emprestados&rdquo; pedaços de uma
+implementação ao <em>incorporar</em> tipos dentro de uma struct ou
 interface.
 </p>
 <p>
-Interface embedding is very simple.
-We've mentioned the <code>io.Reader</code> and <code>io.Writer</code> interfaces before;
-here are their definitions.
+A incorporação de interfaces é muito simples.
+Já mencionamos as interfaces <code>io.Reader</code> e <code>io.Writer</code>;
+aqui estão as definições delas.
 </p>
 <pre>
 type Reader interface {
@@ -2555,13 +2549,13 @@ type Writer interface {
 }
 </pre>
 <p>
-The <code>io</code> package also exports several other interfaces
-that specify objects that can implement several such methods.
-For instance, there is <code>io.ReadWriter</code>, an interface
-containing both <code>Read</code> and <code>Write</code>.
-We could specify <code>io.ReadWriter</code> by listing the
-two methods explicitly, but it's easier and more evocative
-to embed the two interfaces to form the new one, like this:
+O pacote <code>io</code> também exporta várias outras interfaces
+que especificam objetos que podem implementar vários desses métodos.
+Por exemplo, há <code>io.ReadWriter</code>, uma interface
+que contém tanto <code>Read</code> quanto <code>Write</code>.
+Poderíamos especificar <code>io.ReadWriter</code> listando os
+dois métodos explicitamente, mas é mais fácil e mais expressivo
+incorporar as duas interfaces para formar a nova, assim:
 </p>
 <pre>
 // ReadWriter is the interface that combines the Reader and Writer interfaces.
@@ -2571,21 +2565,21 @@ type ReadWriter interface {
 }
 </pre>
 <p>
-This says just what it looks like: A <code>ReadWriter</code> can do
-what a <code>Reader</code> does <em>and</em> what a <code>Writer</code>
-does; it is a union of the embedded interfaces.
-Only interfaces can be embedded within interfaces.
+Isso diz exatamente o que parece: um <code>ReadWriter</code> pode fazer
+o que um <code>Reader</code> faz <em>e</em> o que um <code>Writer</code>
+faz; é uma união das interfaces incorporadas.
+Só interfaces podem ser incorporadas dentro de interfaces.
 </p>
 <p>
-The same basic idea applies to structs, but with more far-reaching
-implications.  The <code>bufio</code> package has two struct types,
-<code>bufio.Reader</code> and <code>bufio.Writer</code>, each of
-which of course implements the analogous interfaces from package
+A mesma ideia básica se aplica a structs, mas com implicações mais amplas.
+O pacote <code>bufio</code> tem dois tipos struct,
+<code>bufio.Reader</code> e <code>bufio.Writer</code>, cada um dos
+quais, naturalmente, implementa as interfaces análogas do pacote
 <code>io</code>.
-And <code>bufio</code> also implements a buffered reader/writer,
-which it does by combining a reader and a writer into one struct
-using embedding: it lists the types within the struct
-but does not give them field names.
+E o <code>bufio</code> também implementa um leitor/escritor com buffer,
+o que faz combinando um leitor e um escritor em uma única struct
+por meio de incorporação: ele lista os tipos dentro da struct,
+mas não dá nomes de campo a eles.
 </p>
 <pre>
 // ReadWriter stores pointers to a Reader and a Writer.
@@ -2596,10 +2590,10 @@ type ReadWriter struct {
 }
 </pre>
 <p>
-The embedded elements are pointers to structs and of course
-must be initialized to point to valid structs before they
-can be used.
-The <code>ReadWriter</code> struct could be written as
+Os elementos incorporados são ponteiros para structs e, naturalmente,
+precisam ser inicializados para apontar para structs válidas antes de
+poderem ser usados.
+A struct <code>ReadWriter</code> poderia ser escrita como
 </p>
 <pre>
 type ReadWriter struct {
@@ -2608,9 +2602,9 @@ type ReadWriter struct {
 }
 </pre>
 <p>
-but then to promote the methods of the fields and to
-satisfy the <code>io</code> interfaces, we would also need
-to provide forwarding methods, like this:
+mas então, para promover os métodos dos campos e
+satisfazer as interfaces de <code>io</code>, também precisaríamos
+fornecer métodos de encaminhamento, assim:
 </p>
 <pre>
 func (rw *ReadWriter) Read(p []byte) (n int, err error) {
@@ -2618,26 +2612,26 @@ func (rw *ReadWriter) Read(p []byte) (n int, err error) {
 }
 </pre>
 <p>
-By embedding the structs directly, we avoid this bookkeeping.
-The methods of embedded types come along for free, which means that <code>bufio.ReadWriter</code>
-not only has the methods of <code>bufio.Reader</code> and <code>bufio.Writer</code>,
-it also satisfies all three interfaces:
+Ao incorporar as structs diretamente, evitamos essa contabilidade.
+Os métodos dos tipos incorporados vêm de graça, o que significa que <code>bufio.ReadWriter</code>
+não apenas tem os métodos de <code>bufio.Reader</code> e <code>bufio.Writer</code>,
+como também satisfaz as três interfaces:
 <code>io.Reader</code>,
-<code>io.Writer</code>, and
+<code>io.Writer</code> e
 <code>io.ReadWriter</code>.
 </p>
 <p>
-There's an important way in which embedding differs from subclassing.  When we embed a type,
-the methods of that type become methods of the outer type,
-but when they are invoked the receiver of the method is the inner type, not the outer one.
-In our example, when the <code>Read</code> method of a <code>bufio.ReadWriter</code> is
-invoked, it has exactly the same effect as the forwarding method written out above;
-the receiver is the <code>reader</code> field of the <code>ReadWriter</code>, not the
-<code>ReadWriter</code> itself.
+Há uma forma importante em que a incorporação difere da herança. Quando incorporamos um tipo,
+os métodos desse tipo se tornam métodos do tipo externo,
+mas, quando são invocados, o receptor do método é o tipo interno, e não o externo.
+No nosso exemplo, quando o método <code>Read</code> de um <code>bufio.ReadWriter</code> é
+invocado, ele tem exatamente o mesmo efeito do método de encaminhamento escrito acima;
+o receptor é o campo <code>reader</code> do <code>ReadWriter</code>, e não o
+próprio <code>ReadWriter</code>.
 </p>
 <p>
-Embedding can also be a simple convenience.
-This example shows an embedded field alongside a regular, named field.
+A incorporação também pode ser uma conveniência simples.
+Este exemplo mostra um campo incorporado ao lado de um campo comum, nomeado.
 </p>
 <pre>
 type Job struct {
@@ -2646,19 +2640,19 @@ type Job struct {
 }
 </pre>
 <p>
-The <code>Job</code> type now has the <code>Print</code>, <code>Printf</code>, <code>Println</code>
-and other
-methods of <code>*log.Logger</code>.  We could have given the <code>Logger</code>
-a field name, of course, but it's not necessary to do so.  And now, once
-initialized, we can
-log to the <code>Job</code>:
+O tipo <code>Job</code> agora tem os métodos <code>Print</code>, <code>Printf</code>, <code>Println</code>
+e os outros
+métodos de <code>*log.Logger</code>. Poderíamos ter dado ao <code>Logger</code>
+um nome de campo, claro, mas não é necessário. E agora, uma vez
+inicializado, podemos
+registrar mensagens no <code>Job</code>:
 </p>
 <pre>
 job.Println("starting now...")
 </pre>
 <p>
-The <code>Logger</code> is a regular field of the <code>Job</code> struct,
-so we can initialize it in the usual way inside the constructor for <code>Job</code>, like this,
+O <code>Logger</code> é um campo comum da struct <code>Job</code>,
+então podemos inicializá-lo da forma usual dentro do construtor de <code>Job</code>, assim,
 </p>
 <pre>
 func NewJob(command string, logger *log.Logger) *Job {
@@ -2666,19 +2660,19 @@ func NewJob(command string, logger *log.Logger) *Job {
 }
 </pre>
 <p>
-or with a composite literal,
+ou com um literal composto,
 </p>
 <pre>
 job := &amp;Job{command, log.New(os.Stderr, "Job: ", log.Ldate)}
 </pre>
 <p>
-If we need to refer to an embedded field directly, the type name of the field,
-ignoring the package qualifier, serves as a field name, as it did
-in the <code>Read</code> method of our <code>ReadWriter</code> struct.
-Here, if we needed to access the
-<code>*log.Logger</code> of a <code>Job</code> variable <code>job</code>,
-we would write <code>job.Logger</code>,
-which would be useful if we wanted to refine the methods of <code>Logger</code>.
+Se precisarmos nos referir a um campo incorporado diretamente, o nome do tipo do campo,
+desconsiderando o qualificador do pacote, serve como nome de campo, como fez
+no método <code>Read</code> da nossa struct <code>ReadWriter</code>.
+Aqui, se precisássemos acessar o
+<code>*log.Logger</code> de uma variável <code>job</code> do tipo <code>Job</code>,
+escreveríamos <code>job.Logger</code>,
+o que seria útil se quiséssemos refinar os métodos de <code>Logger</code>.
 </p>
 <pre>
 func (job *Job) Printf(format string, args ...interface{}) {
@@ -2686,93 +2680,92 @@ func (job *Job) Printf(format string, args ...interface{}) {
 }
 </pre>
 <p>
-Embedding types introduces the problem of name conflicts but the rules to resolve
-them are simple.
-First, a field or method <code>X</code> hides any other item <code>X</code> in a more deeply
-nested part of the type.
-If <code>log.Logger</code> contained a field or method called <code>Command</code>, the <code>Command</code> field
-of <code>Job</code> would dominate it.
+Incorporar tipos introduz o problema de conflitos de nomes, mas as regras para resolvê-los
+são simples.
+Primeiro, um campo ou método <code>X</code> oculta qualquer outro item <code>X</code> em uma parte
+mais profundamente aninhada do tipo.
+Se <code>log.Logger</code> tivesse um campo ou método chamado <code>Command</code>, o campo <code>Command</code>
+de <code>Job</code> prevaleceria sobre ele.
 </p>
 <p>
-Second, if the same name appears at the same nesting level, it is usually an error;
-it would be erroneous to embed <code>log.Logger</code> if the <code>Job</code> struct
-contained another field or method called <code>Logger</code>.
-However, if the duplicate name is never mentioned in the program outside the type definition, it is OK.
-This qualification provides some protection against changes made to types embedded from outside; there
-is no problem if a field is added that conflicts with another field in another subtype if neither field
-is ever used.
+Segundo, se o mesmo nome aparecer no mesmo nível de aninhamento, geralmente é um erro;
+seria errado incorporar <code>log.Logger</code> se a struct <code>Job</code>
+tivesse outro campo ou método chamado <code>Logger</code>.
+No entanto, se o nome duplicado nunca for mencionado no programa fora da definição do tipo, não há problema.
+Essa qualificação oferece alguma proteção contra mudanças feitas em tipos incorporados de fora; não há
+problema se um campo for adicionado e entrar em conflito com outro campo de outro subtipo, desde que nenhum dos
+dois seja usado.
 </p>
 
 
-<h2 id="concurrency">Concurrency</h2>
+<h2 id="concurrency">Concorrência</h2>
 
-<h3 id="sharing">Share by communicating</h3>
+<h3 id="sharing">Compartilhe comunicando</h3>
 
 <p>
-Concurrent programming is a large topic and there is space only for some
-Go-specific highlights here.
+Programação concorrente é um assunto amplo, e há espaço aqui apenas para alguns
+destaques específicos de Go.
 </p>
 <p>
-Concurrent programming in many environments is made difficult by the
-subtleties required to implement correct access to shared variables.  Go encourages
-a different approach in which shared values are passed around on channels
-and, in fact, never actively shared by separate threads of execution.
-Only one goroutine has access to the value at any given time.
-Data races cannot occur, by design.
-To encourage this way of thinking we have reduced it to a slogan:
+A programação concorrente em muitos ambientes é dificultada pelas
+sutilezas necessárias para implementar um acesso correto a variáveis compartilhadas. Go incentiva
+uma abordagem diferente, na qual valores compartilhados são passados por canais
+e, na verdade, nunca são ativamente compartilhados por threads de execução separadas.
+Apenas uma goroutine tem acesso ao valor em um dado momento.
+Condições de corrida (data races) não podem ocorrer, por design.
+Para incentivar essa forma de pensar, a reduzimos a um lema:
 </p>
 <blockquote>
-Do not communicate by sharing memory;
-instead, share memory by communicating.
+Não se comunique compartilhando memória;
+em vez disso, compartilhe memória comunicando.
 </blockquote>
 <p>
-This approach can be taken too far.  Reference counts may be best done
-by putting a mutex around an integer variable, for instance.  But as a
-high-level approach, using channels to control access makes it easier
-to write clear, correct programs.
+Essa abordagem pode ser levada longe demais. Contadores de referência podem ser melhor implementados
+colocando um mutex em torno de uma variável inteira, por exemplo. Mas, como uma
+abordagem de alto nível, usar canais para controlar o acesso torna
+mais fácil escrever programas claros e corretos.
 </p>
 <p>
-One way to think about this model is to consider a typical single-threaded
-program running on one CPU. It has no need for synchronization primitives.
-Now run another such instance; it too needs no synchronization.  Now let those
-two communicate; if the communication is the synchronizer, there's still no need
-for other synchronization.  Unix pipelines, for example, fit this model
-perfectly.  Although Go's approach to concurrency originates in Hoare's
-Communicating Sequential Processes (CSP),
-it can also be seen as a type-safe generalization of Unix pipes.
+Uma forma de pensar sobre esse modelo é considerar um programa típico de thread única
+rodando em uma CPU. Ele não precisa de primitivas de sincronização.
+Agora execute outra instância desse tipo; ela também não precisa de sincronização. Agora faça
+as duas se comunicarem; se a comunicação for o sincronizador, ainda não há necessidade
+de qualquer outra sincronização. Pipelines do Unix, por exemplo, se encaixam perfeitamente
+nesse modelo. Embora a abordagem de Go para concorrência tenha origem nos
+Communicating Sequential Processes (CSP) de Hoare,
+ela também pode ser vista como uma generalização, com segurança de tipos, dos pipes do Unix.
 </p>
 
 <h3 id="goroutines">Goroutines</h3>
 
 <p>
-They're called <em>goroutines</em> because the existing
-terms&mdash;threads, coroutines, processes, and so on&mdash;convey
-inaccurate connotations.  A goroutine has a simple model: it is a
-function executing concurrently with other goroutines in the same
-address space.  It is lightweight, costing little more than the
-allocation of stack space.
-And the stacks start small, so they are cheap, and grow
-by allocating (and freeing) heap storage as required.
+Elas se chamam <em>goroutines</em> porque os termos existentes&mdash;threads, corrotinas, processos e assim por diante&mdash;transmitem
+conotações imprecisas. Uma goroutine tem um modelo simples: é uma
+função executada concorrentemente com outras goroutines no mesmo
+espaço de endereçamento. É leve, custando pouco mais que
+a alocação de espaço de pilha.
+E as pilhas começam pequenas, então são baratas, e crescem
+alocando (e liberando) armazenamento na heap conforme necessário.
 </p>
 <p>
-Goroutines are multiplexed onto multiple OS threads so if one should
-block, such as while waiting for I/O, others continue to run.  Their
-design hides many of the complexities of thread creation and
-management.
+As goroutines são multiplexadas em várias threads do sistema operacional, então, se uma delas
+bloquear, como ao aguardar E/S, as outras continuam rodando. O design delas
+esconde muitas das complexidades da criação e do
+gerenciamento de threads.
 </p>
 <p>
-Prefix a function or method call with the <code>go</code>
-keyword to run the call in a new goroutine.
-When the call completes, the goroutine
-exits, silently.  (The effect is similar to the Unix shell's
-<code>&amp;</code> notation for running a command in the
-background.)
+Coloque a palavra-chave <code>go</code> antes de uma chamada de função ou método
+para executar a chamada em uma nova goroutine.
+Quando a chamada termina, a goroutine
+sai silenciosamente. (O efeito é semelhante à notação
+<code>&amp;</code> do shell do Unix para executar um comando em
+segundo plano.)
 </p>
 <pre>
 go list.Sort()  // run list.Sort concurrently; don't wait for it.
 </pre>
 <p>
-A function literal can be handy in a goroutine invocation.
+Um literal de função pode ser útil na invocação de uma goroutine.
 </p>
 <pre>
 func Announce(message string, delay time.Duration) {
@@ -2783,21 +2776,21 @@ func Announce(message string, delay time.Duration) {
 }
 </pre>
 <p>
-In Go, function literals are closures: the implementation makes
-sure the variables referred to by the function survive as long as they are active.
+Em Go, literais de função são closures: a implementação garante
+que as variáveis referenciadas pela função sobrevivam enquanto estiverem ativas.
 </p>
 <p>
-These examples aren't too practical because the functions have no way of signaling
-completion.  For that, we need channels.
+Esses exemplos não são muito práticos porque as funções não têm como sinalizar
+a conclusão. Para isso, precisamos de canais.
 </p>
 
-<h3 id="channels">Channels</h3>
+<h3 id="channels">Canais</h3>
 
 <p>
-Like maps, channels are allocated with <code>make</code>, and
-the resulting value acts as a reference to an underlying data structure.
-If an optional integer parameter is provided, it sets the buffer size for the channel.
-The default is zero, for an unbuffered or synchronous channel.
+Assim como os maps, canais são alocados com <code>make</code>, e
+o valor resultante funciona como uma referência a uma estrutura de dados subjacente.
+Se um parâmetro inteiro opcional for fornecido, ele define o tamanho do buffer do canal.
+O padrão é zero, para um canal sem buffer, ou síncrono.
 </p>
 <pre>
 ci := make(chan int)            // unbuffered channel of integers
@@ -2805,14 +2798,14 @@ cj := make(chan int, 0)         // unbuffered channel of integers
 cs := make(chan *os.File, 100)  // buffered channel of pointers to Files
 </pre>
 <p>
-Unbuffered channels combine communication&mdash;the exchange of a value&mdash;with
-synchronization&mdash;guaranteeing that two calculations (goroutines) are in
-a known state.
+Canais sem buffer combinam comunicação&mdash;a troca de um valor&mdash;com
+sincronização&mdash;garantindo que dois cálculos (goroutines) estejam em
+um estado conhecido.
 </p>
 <p>
-There are lots of nice idioms using channels.  Here's one to get us started.
-In the previous section we launched a sort in the background. A channel
-can allow the launching goroutine to wait for the sort to complete.
+Há muitos idiomas bons usando canais. Aqui está um para começar.
+Na seção anterior, lançamos uma ordenação em segundo plano. Um canal
+pode permitir que a goroutine que a lançou espere a ordenação terminar.
 </p>
 <pre>
 c := make(chan int)  // Allocate a channel.
@@ -2825,21 +2818,21 @@ doSomethingForAWhile()
 &lt;-c   // Wait for sort to finish; discard sent value.
 </pre>
 <p>
-Receivers always block until there is data to receive.
-If the channel is unbuffered, the sender blocks until the receiver has
-received the value.
-If the channel has a buffer, the sender blocks only until the
-value has been copied to the buffer; if the buffer is full, this
-means waiting until some receiver has retrieved a value.
+Receptores sempre bloqueiam até que haja dados para receber.
+Se o canal não tiver buffer, o remetente bloqueia até que o receptor tenha
+recebido o valor.
+Se o canal tiver buffer, o remetente bloqueia apenas até que o
+valor tenha sido copiado para o buffer; se o buffer estiver cheio, isso
+significa esperar até algum receptor retirar um valor.
 </p>
 <p>
-A buffered channel can be used like a semaphore, for instance to
-limit throughput.  In this example, incoming requests are passed
-to <code>handle</code>, which sends a value into the channel, processes
-the request, and then receives a value from the channel
-to ready the &ldquo;semaphore&rdquo; for the next consumer.
-The capacity of the channel buffer limits the number of
-simultaneous calls to <code>process</code>.
+Um canal com buffer pode ser usado como um semáforo, por exemplo para
+limitar a vazão. Neste exemplo, as requisições recebidas são passadas
+para <code>handle</code>, que envia um valor para o canal, processa
+a requisição e, em seguida, recebe um valor do canal
+para liberar o &ldquo;semáforo&rdquo; para o próximo consumidor.
+A capacidade do buffer do canal limita o número de
+chamadas simultâneas a <code>process</code>.
 </p>
 <pre>
 var sem = make(chan int, MaxOutstanding)
@@ -2859,19 +2852,19 @@ func Serve(queue chan *Request) {
 </pre>
 
 <p>
-Once <code>MaxOutstanding</code> handlers are executing <code>process</code>,
-any more will block trying to send into the filled channel buffer,
-until one of the existing handlers finishes and receives from the buffer.
+Quando <code>MaxOutstanding</code> handlers estiverem executando <code>process</code>,
+quaisquer outros vão bloquear tentando enviar para o buffer cheio do canal,
+até que um dos handlers existentes termine e receba do buffer.
 </p>
 
 <p>
-This design has a problem, though: <code>Serve</code>
-creates a new goroutine for
-every incoming request, even though only <code>MaxOutstanding</code>
-of them can run at any moment.
-As a result, the program can consume unlimited resources if the requests come in too fast.
-We can address that deficiency by changing <code>Serve</code> to
-gate the creation of the goroutines:
+Este design tem um problema, porém: <code>Serve</code>
+cria uma nova goroutine para
+cada requisição recebida, embora apenas <code>MaxOutstanding</code>
+delas possam rodar a qualquer momento.
+Como resultado, o programa pode consumir recursos ilimitados se as requisições chegarem rápido demais.
+Podemos corrigir essa deficiência alterando <code>Serve</code> para
+controlar a criação das goroutines:
 </p>
 
 <pre>
@@ -2886,20 +2879,20 @@ func Serve(queue chan *Request) {
 }</pre>
 
 <p>
-(Note that in Go versions before 1.22 this code has a bug: the loop
-variable is shared across all goroutines.
-See the <a href="/wiki/LoopvarExperiment">Go wiki</a> for details.)
+(Observe que, nas versões do Go anteriores à 1.22, este código tem um bug: a variável
+do laço é compartilhada por todas as goroutines.
+Veja o <a href="/wiki/LoopvarExperiment">wiki do Go</a> para detalhes.)
 </p>
 
 <p>
-Another approach that manages resources well is to start a fixed
-number of <code>handle</code> goroutines all reading from the request
-channel.
-The number of goroutines limits the number of simultaneous
-calls to <code>process</code>.
-This <code>Serve</code> function also accepts a channel on which
-it will be told to exit; after launching the goroutines it blocks
-receiving from that channel.
+Outra abordagem que gerencia bem os recursos é iniciar um número fixo de
+goroutines <code>handle</code>, todas lendo do canal de
+requisições.
+O número de goroutines limita o número de
+chamadas simultâneas a <code>process</code>.
+Esta função <code>Serve</code> também aceita um canal pelo qual
+será avisada para sair; depois de iniciar as goroutines, ela bloqueia
+recebendo desse canal.
 </p>
 
 <pre>
@@ -2918,19 +2911,19 @@ func Serve(clientRequests chan *Request, quit chan bool) {
 }
 </pre>
 
-<h3 id="chan_of_chan">Channels of channels</h3>
+<h3 id="chan_of_chan">Canais de canais</h3>
 <p>
-One of the most important properties of Go is that
-a channel is a first-class value that can be allocated and passed
-around like any other.  A common use of this property is
-to implement safe, parallel demultiplexing.
+Uma das propriedades mais importantes de Go é que
+um canal é um valor de primeira classe, que pode ser alocado e passado
+como qualquer outro. Um uso comum dessa propriedade é
+implementar uma demultiplexação paralela e segura.
 </p>
 <p>
-In the example in the previous section, <code>handle</code> was
-an idealized handler for a request but we didn't define the
-type it was handling.  If that type includes a channel on which
-to reply, each client can provide its own path for the answer.
-Here's a schematic definition of type <code>Request</code>.
+No exemplo da seção anterior, <code>handle</code> era
+um handler idealizado para uma requisição, mas não definimos o
+tipo que ele tratava. Se esse tipo incluir um canal pelo qual
+responder, cada cliente pode fornecer seu próprio caminho para a resposta.
+Aqui está uma definição esquemática do tipo <code>Request</code>.
 </p>
 <pre>
 type Request struct {
@@ -2940,8 +2933,8 @@ type Request struct {
 }
 </pre>
 <p>
-The client provides a function and its arguments, as well as
-a channel inside the request object on which to receive the answer.
+O cliente fornece uma função e seus argumentos, além de
+um canal dentro do objeto de requisição pelo qual receber a resposta.
 </p>
 <pre>
 func sum(a []int) (s int) {
@@ -2958,7 +2951,7 @@ clientRequests &lt;- request
 fmt.Printf("answer: %d\n", &lt;-request.resultChan)
 </pre>
 <p>
-On the server side, the handler function is the only thing that changes.
+Do lado do servidor, a função handler é a única coisa que muda.
 </p>
 <pre>
 func handle(queue chan *Request) {
@@ -2968,22 +2961,22 @@ func handle(queue chan *Request) {
 }
 </pre>
 <p>
-There's clearly a lot more to do to make it realistic, but this
-code is a framework for a rate-limited, parallel, non-blocking RPC
-system, and there's not a mutex in sight.
+Claramente há muito mais a fazer para torná-lo realista, mas este
+código é um esqueleto para um sistema RPC com limite de taxa, paralelo e não bloqueante,
+e não há um mutex à vista.
 </p>
 
-<h3 id="parallel">Parallelization</h3>
+<h3 id="parallel">Paralelização</h3>
 <p>
-Another application of these ideas is to parallelize a calculation
-across multiple CPU cores.  If the calculation can be broken into
-separate pieces that can execute independently, it can be parallelized,
-with a channel to signal when each piece completes.
+Outra aplicação dessas ideias é paralelizar um cálculo
+entre vários núcleos de CPU. Se o cálculo puder ser dividido em
+partes separadas que possam ser executadas de forma independente, ele pode ser paralelizado,
+com um canal para sinalizar quando cada parte termina.
 </p>
 <p>
-Let's say we have an expensive operation to perform on a vector of items,
-and that the value of the operation on each item is independent,
-as in this idealized example.
+Digamos que temos uma operação cara a ser realizada sobre um vetor de itens,
+e que o valor da operação em cada item é independente,
+como neste exemplo idealizado.
 </p>
 <pre>
 type Vector []float64
@@ -2997,10 +2990,10 @@ func (v Vector) DoSome(i, n int, u Vector, c chan int) {
 }
 </pre>
 <p>
-We launch the pieces independently in a loop, one per CPU.
-They can complete in any order but it doesn't matter; we just
-count the completion signals by draining the channel after
-launching all the goroutines.
+Lançamos as partes de forma independente em um laço, uma por CPU.
+Elas podem terminar em qualquer ordem, mas isso não importa; apenas
+contamos os sinais de conclusão esvaziando o canal depois de
+lançar todas as goroutines.
 </p>
 <pre>
 const numCPU = 4 // number of CPU cores
@@ -3018,50 +3011,49 @@ func (v Vector) DoAll(u Vector) {
 }
 </pre>
 <p>
-Rather than create a constant value for numCPU, we can ask the runtime what
-value is appropriate.
-The function <code><a href="/pkg/runtime#NumCPU">runtime.NumCPU</a></code>
-returns the number of hardware CPU cores in the machine, so we could write
+Em vez de criar um valor constante para numCPU, podemos pedir ao runtime qual
+valor é apropriado.
+A função <code><a href="/pkg/runtime#NumCPU">runtime.NumCPU</a></code>
+retorna o número de núcleos de CPU de hardware da máquina, então podemos escrever
 </p>
 <pre>
 var numCPU = runtime.NumCPU()
 </pre>
 <p>
-There is also a function
+Há também a função
 <code><a href="/pkg/runtime#GOMAXPROCS">runtime.GOMAXPROCS</a></code>,
-which reports (or sets)
-the user-specified number of cores that a Go program can have running
-simultaneously.
-It defaults to the value of <code>runtime.NumCPU</code> but can be
-overridden by setting the similarly named shell environment variable
-or by calling the function with a positive number.  Calling it with
-zero just queries the value.
-Therefore if we want to honor the user's resource request, we should write
+que informa (ou define)
+o número de núcleos, especificado pelo usuário, que um programa Go pode ter rodando
+simultaneamente.
+O padrão é o valor de <code>runtime.NumCPU</code>, mas pode ser
+alterado definindo a variável de ambiente de shell de nome semelhante
+ou chamando a função com um número positivo. Chamá-la com
+zero apenas consulta o valor.
+Portanto, se quisermos respeitar a solicitação de recursos do usuário, devemos escrever
 </p>
 <pre>
 var numCPU = runtime.GOMAXPROCS(0)
 </pre>
 <p>
-Be sure not to confuse the ideas of concurrency—structuring a program
-as independently executing components—and parallelism—executing
-calculations in parallel for efficiency on multiple CPUs.
-Although the concurrency features of Go can make some problems easy
-to structure as parallel computations, Go is a concurrent language,
-not a parallel one, and not all parallelization problems fit Go's model.
-For a discussion of the distinction, see the talk cited in
-<a href="/blog/concurrency-is-not-parallelism">this
-blog post</a>.
+Cuidado para não confundir as ideias de concorrência—estruturar um programa
+como componentes que executam de forma independente—e paralelismo—executar
+cálculos em paralelo para ganhar eficiência em várias CPUs.
+Embora os recursos de concorrência de Go possam tornar alguns problemas fáceis
+de estruturar como cálculos paralelos, Go é uma linguagem concorrente,
+não uma linguagem paralela, e nem todos os problemas de paralelização se encaixam no modelo de Go.
+Para uma discussão sobre a distinção, veja a palestra citada neste
+<a href="/blog/concurrency-is-not-parallelism">post do blog</a>.
 
-<h3 id="leaky_buffer">A leaky buffer</h3>
+<h3 id="leaky_buffer">Um buffer com vazamento</h3>
 
 <p>
-The tools of concurrent programming can even make non-concurrent
-ideas easier to express.  Here's an example abstracted from an RPC
-package.  The client goroutine loops receiving data from some source,
-perhaps a network.  To avoid allocating and freeing buffers, it keeps
-a free list, and uses a buffered channel to represent it.  If the
-channel is empty, a new buffer gets allocated.
-Once the message buffer is ready, it's sent to the server on
+As ferramentas da programação concorrente podem até tornar ideias não concorrentes
+mais fáceis de expressar. Aqui está um exemplo abstraído de um pacote
+RPC. A goroutine cliente fica em um laço recebendo dados de alguma fonte,
+talvez uma rede. Para evitar alocar e liberar buffers, ela mantém
+uma lista livre e usa um canal com buffer para representá-la. Se o
+canal estiver vazio, um novo buffer é alocado.
+Quando o buffer da mensagem estiver pronto, ele é enviado ao servidor por
 <code>serverChan</code>.
 </p>
 <pre>
@@ -3085,8 +3077,8 @@ func client() {
 }
 </pre>
 <p>
-The server loop receives each message from the client, processes it,
-and returns the buffer to the free list.
+O laço do servidor recebe cada mensagem do cliente, a processa
+e devolve o buffer à lista livre.
 </p>
 <pre>
 func server() {
@@ -3104,37 +3096,36 @@ func server() {
 }
 </pre>
 <p>
-The client attempts to retrieve a buffer from <code>freeList</code>;
-if none is available, it allocates a fresh one.
-The server's send to <code>freeList</code> puts <code>b</code> back
-on the free list unless the list is full, in which case the
-buffer is dropped on the floor to be reclaimed by
-the garbage collector.
-(The <code>default</code> clauses in the <code>select</code>
-statements execute when no other case is ready,
-meaning that the <code>selects</code> never block.)
-This implementation builds a leaky bucket free list
-in just a few lines, relying on the buffered channel and
-the garbage collector for bookkeeping.
+O cliente tenta obter um buffer de <code>freeList</code>;
+se nenhum estiver disponível, ele aloca um novo.
+O envio do servidor para <code>freeList</code> devolve <code>b</code>
+à lista livre, a menos que a lista esteja cheia; nesse caso, o
+buffer é descartado para ser recuperado pelo
+coletor de lixo.
+(As cláusulas <code>default</code> nas instruções <code>select</code>
+são executadas quando nenhum outro caso está pronto,
+o que significa que os <code>select</code> nunca bloqueiam.)
+Esta implementação constrói uma lista livre de balde furado
+em apenas algumas linhas, contando com o canal com buffer e
+com o coletor de lixo para a contabilidade.
 </p>
 
-<h2 id="errors">Errors</h2>
+<h2 id="errors">Erros</h2>
 
 <p>
-Library routines must often return some sort of error indication to
-the caller.
-As mentioned earlier, Go's multivalue return makes it
-easy to return a detailed error description alongside the normal
-return value.
-It is good style to use this feature to provide detailed error information.
-For example, as we'll see, <code>os.Open</code> doesn't
-just return a <code>nil</code> pointer on failure, it also returns an
-error value that describes what went wrong.
+Rotinas de biblioteca frequentemente precisam devolver algum tipo de indicação de erro para
+quem chamou.
+Como mencionado antes, o retorno com múltiplos valores de Go facilita
+devolver uma descrição detalhada do erro junto com o valor de retorno normal.
+É um bom estilo usar esse recurso para fornecer informações detalhadas sobre o erro.
+Por exemplo, como veremos, <code>os.Open</code> não
+apenas retorna um ponteiro <code>nil</code> em caso de falha; ele também retorna um
+valor de erro que descreve o que deu errado.
 </p>
 
 <p>
-By convention, errors have type <code>error</code>,
-a simple built-in interface.
+Por convenção, erros têm o tipo <code>error</code>,
+uma interface embutida simples.
 </p>
 <pre>
 type error interface {
@@ -3142,14 +3133,14 @@ type error interface {
 }
 </pre>
 <p>
-A library writer is free to implement this interface with a
-richer model under the covers, making it possible not only
-to see the error but also to provide some context.
-As mentioned, alongside the usual <code>*os.File</code>
-return value, <code>os.Open</code> also returns an
-error value.
-If the file is opened successfully, the error will be <code>nil</code>,
-but when there is a problem, it will hold an
+Quem escreve a biblioteca é livre para implementar essa interface com um
+modelo mais rico por trás, tornando possível não apenas
+ver o erro, mas também fornecer algum contexto.
+Como mencionado, junto com o valor de retorno habitual
+<code>*os.File</code>, <code>os.Open</code> também retorna um
+valor de erro.
+Se o arquivo for aberto com sucesso, o erro será <code>nil</code>,
+mas, quando houver um problema, ele conterá um
 <code>os.PathError</code>:
 </p>
 <pre>
@@ -3166,33 +3157,33 @@ func (e *PathError) Error() string {
 }
 </pre>
 <p>
-<code>PathError</code>'s <code>Error</code> generates
-a string like this:
+O <code>Error</code> de <code>PathError</code> gera
+uma string como esta:
 </p>
 <pre>
 open /etc/passwx: no such file or directory
 </pre>
 <p>
-Such an error, which includes the problematic file name, the
-operation, and the operating system error it triggered, is useful even
-if printed far from the call that caused it;
-it is much more informative than the plain
+Um erro assim, que inclui o nome do arquivo problemático, a
+operação e o erro do sistema operacional que o disparou, é útil mesmo
+se impresso longe da chamada que o causou;
+ele é muito mais informativo do que o simples
 "no such file or directory".
 </p>
 
 <p>
-When feasible, error strings should identify their origin, such as by having
-a prefix naming the operation or package that generated the error.  For example, in package
-<code>image</code>, the string representation for a decoding error due to an
-unknown format is "image: unknown format".
+Quando for viável, as strings de erro devem identificar sua origem, por exemplo com
+um prefixo que nomeie a operação ou o pacote que gerou o erro. Por exemplo, no pacote
+<code>image</code>, a representação em string de um erro de decodificação devido a um
+formato desconhecido é "image: unknown format".
 </p>
 
 <p>
-Callers that care about the precise error details can
-use a type switch or a type assertion to look for specific
-errors and extract details.  For <code>PathErrors</code>
-this might include examining the internal <code>Err</code>
-field for recoverable failures.
+Quem se importa com os detalhes precisos do erro pode
+usar um switch de tipo ou uma asserção de tipo para procurar erros específicos
+e extrair detalhes. Para <code>PathErrors</code>,
+isso pode incluir examinar o campo interno <code>Err</code>
+em busca de falhas recuperáveis.
 </p>
 
 <pre>
@@ -3210,31 +3201,31 @@ for try := 0; try &lt; 2; try++ {
 </pre>
 
 <p>
-The second <code>if</code> statement here is another <a href="#interface_conversions">type assertion</a>.
-If it fails, <code>ok</code> will be false, and <code>e</code>
-will be <code>nil</code>.
-If it succeeds,  <code>ok</code> will be true, which means the
-error was of type <code>*os.PathError</code>, and then so is <code>e</code>,
-which we can examine for more information about the error.
+O segundo <code>if</code> aqui é outra <a href="#interface_conversions">asserção de tipo</a>.
+Se ela falhar, <code>ok</code> será falso, e <code>e</code>
+será <code>nil</code>.
+Se der certo, <code>ok</code> será verdadeiro, o que significa que o
+erro era do tipo <code>*os.PathError</code>, e então <code>e</code> também é,
+e podemos examiná-lo para obter mais informações sobre o erro.
 </p>
 
 <h3 id="panic">Panic</h3>
 
 <p>
-The usual way to report an error to a caller is to return an
-<code>error</code> as an extra return value.  The canonical
-<code>Read</code> method is a well-known instance; it returns a byte
-count and an <code>error</code>.  But what if the error is
-unrecoverable?  Sometimes the program simply cannot continue.
+A forma habitual de informar um erro a quem chamou é devolver um
+<code>error</code> como valor de retorno extra. O método canônico
+<code>Read</code> é um exemplo conhecido; ele devolve uma contagem
+de bytes e um <code>error</code>. Mas e se o erro for
+irrecuperável? Às vezes o programa simplesmente não pode continuar.
 </p>
 
 <p>
-For this purpose, there is a built-in function <code>panic</code>
-that in effect creates a run-time error that will stop the program
-(but see the next section).  The function takes a single argument
-of arbitrary type&mdash;often a string&mdash;to be printed as the
-program dies.  It's also a way to indicate that something impossible has
-happened, such as exiting an infinite loop.
+Para isso, existe a função embutida <code>panic</code>,
+que, na prática, cria um erro de tempo de execução que interrompe o programa
+(mas veja a próxima seção). A função recebe um único argumento
+de tipo arbitrário&mdash;frequentemente uma string&mdash;para ser impresso quando
+o programa morre. É também uma forma de indicar que algo impossível aconteceu,
+como sair de um laço infinito.
 </p>
 
 
@@ -3255,12 +3246,12 @@ func CubeRoot(x float64) float64 {
 </pre>
 
 <p>
-This is only an example but real library functions should
-avoid <code>panic</code>.  If the problem can be masked or worked
-around, it's always better to let things continue to run rather
-than taking down the whole program.  One possible counterexample
-is during initialization: if the library truly cannot set itself up,
-it might be reasonable to panic, so to speak.
+Este é apenas um exemplo, mas funções reais de biblioteca devem
+evitar <code>panic</code>. Se o problema puder ser mascarado ou contornado,
+é sempre melhor deixar as coisas continuarem rodando do que
+derrubar o programa inteiro. Um possível contraexemplo
+é durante a inicialização: se a biblioteca realmente não consegue se configurar,
+pode ser razoável entrar em pânico, por assim dizer.
 </p>
 
 <pre>
@@ -3276,26 +3267,26 @@ func init() {
 <h3 id="recover">Recover</h3>
 
 <p>
-When <code>panic</code> is called, including implicitly for run-time
-errors such as indexing a slice out of bounds or failing a type
-assertion, it immediately stops execution of the current function
-and begins unwinding the stack of the goroutine, running any deferred
-functions along the way.  If that unwinding reaches the top of the
-goroutine's stack, the program dies.  However, it is possible to
-use the built-in function <code>recover</code> to regain control
-of the goroutine and resume normal execution.
+Quando <code>panic</code> é chamado, inclusive implicitamente em erros de tempo de execução
+como indexar um slice fora dos limites ou falhar uma
+asserção de tipo, a execução da função atual para imediatamente
+e começa a desenrolar a pilha da goroutine, executando as funções
+adiadas pelo caminho. Se esse desenrolar chegar ao topo da
+pilha da goroutine, o programa morre. No entanto, é possível
+usar a função embutida <code>recover</code> para retomar o controle
+da goroutine e continuar a execução normal.
 </p>
 
 <p>
-A call to <code>recover</code> stops the unwinding and returns the
-argument passed to <code>panic</code>.  Because the only code that
-runs while unwinding is inside deferred functions, <code>recover</code>
-is only useful inside deferred functions.
+Uma chamada a <code>recover</code> interrompe o desenrolar e devolve o
+argumento passado para <code>panic</code>. Como o único código que
+roda durante o desenrolar está dentro de funções adiadas, <code>recover</code>
+só é útil dentro de funções adiadas.
 </p>
 
 <p>
-One application of <code>recover</code> is to shut down a failing goroutine
-inside a server without killing the other executing goroutines.
+Uma aplicação de <code>recover</code> é encerrar uma goroutine que falhou
+dentro de um servidor, sem matar as outras goroutines em execução.
 </p>
 
 <pre>
@@ -3316,30 +3307,30 @@ func safelyDo(work *Work) {
 </pre>
 
 <p>
-In this example, if <code>do(work)</code> panics, the result will be
-logged and the goroutine will exit cleanly without disturbing the
-others.  There's no need to do anything else in the deferred closure;
-calling <code>recover</code> handles the condition completely.
+Neste exemplo, se <code>do(work)</code> entrar em pânico, o resultado será
+registrado e a goroutine vai sair de forma limpa, sem perturbar as
+outras. Não há necessidade de fazer mais nada no closure adiado;
+chamar <code>recover</code> resolve a situação por completo.
 </p>
 
 <p>
-Because <code>recover</code> always returns <code>nil</code> unless called directly
-from a deferred function, deferred code can call library routines that themselves
-use <code>panic</code> and <code>recover</code> without failing.  As an example,
-the deferred function in <code>safelyDo</code> might call a logging function before
-calling <code>recover</code>, and that logging code would run unaffected
-by the panicking state.
+Como <code>recover</code> sempre devolve <code>nil</code>, a menos que seja chamado diretamente
+de uma função adiada, código adiado pode chamar rotinas de biblioteca que usam
+<code>panic</code> e <code>recover</code> internamente sem falhar. Por exemplo,
+a função adiada em <code>safelyDo</code> pode chamar uma função de log antes
+de chamar <code>recover</code>, e esse código de log rodaria sem ser afetado
+pelo estado de pânico.
 </p>
 
 <p>
-With our recovery pattern in place, the <code>do</code>
-function (and anything it calls) can get out of any bad situation
-cleanly by calling <code>panic</code>.  We can use that idea to
-simplify error handling in complex software.  Let's look at an
-idealized version of a <code>regexp</code> package, which reports
-parsing errors by calling <code>panic</code> with a local
-error type.  Here's the definition of <code>Error</code>,
-an <code>error</code> method, and the <code>Compile</code> function.
+Com o nosso padrão de recuperação implementado, a função <code>do</code>
+(e tudo o que ela chama) pode sair de qualquer situação ruim
+de forma limpa, chamando <code>panic</code>. Podemos usar essa ideia para
+simplificar o tratamento de erros em software complexo. Vejamos uma
+versão idealizada de um pacote <code>regexp</code>, que informa erros de
+análise chamando <code>panic</code> com um tipo de erro local.
+Aqui estão a definição de <code>Error</code>,
+um método <code>error</code> e a função <code>Compile</code>.
 </p>
 
 <pre>
@@ -3370,26 +3361,25 @@ func Compile(str string) (regexp *Regexp, err error) {
 </pre>
 
 <p>
-If <code>doParse</code> panics, the recovery block will set the
-return value to <code>nil</code>&mdash;deferred functions can modify
-named return values.  It will then check, in the assignment
-to <code>err</code>, that the problem was a parse error by asserting
-that it has the local type <code>Error</code>.
-If it does not, the type assertion will fail, causing a run-time error
-that continues the stack unwinding as though nothing had interrupted
-it.
-This check means that if something unexpected happens, such
-as an index out of bounds, the code will fail even though we
-are using <code>panic</code> and <code>recover</code> to handle
-parse errors.
+Se <code>doParse</code> entrar em pânico, o bloco de recuperação vai definir o
+valor de retorno como <code>nil</code>&mdash;funções adiadas podem modificar
+valores de retorno nomeados. Em seguida, ele verifica, na atribuição
+a <code>err</code>, que o problema foi um erro de análise, afirmando
+que o valor tem o tipo local <code>Error</code>.
+Se não tiver, a asserção de tipo falha, causando um erro de tempo de execução
+que continua o desenrolar da pilha como se nada a tivesse interrompido.
+Essa verificação significa que, se algo inesperado acontecer, como
+um índice fora dos limites, o código vai falhar, mesmo que estejamos
+usando <code>panic</code> e <code>recover</code> para tratar
+erros de análise.
 </p>
 
 <p>
-With error handling in place, the <code>error</code> method (because it's a
-method bound to a type, it's fine, even natural, for it to have the same name
-as the builtin <code>error</code> type)
-makes it easy to report parse errors without worrying about unwinding
-the parse stack by hand:
+Com o tratamento de erros no lugar, o método <code>error</code> (como é um
+método vinculado a um tipo, é válido, até natural, que ele tenha o mesmo nome
+do tipo embutido <code>error</code>)
+facilita informar erros de análise sem se preocupar em desenrolar
+a pilha de análise manualmente:
 </p>
 
 <pre>
@@ -3399,89 +3389,89 @@ if pos == 0 {
 </pre>
 
 <p>
-Useful though this pattern is, it should be used only within a package.
-<code>Parse</code> turns its internal <code>panic</code> calls into
-<code>error</code> values; it does not expose <code>panics</code>
-to its client.  That is a good rule to follow.
+Por mais útil que esse padrão seja, ele deve ser usado apenas dentro de um pacote.
+<code>Parse</code> transforma suas chamadas internas de <code>panic</code> em
+valores <code>error</code>; ele não expõe os <code>panics</code>
+ao seu cliente. Essa é uma boa regra a seguir.
 </p>
 
 <p>
-By the way, this re-panic idiom changes the panic value if an actual
-error occurs.  However, both the original and new failures will be
-presented in the crash report, so the root cause of the problem will
-still be visible.  Thus this simple re-panic approach is usually
-sufficient&mdash;it's a crash after all&mdash;but if you want to
-display only the original value, you can write a little more code to
-filter unexpected problems and re-panic with the original error.
-That's left as an exercise for the reader.
+A propósito, esse idioma de re-pânico muda o valor do pânico se ocorrer
+um erro real. No entanto, tanto a falha original quanto a nova serão
+exibidas no relatório de falha, então a causa raiz do problema
+continuará visível. Assim, essa abordagem simples de re-pânico costuma
+ser suficiente&mdash;afinal, é uma falha&mdash;mas, se você quiser
+exibir apenas o valor original, pode escrever um pouco mais de código para
+filtrar problemas inesperados e entrar em pânico de novo com o erro original.
+Isso fica como exercício para o leitor.
 </p>
 
 
-<h2 id="web_server">A web server</h2>
+<h2 id="web_server">Um servidor web</h2>
 
 <p>
-Let's finish with a complete Go program, a web server.
-This one is actually a kind of web re-server.
-Google provides a service at <code>chart.apis.google.com</code>
-that does automatic formatting of data into charts and graphs.
-It's hard to use interactively, though,
-because you need to put the data into the URL as a query.
-The program here provides a nicer interface to one form of data: given a short piece of text,
-it calls on the chart server to produce a QR code, a matrix of boxes that encode the
-text.
-That image can be grabbed with your cell phone's camera and interpreted as,
-for instance, a URL, saving you typing the URL into the phone's tiny keyboard.
+Vamos terminar com um programa Go completo, um servidor web.
+Este é, na verdade, uma espécie de re-servidor web.
+O Google oferece um serviço em <code>chart.apis.google.com</code>
+que formata automaticamente dados em gráficos e diagramas.
+É difícil de usar de forma interativa, porém,
+porque você precisa colocar os dados na URL como uma query.
+O programa aqui oferece uma interface mais agradável para um tipo de dado: dado um pequeno trecho de texto,
+ele chama o servidor de gráficos para produzir um código QR, uma matriz de quadrados que codificam o
+texto.
+Essa imagem pode ser capturada pela câmera do celular e interpretada como,
+por exemplo, uma URL, poupando você de digitar a URL no teclado minúsculo do telefone.
 </p>
 <p>
-Here's the complete program.
-An explanation follows.
+Aqui está o programa completo.
+Uma explicação vem a seguir.
 </p>
 {{code "/doc/progs/eff_qr.go" `/package/` `$`}}
 <p>
-The pieces up to <code>main</code> should be easy to follow.
-The one flag sets a default HTTP port for our server.  The template
-variable <code>templ</code> is where the fun happens. It builds an HTML template
-that will be executed by the server to display the page; more about
-that in a moment.
+As partes até <code>main</code> devem ser fáceis de acompanhar.
+A única flag define uma porta HTTP padrão para o nosso servidor. A variável de template
+<code>templ</code> é onde a diversão acontece. Ela monta um template HTML
+que será executado pelo servidor para exibir a página; mais sobre
+isso daqui a pouco.
 </p>
 <p>
-The <code>main</code> function parses the flags and, using the mechanism
-we talked about above, binds the function <code>QR</code> to the root path
-for the server.  Then <code>http.ListenAndServe</code> is called to start the
-server; it blocks while the server runs.
+A função <code>main</code> analisa as flags e, usando o mecanismo
+sobre o qual falamos acima, vincula a função <code>QR</code> ao caminho raiz
+do servidor. Em seguida, <code>http.ListenAndServe</code> é chamada para iniciar o
+servidor; ela bloqueia enquanto o servidor roda.
 </p>
 <p>
-<code>QR</code> just receives the request, which contains form data, and
-executes the template on the data in the form value named <code>s</code>.
+<code>QR</code> apenas recebe a requisição, que contém dados de formulário, e
+executa o template sobre os dados no valor do formulário chamado <code>s</code>.
 </p>
 <p>
-The template package <code>html/template</code> is powerful;
-this program just touches on its capabilities.
-In essence, it rewrites a piece of HTML text on the fly by substituting elements derived
-from data items passed to <code>templ.Execute</code>, in this case the
-form value.
-Within the template text (<code>templateStr</code>),
-double-brace-delimited pieces denote template actions.
-The piece from <code>{{"{{if .}}"}}</code>
-to <code>{{"{{end}}"}}</code> executes only if the value of the current data item, called <code>.</code> (dot),
-is non-empty.
-That is, when the string is empty, this piece of the template is suppressed.
+O pacote de templates <code>html/template</code> é poderoso;
+este programa apenas toca em suas capacidades.
+Em essência, ele reescreve um trecho de texto HTML em tempo real, substituindo elementos derivados
+de itens de dados passados para <code>templ.Execute</code>, neste caso o
+valor do formulário.
+Dentro do texto do template (<code>templateStr</code>),
+trechos delimitados por chaves duplas denotam ações de template.
+O trecho de <code>{{"{{if .}}"}}</code>
+até <code>{{"{{end}}"}}</code> só é executado se o valor do item de dado atual, chamado <code>.</code> (ponto),
+não for vazio.
+Ou seja, quando a string está vazia, esse trecho do template é suprimido.
 </p>
 <p>
-The two snippets <code>{{"{{.}}"}}</code> say to show the data presented to
-the template—the query string—on the web page.
-The HTML template package automatically provides appropriate escaping so the
-text is safe to display.
+Os dois trechos <code>{{"{{.}}"}}</code> mandam mostrar os dados apresentados ao
+template—a string de consulta—na página web.
+O pacote de templates HTML fornece automaticamente o escape apropriado, para que o
+texto seja seguro para exibir.
 </p>
 <p>
-The rest of the template string is just the HTML to show when the page loads.
-If this is too quick an explanation, see the <a href="/pkg/html/template/">documentation</a>
-for the template package for a more thorough discussion.
+O restante da string do template é apenas o HTML a ser mostrado quando a página carrega.
+Se esta explicação for rápida demais, veja a <a href="/pkg/html/template/">documentação</a>
+do pacote de templates para uma discussão mais completa.
 </p>
 <p>
-And there you have it: a useful web server in a few lines of code plus some
-data-driven HTML text.
-Go is powerful enough to make a lot happen in a few lines.
+E pronto: um servidor web útil em poucas linhas de código, além de um
+texto HTML guiado por dados.
+Go é poderoso o suficiente para fazer muita coisa em poucas linhas.
 </p>
 
 <!--

@@ -1,106 +1,109 @@
 <!--{
+  "ia-translated": true,
   "Template": true,
-  "Title": "Tutorial: Getting started with fuzzing",
+  "Title": "Tutorial: Primeiros passos com fuzzing",
   "HideTOC": true,
   "Breadcrumb": true
 }-->
 
-This tutorial introduces the basics of fuzzing in Go. With fuzzing, random data
-is run against your test in an attempt to find vulnerabilities or crash-causing
-inputs. Some examples of vulnerabilities that can be found by fuzzing are SQL
-injection, buffer overflow, denial of service and cross-site scripting attacks.
+Este tutorial apresenta o básico de fuzzing em Go. Com fuzzing, dados aleatórios
+são executados contra o seu teste na tentativa de encontrar vulnerabilidades ou
+entradas que causam falhas. Alguns exemplos de vulnerabilidades que podem ser
+encontradas com fuzzing são injeção de SQL, buffer overflow, negação de serviço
+e ataques de cross-site scripting.
 
-In this tutorial, you'll write a fuzz test for a simple function, run the go
-command, and debug and fix issues in the code.
+Neste tutorial, você vai escrever um teste de fuzz para uma função simples,
+executar o comando go, e depurar e corrigir problemas no código.
 
-For help with terminology throughout this tutorial, see the [Go Fuzzing
-glossary](/security/fuzz/#glossary).
+Para ajuda com a terminologia ao longo deste tutorial, veja o [glossário de
+Go Fuzzing](/security/fuzz/#glossary).
 
-You'll progress through the following sections:
+Você vai percorrer as seguintes seções:
 
-1. [Create a folder for your code.](#create_folder)
-2. [Add code to test.](#code_to_test)
-3. [Add a unit test.](#unit_test)
-4. [Add a fuzz test.](#fuzz_test)
-5. [Fix two bugs.](#fix_invalid_string_error)
-6. [Explore additional resources.](#conclusion)
+1. [Crie uma pasta para o seu código.](#create_folder)
+2. [Adicione o código a ser testado.](#code_to_test)
+3. [Adicione um teste unitário.](#unit_test)
+4. [Adicione um teste de fuzz.](#fuzz_test)
+5. [Corrija dois bugs.](#fix_invalid_string_error)
+6. [Explore recursos adicionais.](#conclusion)
 
-**Note:** For other tutorials, see [Tutorials](/doc/tutorial/index.html).
+**Observação:** para outros tutoriais, veja [Tutoriais](/doc/tutorial/index.html).
 
-**Note:** Go fuzzing currently supports a subset of built-in types, listed in
-the [Go Fuzzing docs](/security/fuzz/#requirements), with support for more built-in
-types to be added in the future.
+**Observação:** o fuzzing em Go atualmente suporta um subconjunto dos tipos
+embutidos, listados na [documentação de Go Fuzzing](/security/fuzz/#requirements), com suporte
+a mais tipos embutidos a ser adicionado no futuro.
 
-## Prerequisites
+## Pré-requisitos
 
-- **Go.** We recommend using the latest version of Go to follow this tutorial.
-  For installation instructions, see [Installing Go](/doc/install).
-- **A tool to edit your code.** Any text editor you have will work fine.
-- **A command terminal.** Go works well using any terminal on Linux and Mac, and
-  on PowerShell or cmd in Windows.
-- **An environment that supports fuzzing.** Go fuzzing with coverage
-  instrumentation is only available on AMD64 and ARM64 architectures currently.
+- **Go.** Recomendamos usar a versão mais recente do Go para acompanhar este tutorial.
+  Para instruções de instalação, veja [Instalando o Go](/doc/install).
+- **Uma ferramenta para editar o seu código.** Qualquer editor de texto que você tenha
+  vai funcionar bem.
+- **Um terminal de comandos.** O Go funciona bem com qualquer terminal no Linux e no Mac,
+  e com PowerShell ou cmd no Windows.
+- **Um ambiente que suporte fuzzing.** O fuzzing em Go com instrumentação de
+  cobertura atualmente só está disponível nas arquiteturas AMD64 e ARM64.
 
-## Create a folder for your code {#create_folder}
+## Crie uma pasta para o seu código {#create_folder}
 
-To begin, create a folder for the code you’ll write.
+Para começar, crie uma pasta para o código que você vai escrever.
 
-1. Open a command prompt and change to your home directory.
+1. Abra um prompt de comando e vá para o seu diretório home.
 
-   On Linux or Mac:
+   No Linux ou no Mac:
 
    ```
    $ cd
    ```
 
-   On Windows:
+   No Windows:
 
    ```
    C:\> cd %HOMEPATH%
    ```
 
-   The rest of the tutorial will show a $ as the prompt. The commands you use
-   will work on Windows too.
+   O restante do tutorial vai mostrar um $ como prompt. Os comandos que você usar
+   vão funcionar no Windows também.
 
-2. From the command prompt, create a directory for your code called fuzz.
+2. No prompt de comando, crie um diretório para o seu código chamado fuzz.
 
    ```
    $ mkdir fuzz
    $ cd fuzz
    ```
 
-3. Create a module to hold your code.
+3. Crie um módulo para guardar o seu código.
 
-   Run the `go mod init` command, giving it your new code’s module path.
+   Execute o comando `go mod init`, passando o caminho do módulo do seu novo código.
 
    ```
    $ go mod init example/fuzz
    go: creating new go.mod: module example/fuzz
    ```
 
-   **Note:** For production code, you’d specify a module path that’s more
-   specific to your own needs. For more, be sure to see [Managing
-   dependencies](/doc/modules/managing-dependencies).
+   **Observação:** para código de produção, você especificaria um caminho de módulo
+   mais específico para as suas necessidades. Para mais detalhes, não deixe de ver
+   [Gerenciando dependências](/doc/modules/managing-dependencies).
 
-Next, you'll add some simple code to reverse a string, which we’ll fuzz later.
+Em seguida, você vai adicionar um código simples para inverter uma string, que vamos
+testar com fuzzing depois.
 
-## Add code to test {#code_to_test}
+## Adicione o código a ser testado {#code_to_test}
 
-In this step, you’ll add a function to reverse a string.
+Nesta etapa, você vai adicionar uma função para inverter uma string.
 
-### Write the code
+### Escreva o código
 
-1.  Using your text editor, create a file called main.go in the fuzz directory.
-2.  Into main.go, at the top of the file, paste the following package
-    declaration.
+1.  Usando o seu editor de texto, crie um arquivo chamado main.go no diretório fuzz.
+2.  No main.go, no topo do arquivo, cole a seguinte declaração de pacote.
 
     ```
     package main
     ```
 
-    A standalone program (as opposed to a library) is always in package `main`.
+    Um programa independente (em oposição a uma biblioteca) sempre fica no pacote `main`.
 
-3.  Beneath the package declaration, paste the following function declaration.
+3.  Abaixo da declaração de pacote, cole a seguinte declaração de função.
 
     ```
     func Reverse(s string) string {
@@ -112,15 +115,14 @@ In this step, you’ll add a function to reverse a string.
     }
     ```
 
-    This function will accept a `string`, loop over it a `byte` at a time, and
-    return the reversed string at the end.
+    Esta função vai aceitar uma `string`, percorrê-la um `byte` por vez e
+    retornar a string invertida no final.
 
-    _Note:_ This code is based on the `stringutil.Reverse` function within
+    _Observação:_ este código é baseado na função `stringutil.Reverse` dentro de
     golang.org/x/example.
 
-4.  At the top of main.go, beneath the package declaration, paste the following
-    `main` function to initialize a string, reverse it, print the output, and
-    repeat.
+4.  No topo do main.go, abaixo da declaração de pacote, cole a seguinte função
+    `main` para inicializar uma string, invertê-la, imprimir a saída e repetir.
 
     ```
     func main() {
@@ -133,13 +135,13 @@ In this step, you’ll add a function to reverse a string.
     }
     ```
 
-    This function will run a few `Reverse` operations, then print the output to
-    the command line. This can be helpful for seeing the code in action, and
-    potentially for debugging.
+    Esta função vai executar algumas operações `Reverse`, depois imprimir a saída na
+    linha de comando. Isso pode ser útil para ver o código em ação e, possivelmente,
+    para depuração.
 
-5.  The `main` function uses the fmt package, so you will need to import it.
+5.  A função `main` usa o pacote fmt, então você precisa importá-lo.
 
-    The first lines of code should look like this:
+    As primeiras linhas do código devem ficar assim:
 
     ```
     package main
@@ -147,9 +149,9 @@ In this step, you’ll add a function to reverse a string.
     import "fmt"
     ```
 
-### Run the code
+### Execute o código
 
-From the command line in the directory containing main.go, run the code.
+Na linha de comando, no diretório que contém o main.go, execute o código.
 
 ```
 $ go run .
@@ -158,20 +160,20 @@ reversed: "god yzal eht revo depmuj xof nworb kciuq ehT"
 reversed again: "The quick brown fox jumped over the lazy dog"
 ```
 
-You can see the original string, the result of reversing it, then the result of
-reversing it again, which is equivalent to the original.
+Você pode ver a string original, o resultado de invertê-la, depois o resultado de
+invertê-la novamente, que é equivalente à original.
 
-Now that the code is running, it’s time to test it.
+Agora que o código está rodando, é hora de testá-lo.
 
-## Add a unit test {#unit_test}
+## Adicione um teste unitário {#unit_test}
 
-In this step, you will write a basic unit test for the `Reverse` function.
+Nesta etapa, você vai escrever um teste unitário básico para a função `Reverse`.
 
-### Write the code
+### Escreva o código
 
-1. Using your text editor, create a file called reverse_test.go in the fuzz
-   directory.
-2. Paste the following code into reverse_test.go.
+1. Usando o seu editor de texto, crie um arquivo chamado reverse_test.go no diretório
+   fuzz.
+2. Cole o seguinte código no reverse_test.go.
 
    ```
    package main
@@ -197,12 +199,12 @@ In this step, you will write a basic unit test for the `Reverse` function.
    }
    ```
 
-   This simple test will assert that the listed input strings will be correctly
-   reversed.
+   Este teste simples vai verificar se as strings de entrada listadas são
+   invertidas corretamente.
 
-### Run the code
+### Execute o código
 
-Run the unit test using `go test`
+Execute o teste unitário usando `go test`
 
 ```
 $ go test
@@ -210,26 +212,26 @@ PASS
 ok      example/fuzz  0.013s
 ```
 
-Next, you will change the unit test into a fuzz test.
+Em seguida, você vai transformar o teste unitário em um teste de fuzz.
 
-## Add a fuzz test {#fuzz_test}
+## Adicione um teste de fuzz {#fuzz_test}
 
-The unit test has limitations, namely that each input must be added to the test
-by the developer. One benefit of fuzzing is that it comes up with inputs for
-your code, and may identify edge cases that the test cases you came up with
-didn’t reach.
+O teste unitário tem limitações, principalmente que cada entrada precisa ser
+adicionada ao teste pelo desenvolvedor. Um benefício do fuzzing é que ele gera
+entradas para o seu código e pode identificar casos extremos que os casos de
+teste que você criou não alcançaram.
 
-In this section you will convert the unit test to a fuzz test so that you can
-generate more inputs with less work!
+Nesta seção, você vai converter o teste unitário em um teste de fuzz para que
+possa gerar mais entradas com menos trabalho!
 
-Note that you can keep unit tests, benchmarks, and fuzz tests in the same
-*_test.go file, but for this example you will convert the unit test to a fuzz
-test.
+Observe que você pode manter testes unitários, benchmarks e testes de fuzz no
+mesmo arquivo *_test.go, mas, para este exemplo, você vai converter o teste
+unitário em um teste de fuzz.
 
-### Write the code
+### Escreva o código
 
-In your text editor, replace the unit test in reverse_test.go with the following
-fuzz test.
+No seu editor de texto, substitua o teste unitário no reverse_test.go pelo seguinte
+teste de fuzz.
 
 ```
 func FuzzReverse(f *testing.F) {
@@ -250,32 +252,32 @@ func FuzzReverse(f *testing.F) {
 }
 ```
 
-Fuzzing has a few limitations as well. In your unit test, you could predict the
-expected output of the `Reverse` function, and verify that the actual output met
-those expectations.
+O fuzzing também tem algumas limitações. No seu teste unitário, você poderia prever a
+saída esperada da função `Reverse` e verificar se a saída real atendia a essas
+expectativas.
 
-For example, in the test case `Reverse("Hello, world")` the unit test specifies
-the return as `"dlrow ,olleH"`.
+Por exemplo, no caso de teste `Reverse("Hello, world")`, o teste unitário especifica
+o retorno como `"dlrow ,olleH"`.
 
-When fuzzing, you can't predict the expected output, since you don't have
-control over the inputs.
+Ao fazer fuzzing, você não consegue prever a saída esperada, já que não tem
+controle sobre as entradas.
 
-However, there are a few properties of the `Reverse` function that you can
-verify in a fuzz test. The two properties being checked in this fuzz test are:
+No entanto, há algumas propriedades da função `Reverse` que você pode
+verificar em um teste de fuzz. As duas propriedades verificadas neste teste de fuzz são:
 
-1.  Reversing a string twice preserves the original value
-2.  The reversed string preserves its state as valid UTF-8.
+1.  Inverter uma string duas vezes preserva o valor original
+2.  A string invertida preserva seu estado como UTF-8 válido.
 
-Note the syntax differences between the unit test and the fuzz test:
+Observe as diferenças de sintaxe entre o teste unitário e o teste de fuzz:
 
-- The function begins with FuzzXxx instead of TestXxx, and takes `*testing.F`
-  instead of `*testing.T`
-- Where you would expect to see a `t.Run` execution, you instead see `f.Fuzz`
-  which takes a fuzz target function whose parameters are `*testing.T` and the
-  types to be fuzzed. The inputs from your unit test are provided as seed corpus
-  inputs using `f.Add`.
+- A função começa com FuzzXxx em vez de TestXxx, e recebe `*testing.F`
+  em vez de `*testing.T`
+- Onde você esperaria ver uma execução `t.Run`, você vê `f.Fuzz`,
+  que recebe uma função alvo de fuzz cujos parâmetros são `*testing.T` e os
+  tipos a serem testados com fuzzing. As entradas do seu teste unitário são fornecidas como
+  entradas de corpus inicial usando `f.Add`.
 
-Ensure the new package, `unicode/utf8` has been imported.
+Garanta que o novo pacote, `unicode/utf8`, foi importado.
 
 ```
 package main
@@ -286,11 +288,11 @@ import (
 )
 ```
 
-With the unit test converted to a fuzz test, it’s time to run the test again.
+Com o teste unitário convertido em teste de fuzz, é hora de executar o teste novamente.
 
-### Run the code
+### Execute o código
 
-1. Run the fuzz test without fuzzing it to make sure the seed inputs pass.
+1. Execute o teste de fuzz sem fazer fuzzing para garantir que as entradas iniciais passem.
 
    ```
    $ go test
@@ -298,25 +300,25 @@ With the unit test converted to a fuzz test, it’s time to run the test again.
    ok      example/fuzz  0.013s
    ```
 
-   You can also run `go test -run=FuzzReverse` if you have other tests in that
-   file, and you only wish to run the fuzz test.
+   Você também pode executar `go test -run=FuzzReverse` se tiver outros testes nesse
+   arquivo e quiser rodar apenas o teste de fuzz.
 
-2. Run `FuzzReverse` with fuzzing, to see if any randomly generated string
-   inputs will cause a failure. This is executed using `go test` with a new
-   flag, `-fuzz`, set to the parameter `Fuzz`. Copy the command below.
+2. Execute `FuzzReverse` com fuzzing, para ver se alguma entrada de string gerada
+   aleatoriamente vai causar uma falha. Isso é executado usando `go test` com uma nova
+   flag, `-fuzz`, definida com o parâmetro `Fuzz`. Copie o comando abaixo.
 
     ```
     $ go test -fuzz=Fuzz
     ```
 
-    Another useful flag is `-fuzztime`, which restricts the time fuzzing takes.
-    For example, specifying `-fuzztime 10s` in the test below would mean that,
-    as long as no failures occurred earlier, the test would exit by default
-    after 10 seconds had elapsed. See [this
-    section](https://pkg.go.dev/cmd/go#hdr-Testing_flags) of the cmd/go
-    documentation to see other testing flags.
+    Outra flag útil é `-fuzztime`, que limita o tempo que o fuzzing leva.
+    Por exemplo, especificar `-fuzztime 10s` no teste abaixo significaria que,
+    desde que nenhuma falha ocorra antes, o teste sairia por padrão
+    depois de 10 segundos. Veja [esta
+    seção](https://pkg.go.dev/cmd/go#hdr-Testing_flags) da documentação do cmd/go
+    para outras flags de teste.
 
-   Now, run the command you just copied.
+   Agora, execute o comando que você acabou de copiar.
 
    ```
    $ go test -fuzz=Fuzz
@@ -335,25 +337,25 @@ With the unit test converted to a fuzz test, it’s time to run the test again.
    FAIL    example/fuzz  0.030s
    ```
 
-   A failure occurred while fuzzing, and the input that caused the problem is
-   written to a seed corpus file that will be run the next time `go test` is
-   called, even without the `-fuzz` flag. To view the input that caused the
-   failure, open the corpus file written to the testdata/fuzz/FuzzReverse
-   directory in a text editor. Your seed corpus file may contain a different
-   string, but the format will be the same.
+   Uma falha ocorreu durante o fuzzing, e a entrada que causou o problema é
+   gravada em um arquivo de corpus inicial que será executado na próxima vez que `go test` for
+   chamado, mesmo sem a flag `-fuzz`. Para ver a entrada que causou a
+   falha, abra o arquivo de corpus gravado no diretório testdata/fuzz/FuzzReverse
+   em um editor de texto. Seu arquivo de corpus inicial pode conter uma string
+   diferente, mas o formato será o mesmo.
 
    ```
    go test fuzz v1
    string("泃")
    ```
 
-   The first line of the corpus file indicates the encoding version. Each
-   following line represents the value of each type making up the corpus entry.
-   Since the fuzz target only takes 1 input, there is only 1 value after the
-   version.
+   A primeira linha do arquivo de corpus indica a versão de codificação. Cada
+   linha seguinte representa o valor de cada tipo que compõe a entrada do corpus.
+   Como o alvo de fuzz recebe apenas 1 entrada, há apenas 1 valor depois da
+   versão.
 
-3. Run `go test` again without the` -fuzz` flag; the new failing seed corpus
-   entry will be used:
+3. Execute `go test` novamente sem a flag `-fuzz`; a nova entrada de corpus inicial
+   que falhou será usada:
 
    ```
    $ go test
@@ -365,43 +367,43 @@ With the unit test converted to a fuzz test, it’s time to run the test again.
    FAIL    example/fuzz  0.016s
    ```
 
-   Since our test has failed, it’s time to debug.
+   Como nosso teste falhou, é hora de depurar.
 
-## Fix the invalid string error {#fix_invalid_string_error}
+## Corrija o erro de string inválida {#fix_invalid_string_error}
 
-In this section, you will debug the failure, and fix the bug.
+Nesta seção, você vai depurar a falha e corrigir o bug.
 
-Feel free to spend some time thinking about this and trying to fix the issue
-yourself before moving on.
+Fique à vontade para passar um tempo pensando nisso e tentando corrigir o problema
+por conta própria antes de seguir em frente.
 
-### Diagnose the error
+### Diagnostique o erro
 
-There are a few different ways you could debug this error. If you are using VS
-Code as your text editor, you can [set up your
-debugger](https://github.com/golang/vscode-go/blob/master/docs/debugging.md) to
-investigate.
+Há algumas maneiras diferentes de depurar este erro. Se você estiver usando o VS
+Code como editor de texto, pode [configurar o seu
+depurador](https://github.com/golang/vscode-go/blob/master/docs/debugging.md) para
+investigar.
 
-In this tutorial, we will log useful debugging info to your terminal.
+Neste tutorial, vamos registrar informações úteis de depuração no seu terminal.
 
-First, consider the docs for
+Primeiro, considere a documentação de
 [`utf8.ValidString`](https://pkg.go.dev/unicode/utf8).
 
 ```
 ValidString reports whether s consists entirely of valid UTF-8-encoded runes.
 ```
 
-The current `Reverse` function reverses the string byte-by-byte, and therein
-lies our problem. In order to preserve the UTF-8-encoded runes of the original
-string, we must instead reverse the string rune-by-rune.
+A função `Reverse` atual inverte a string byte a byte, e aí está o nosso problema. Para
+preservar as runes codificadas em UTF-8 da string original, devemos, em vez disso,
+inverter a string rune a rune.
 
-To examine why the input (in this case, the Chinese character `泃`) is causing
-`Reverse` to produce an invalid string when reversed, you can inspect the number
-of runes in the reversed string.
+Para examinar por que a entrada (neste caso, o caractere chinês `泃`) faz
+`Reverse` produzir uma string inválida ao ser invertida, você pode inspecionar o número
+de runes na string invertida.
 
-#### Write the code
+#### Escreva o código
 
-In your text editor, replace the fuzz target within `FuzzReverse` with the
-following.
+No seu editor de texto, substitua o alvo de fuzz dentro de `FuzzReverse` pelo
+seguinte.
 
 ```
 f.Fuzz(func(t *testing.T, orig string) {
@@ -417,12 +419,12 @@ f.Fuzz(func(t *testing.T, orig string) {
 })
 ```
 
-This `t.Logf` line will print to the command line if an error occurs, or if
-executing the test with `-v`, which can help you debug this particular issue.
+Esta linha `t.Logf` vai imprimir na linha de comando se um erro ocorrer, ou se
+executar o teste com `-v`, o que pode ajudar você a depurar este problema específico.
 
-#### Run the code
+#### Execute o código
 
-Run the test using go test
+Execute o teste usando go test
 
 ```
 $ go test
@@ -435,25 +437,24 @@ exit status 1
 FAIL    example/fuzz    0.598s
 ```
 
-The entire seed corpus used strings in which every character was a single byte.
-However, characters such as 泃 can require several bytes. Thus, reversing the
-string byte-by-byte will invalidate multi-byte characters.
+O corpus inicial inteiro usava strings em que cada caractere era um único byte.
+No entanto, caracteres como 泃 podem exigir vários bytes. Assim, inverter a
+string byte a byte invalida os caracteres de múltiplos bytes.
 
-**Note:** If you’re curious about how Go deals with strings, read the blog post
-[Strings, bytes, runes and characters in Go](/blog/strings) for a
-deeper understanding.
+**Observação:** se você tiver curiosidade sobre como o Go lida com strings, leia o post do blog
+[Strings, bytes, runes and characters in Go](/blog/strings) para
+um entendimento mais profundo.
 
-With a better understanding of the bug, correct the error in the `Reverse`
-function.
+Com um entendimento melhor do bug, corrija o erro na função `Reverse`.
 
-### Fix the error
+### Corrija o erro
 
-To correct the `Reverse` function, let’s traverse the string by runes, instead
-of by bytes.
+Para corrigir a função `Reverse`, vamos percorrer a string por runes, em vez de
+por bytes.
 
-#### Write the code
+#### Escreva o código
 
-In your text editor, replace the existing Reverse() function with the following.
+No seu editor de texto, substitua a função Reverse() existente pela seguinte.
 
 ```
 func Reverse(s string) string {
@@ -465,13 +466,13 @@ func Reverse(s string) string {
 }
 ```
 
-The key difference is that `Reverse` is now iterating over each `rune` in the
-string, rather than each `byte`. Note that this is just an example, and does not
-handle [combining characters](https://en.wikipedia.org/wiki/Combining_character) correctly.
+A diferença principal é que `Reverse` agora itera sobre cada `rune` da
+string, em vez de cada `byte`. Observe que este é apenas um exemplo e não
+trata [caracteres combinados](https://en.wikipedia.org/wiki/Combining_character) corretamente.
 
-#### Run the code
+#### Execute o código
 
-1. Run the test using `go test`
+1. Execute o teste usando `go test`
 
    ```
    $ go test
@@ -479,9 +480,9 @@ handle [combining characters](https://en.wikipedia.org/wiki/Combining_character)
    ok      example/fuzz  0.016s
    ```
 
-   The test now passes!
+   O teste agora passa!
 
-2. Fuzz it again with `go test -fuzz`, to see if there are any new bugs.
+2. Faça fuzzing novamente com `go test -fuzz`, para ver se há novos bugs.
 
    ```
    $ go test -fuzz=Fuzz
@@ -500,38 +501,38 @@ handle [combining characters](https://en.wikipedia.org/wiki/Combining_character)
    FAIL    example/fuzz  0.032s
    ```
 
-   We can see that the string is different from the original after being
-   reversed twice. This time the input itself is invalid unicode. How is this
-   possible if we’re fuzzing with strings?
+   Podemos ver que a string é diferente da original depois de ser
+   invertida duas vezes. Desta vez, a própria entrada é um unicode inválido. Como isso é
+   possível se estamos fazendo fuzzing com strings?
 
-   Let’s debug again.
+   Vamos depurar de novo.
 
-## Fix the double reverse error {#fix_double_reverse_error}
+## Corrija o erro de dupla inversão {#fix_double_reverse_error}
 
-In this section, you will debug the double reverse failure and fix the bug.
+Nesta seção, você vai depurar a falha de dupla inversão e corrigir o bug.
 
-Feel free to spend some time thinking about this and trying to fix the issue
-yourself before moving on.
+Fique à vontade para passar um tempo pensando nisso e tentando corrigir o problema
+por conta própria antes de seguir em frente.
 
-### Diagnose the error
+### Diagnostique o erro
 
-Like before, there are several ways you could debug this failure. In this case,
-using a
-[debugger](https://github.com/golang/vscode-go/blob/master/docs/debugging.md)
-would be a great approach.
+Como antes, há várias maneiras de depurar esta falha. Neste caso,
+usar um
+[depurador](https://github.com/golang/vscode-go/blob/master/docs/debugging.md)
+seria uma ótima abordagem.
 
-In this tutorial, we will log useful debugging info in the `Reverse` function.
+Neste tutorial, vamos registrar informações úteis de depuração na função `Reverse`.
 
-Look closely at the reversed string to spot the error. In Go, [a string is a
-read only slice of bytes](/blog/strings), and can contain bytes
-that aren’t valid UTF-8. The original string is a byte slice with one byte,
-`'\x91'`. When the input string is set to `[]rune`, Go encodes the byte slice to
-UTF-8, and replaces the byte with the UTF-8 character �. When we compare the
-replacement UTF-8 character to the input byte slice, they are clearly not equal.
+Observe com atenção a string invertida para encontrar o erro. Em Go, [uma string é um
+slice somente leitura de bytes](/blog/strings), e pode conter bytes
+que não são UTF-8 válido. A string original é um slice de bytes com um byte,
+`'\x91'`. Quando a string de entrada é convertida para `[]rune`, o Go codifica o slice de bytes
+em UTF-8 e substitui o byte pelo caractere UTF-8 �. Quando comparamos o
+caractere UTF-8 de substituição com o slice de bytes de entrada, eles claramente não são iguais.
 
-#### Write the code
+#### Escreva o código
 
-1. In your text editor, replace the `Reverse` function with the following.
+1. No seu editor de texto, substitua a função `Reverse` pela seguinte.
 
    ```
    func Reverse(s string) string {
@@ -545,19 +546,19 @@ replacement UTF-8 character to the input byte slice, they are clearly not equal.
    }
    ```
 
-   This will help us understand what is going wrong when converting the string
-   to a slice of runes.
+   Isso vai ajudar a entender o que está dando errado ao converter a string
+   para um slice de runes.
 
-#### Run the code
+#### Execute o código
 
-This time, we only want to run the failing test in order to inspect the logs. To
-do this, we will use `go test -run`.
+Desta vez, queremos apenas executar o teste que falha para inspecionar os logs. Para
+fazer isso, vamos usar `go test -run`.
 
-To run a specific corpus entry within FuzzXxx/testdata, you can provide
-{FuzzTestName}/{filename} to `-run`. This can be helpful when debugging.
-In this case, set the `-run` flag equal to the exact hash of the failing test.
-Copy and paste the unique hash from your terminal;
-it will be different than the one below.
+Para executar uma entrada específica do corpus dentro de FuzzXxx/testdata, você pode passar
+{FuzzTestName}/{filename} para `-run`. Isso pode ser útil na depuração.
+Neste caso, defina a flag `-run` igual ao hash exato do teste que falha.
+Copie e cole o hash único do seu terminal;
+ele será diferente do que está abaixo.
 
 ```
 $ go test -run=FuzzReverse/28f36ef487f23e6c7a81ebdaa9feffe2f2b02b4cddaa6252e87f69863046a5e0
@@ -574,18 +575,18 @@ exit status 1
 FAIL    example/fuzz    0.145s
 ```
 
-Knowing that the input is invalid unicode, let’s fix the error in our `Reverse`
-function.
+Sabendo que a entrada é um unicode inválido, vamos corrigir o erro na nossa
+função `Reverse`.
 
-### Fix the error
+### Corrija o erro
 
-To fix this issue, let's return an error if the input to `Reverse` isn't valid
-UTF-8.
+Para corrigir este problema, vamos fazer a função `Reverse` retornar um erro se a entrada
+não for UTF-8 válido.
 
-#### Write the code
+#### Escreva o código
 
-1. In your text editor, replace the existing `Reverse` function with the
-   following.
+1. No seu editor de texto, substitua a função `Reverse` existente pela
+   seguinte.
 
    ```
    func Reverse(s string) (string, error) {
@@ -600,12 +601,12 @@ UTF-8.
    }
    ```
 
-   This change will return an error if the input string contains characters
-   which are not valid UTF-8.
+   Essa mudança vai retornar um erro se a string de entrada contiver caracteres
+   que não são UTF-8 válido.
 
-1. Since the Reverse function now returns an error, modify the `main` function to
-   discard the extra error value. Replace the existing `main` function with the
-   following.
+1. Como a função Reverse agora retorna um erro, modifique a função `main` para
+   descartar o valor extra de erro. Substitua a função `main` existente pela
+   seguinte.
 
    ```
    func main() {
@@ -618,11 +619,11 @@ UTF-8.
    }
    ```
 
-    These calls to `Reverse` should return a nil error, since the input
-    string is valid UTF-8.
+    Essas chamadas a `Reverse` devem retornar um erro nil, já que a string de
+    entrada é UTF-8 válido.
 
-1. You will need to import the errors and the unicode/utf8 packages.
-   The import statement in main.go should look like the following.
+1. Você vai precisar importar os pacotes errors e unicode/utf8.
+   A instrução import no main.go deve ficar assim:
 
    ```
    import (
@@ -632,8 +633,8 @@ UTF-8.
    )
    ```
 
-1. Modify the reverse_test.go file to check for errors and skip the test if
-   errors are generated by returning.
+1. Modifique o arquivo reverse_test.go para verificar erros e pular o teste se
+   forem gerados erros, retornando.
 
    ```
    func FuzzReverse(f *testing.F) {
@@ -660,12 +661,12 @@ UTF-8.
    }
    ```
 
-   Rather than returning, you can also call `t.Skip()` to stop the execution of
-   that fuzz input.
+   Em vez de retornar, você também pode chamar `t.Skip()` para interromper a execução
+   daquela entrada de fuzz.
 
-#### Run the code
+#### Execute o código
 
-1. Run the test using go test
+1. Execute o teste usando go test
 
    ```
    $ go test
@@ -673,10 +674,10 @@ UTF-8.
    ok      example/fuzz  0.019s
    ```
 
-2.  Fuzz it with `go test -fuzz=Fuzz`, then after a few seconds has passed, stop
-    fuzzing with `ctrl-C`. The fuzz test will run until it encounters a failing
-    input unless you pass the `-fuzztime` flag. The default is to run forever if no
-    failures occur, and the process can be interrupted with `ctrl-C`.
+2.  Faça fuzzing com `go test -fuzz=Fuzz`, depois que alguns segundos tiverem passado, pare
+    o fuzzing com `ctrl-C`. O teste de fuzz vai rodar até encontrar uma
+    entrada que falha, a menos que você passe a flag `-fuzztime`. O padrão é rodar para sempre se nenhuma
+    falha ocorrer, e o processo pode ser interrompido com `ctrl-C`.
 
    ```
    $ go test -fuzz=Fuzz
@@ -692,8 +693,8 @@ UTF-8.
    ok      example/fuzz  228.000s
    ```
 
-3. Fuzz it with `go test -fuzz=Fuzz -fuzztime 30s` which will fuzz for 30
-   seconds before exiting if no failure was found.
+3. Faça fuzzing com `go test -fuzz=Fuzz -fuzztime 30s`, que vai fazer fuzzing por 30
+   segundos antes de sair, se nenhuma falha for encontrada.
 
    ```
    $ go test -fuzz=Fuzz -fuzztime 30s
@@ -714,37 +715,37 @@ UTF-8.
    ok      example/fuzz  31.025s
    ```
 
-   Fuzzing passed!
+   O fuzzing passou!
 
-   In addition to the `-fuzz` flag, several new flags have been added to `go
-   test` and can be viewed in the [documentation](/security/fuzz/#custom-settings).
+   Além da flag `-fuzz`, várias novas flags foram adicionadas ao `go
+   test` e podem ser vistas na [documentação](/security/fuzz/#custom-settings).
 
-   See [Go Fuzzing](/security/fuzz/#command-line-output) for more
-   information on terms used in fuzzing output. For example, "new interesting"
-   refers to inputs that expand the code coverage of the existing fuzz test
-   corpus. The number of "new interesting" inputs can be expected to increase
-   sharply as fuzzing begins, spike several times as new code paths are
-   discovered, then taper off over time.
+   Veja [Go Fuzzing](/security/fuzz/#command-line-output) para mais
+   informações sobre os termos usados na saída do fuzzing. Por exemplo, "new interesting"
+   se refere a entradas que expandem a cobertura de código do corpus existente do
+   teste de fuzz. Pode-se esperar que o número de entradas "new interesting" aumente
+   bruscamente quando o fuzzing começa, tenha picos várias vezes à medida que novos caminhos de código são
+   descobertos, e depois diminua com o tempo.
 
-## Conclusion {#conclusion}
+## Conclusão {#conclusion}
 
-Nicely done! You've just introduced yourself to fuzzing in Go.
+Muito bem! Você acabou de se apresentar ao fuzzing em Go.
 
-The next step is to choose a function in your code that you'd like to fuzz, and
-try it out! If fuzzing finds a bug in your code, consider adding it to the
-[trophy case](/wiki/Fuzzing-trophy-case).
+O próximo passo é escolher uma função no seu código que você gostaria de testar com fuzzing e
+experimentar! Se o fuzzing encontrar um bug no seu código, considere adicioná-lo à
+[galeria de troféus](/wiki/Fuzzing-trophy-case).
 
-If you experience any problems or have an idea for a feature, [file an
+Se você tiver algum problema ou uma ideia para um recurso, [abra uma
 issue](/issue/new/?&labels=fuzz).
 
-For discussion and general feedback about the feature, you can also participate
-in the [#fuzzing channel](https://gophers.slack.com/archives/CH5KV1AKE) in
+Para discussões e feedback geral sobre o recurso, você também pode participar do
+[canal #fuzzing](https://gophers.slack.com/archives/CH5KV1AKE) no
 Gophers Slack.
 
-Check out the documentation at [go.dev/security/fuzz](/security/fuzz/#requirements) for
-further reading.
+Confira a documentação em [go.dev/security/fuzz](/security/fuzz/#requirements) para
+leituras adicionais.
 
-## Completed code
+## Código completo
 
 --- main.go ---
 
@@ -812,4 +813,4 @@ func FuzzReverse(f *testing.F) {
 }
 ```
 
-[Back to top](#top)
+[Voltar ao topo](#top)
